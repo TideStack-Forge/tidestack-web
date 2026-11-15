@@ -1,0 +1,213 @@
+// ============================================================
+// 组件变量契约 (Component Tokens)
+// ============================================================
+// 组件内部样式变量，引用语义变量
+// v1.0.0
+
+// ============================================================
+// Tier 2: 组件契约（相对稳定，组件重构时可能变化）
+// ============================================================
+
+// 按钮组件
+$contract-button: (
+  // 尺寸
+  height, height-sm, height-md, height-lg,
+  padding-x, padding-x-sm, padding-x-lg, padding-y,
+  font-size, font-size-sm, font-size-lg, font-weight,
+  border-radius, border-radius-sm, border-radius-lg,
+  border-width, border-style,
+  radius, shadow, shadow-active, hover-shadow, loading-overlay,
+  // Primary
+  primary-bg, primary-bg-hover, primary-bg-active, primary-bg-disabled,
+  primary-text, primary-text-disabled,
+  primary-border, primary-border-hover, primary-border-active, primary-border-disabled,
+  // Default
+  default-bg, default-bg-hover, default-bg-active, default-bg-disabled, default-bg-color,
+  default-text, default-text-hover, default-text-active, default-text-disabled,
+  default-border, default-border-hover, default-border-active, default-border-disabled, default-border-color,
+  // Success
+  success-bg, success-bg-hover, success-bg-active, success-text, success-border,
+  // Warning
+  warning-bg, warning-bg-hover, warning-bg-active, warning-text, warning-border,
+  // Error
+  error-bg, error-bg-hover, error-bg-active, error-text, error-border,
+  // Info
+  info-bg, info-bg-hover, info-bg-active, info-text, info-border
+);
+
+// 输入框组件
+$contract-input: (
+  bg, bg-disabled,
+  text, text-disabled, placeholder, placeholder-color, color,
+  border, border-color, border-hover, border-focus, border-disabled, border-error, border-width, border-radius,
+  outline, outline-error,
+  height, padding-x, font-size, font-weight,
+  clear-color, clear-color-hover,
+  hover-border-color, focus-border-color, focus-shadow,
+  disabled-bg, disabled-border-color, disabled-color,
+  error-bg, error-border-color
+);
+
+// 标签页组件
+$contract-tabs: (
+  text, text-active,
+  line, line-active,
+  bg, bg-hover, bg-selected,
+  border-color, border-focus,
+  color, hover-color, active-color, active-border-color,
+  font-size, height,
+  // tabbar 样式
+  item-bg, item-bg-hover, item-bg-active,
+  item-text, item-text-active, item-border, item-height,
+  // tab context menu 样式
+  menu-bg, menu-text, menu-text-disabled,
+  menu-border, menu-shadow,
+  menu-item-bg-hover, menu-item-text-hover,
+  padding-x, padding-t
+);
+
+// 标签栏组件
+$contract-tabbar: (
+  bg, height,
+  item-height, item-bg, item-bg-hover, item-bg-active,
+  item-text, item-text-active, item-border,
+  padding-x, padding-t
+);
+
+// 菜单组件
+$contract-menu: (
+  bg, border, text, text-secondary,
+  item-text-active, item-bg-hover, item-bg-active, item-bg-selected,
+  icon, icon-secondary
+);
+
+// 弹窗组件
+$contract-modal: (
+  mask-bg, bg, text,
+  header-bg, header-text, header-color,
+  body-color,
+  border, border-radius, shadow
+);
+
+// 提示组件
+$contract-toast: (
+  shadow
+);
+
+// 表格组件
+$contract-table: (
+  header-bg, header-text, header-color, header-border-color,
+  row-bg, row-bg-hover, row-bg-selected, row-text, row-hover-bg,
+  border, border-color, border-focus,
+  font-size, selected-row-bg
+);
+
+// 选择器组件
+$contract-select: (
+  bg, bg-hover, bg-active, bg-disabled,
+  text, text-disabled, placeholder,
+  border, border-color, border-hover, border-focus, border-error, border-radius,
+  outline,
+  arrow, height, padding-x, font-size, color,
+  hover-border-color, focus-border-color,
+  disabled-bg, disabled-border-color, disabled-color,
+  dropdown-bg,
+  option-color, option-hover-bg, option-selected-bg, option-selected-color
+);
+
+// 下拉菜单组件
+$contract-dropdown: (
+  menu-bg, menu-border, menu-shadow,
+  item-text, item-text-selected, item-text-disabled,
+  item-bg-hover, item-bg-active, item-bg-selected, item-selected,
+  divider
+);
+
+// 复选框组件
+$contract-checkbox: (
+  bg, bg-hover, bg-disabled,
+  border, border-color, border-hover, border-disabled, border-radius,
+  checked-bg, checked-border, checked-border-color,
+  checkmark-color, outline, size,
+  hover-border-color,
+  disabled-bg, disabled-border-color, disabled-color
+);
+
+// 单选框组件
+$contract-radio: (
+  bg, bg-hover, bg-disabled,
+  border, border-color, border-hover, border-disabled,
+  checked-bg, checked-border,
+  dot, dot-color, outline, size,
+  hover-border-color,
+  disabled-bg, disabled-border-color, disabled-color
+);
+
+// 开关组件
+$contract-switch: (
+  track-bg, track-bg-hover, track-bg-checked, track-bg-disabled,
+  track-border, track-border-checked,
+  thumb-bg, thumb-shadow,
+  outline, height, width,
+  bg, checked-bg, disabled-bg, handle-bg, handle-size
+);
+
+// 侧边栏组件
+$contract-sidebar: (
+  width, width-open, width-tablet, secondary-width,
+  bg, search-bg,
+  float-item-bg-hover, float-item-text, float-item-text-active,
+  float-border, float-menu-title-bg, float-menu-item-bg, float-menu-bg,
+  nav-item-bg-active, nav-item-text-active,
+  menu-bg, menu-border, menu-text, menu-text-secondary,
+  menu-item-text-active, menu-item-bg-hover, menu-item-bg-active,
+  menu-icon-secondary
+);
+
+// 顶栏组件
+$contract-topbar: (
+  height, bg, color, margin
+);
+
+// 布局变量
+$contract-layout: (
+  header-height, footer-height, content-bg,
+  breakpoint-sm, breakpoint-md, breakpoint-lg,
+  container-max-width, container-padding-x,
+  sidebar-width, sidebar-width-open,
+  nav-item-bg-active, nav-item-text-active
+);
+
+// 组件通用变量
+$contract-component: (
+  page-padding-x, page-padding-y,
+  header-height, tab-height, card-padding
+);
+
+// 过渡动画
+$contract-transition: (
+  fast, normal, slow,
+  duration-fast, duration-normal, duration-slow,
+  easing-standard, easing-decelerate, easing-accelerate,
+  color, opacity, shadow, transform
+);
+
+// 表单组件（来自 vendor/amis）
+$contract-form: (
+  label-color, label-font-size, label-font-weight, label-margin-bottom, label-padding-right,
+  error-color, error-font-size, error-line-height, error-padding-top,
+  item-margin-bottom,
+  required-color, required-margin-right
+);
+
+// 分页组件（来自 vendor/amis）
+$contract-pagination: (
+  bg, hover-bg, active-bg, disabled-bg,
+  active-color, disabled-color, border-color,
+  font-size, height
+);
+
+// Widget 组件
+$contract-widget: (
+  header-height, footer-height
+);

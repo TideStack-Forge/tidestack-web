@@ -1,0 +1,11 @@
+{
+  "name": "tidestack-web-base",
+  "private": true,
+  "license": "Apache-2.0",
+  "scripts": {
+    "install:dependencies": "npm ci --prefix frontends/web/ouroboros-sdk && npm ci --legacy-peer-deps --prefix frontends/web/main-app && bash frontends/web/scripts/apply-amis-ui-tooltip-patch.sh",
+    "build": "npm run build --prefix frontends/web/main-app",
+    "test": "npm run test:unit --prefix frontends/web/main-app",
+    "dev": "npm run dev --prefix frontends/web/main-app"
+  }
+}

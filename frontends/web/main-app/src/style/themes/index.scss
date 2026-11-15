@@ -1,0 +1,31 @@
+// ============================================================
+// 主题系统
+// ============================================================
+// 色彩模式切换：data-theme="light|dark"
+
+@use 'shared';
+@use 'light';
+@use 'dark';
+
+// 共享变量导出到根选择器
+:root {
+  // 默认密度系数
+  --density-space: 1;
+  --density-control: 1;
+  --density-font: 1;
+  
+  @include shared.shared-theme-vars;
+  
+  // 默认使用浅色主题
+  @include light.light-theme-vars;
+}
+
+[data-theme="light"],
+.theme-default {
+  @include light.light-theme-vars;
+}
+
+[data-theme="dark"],
+.theme-dark {
+  @include dark.dark-theme-vars;
+}

@@ -1,0 +1,294 @@
+@keyframes toast-slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes toast-slide-out-right {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
+
+@keyframes toast-slide-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes toast-slide-out-left {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes toast-slide-in-down {
+  from {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes toast-slide-out-up {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+}
+
+@keyframes toast-slide-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes toast-slide-out-down {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+}
+
+.cxd-Toast-wrap:not(.cxd-Toast-mobile) {
+  padding: 20px;
+}
+
+.cxd-Toast-wrap--topRight:not(.cxd-Toast-mobile) {
+  top: 0;
+  right: 0;
+}
+
+.cxd-Toast-wrap--topLeft:not(.cxd-Toast-mobile) {
+  top: 0;
+  left: 0;
+}
+
+.cxd-Toast-wrap--bottomRight:not(.cxd-Toast-mobile) {
+  right: 0;
+  bottom: 0;
+}
+
+.cxd-Toast-wrap--bottomLeft:not(.cxd-Toast-mobile) {
+  bottom: 0;
+  left: 0;
+}
+
+.cxd-Toast-wrap--topCenter:not(.cxd-Toast-mobile) {
+  top: 0;
+  left: 50%;
+  padding-right: 0;
+  padding-left: 0;
+  transform: translateX(-50%);
+}
+
+.cxd-Toast-wrap--bottomCenter:not(.cxd-Toast-mobile) {
+  bottom: 0;
+  left: 50%;
+  padding-right: 0;
+  padding-left: 0;
+  transform: translateX(-50%);
+}
+
+.cxd-Toast-wrap:not(.cxd-Toast-mobile) .cxd-Toast {
+  --toast-status-color: var(--color-info);
+  --toast-status-bg: var(--color-info-bg);
+
+  width: 360px;
+  max-width: calc(100vw - 40px);
+  min-width: 320px;
+  margin: 0 0 12px;
+  padding: 16px 12px 16px 20px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--toast-status-color);
+  border-radius: 6px;
+  background-color: var(--color-bg-container);
+  background-image: linear-gradient(
+    0deg,
+    var(--toast-status-bg),
+    var(--toast-status-bg)
+  );
+  box-shadow: var(--toast-shadow, var(--modal-shadow));
+  color: var(--color-text);
+  text-shadow: none;
+  cursor: default;
+}
+
+.cxd-Toast-wrap:not(.cxd-Toast-mobile) .cxd-Toast:last-child {
+  margin-bottom: 0;
+}
+
+.cxd-Toast-wrap:not(.cxd-Toast-mobile) .cxd-Toast-content {
+  min-width: 0;
+  margin-right: 8px;
+}
+
+.cxd-Toast-wrap:not(.cxd-Toast-mobile) .cxd-Toast-content .cxd-Toast-title {
+  margin-bottom: 4px;
+  color: var(--color-text);
+  font-size: var(--font-size-lg);
+  line-height: 22px;
+  font-weight: 600;
+}
+
+.cxd-Toast-wrap:not(.cxd-Toast-mobile) .cxd-Toast-content .cxd-Toast-body {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-md);
+  line-height: 20px;
+}
+
+.cxd-Toast-wrap:not(.cxd-Toast-mobile)
+  .cxd-Toast-content
+  .cxd-Toast-body
+  .cxd-Html {
+  color: inherit;
+}
+
+.cxd-Toast-wrap:not(.cxd-Toast-mobile) .cxd-Toast-icon {
+  width: 24px;
+  height: 22px;
+  margin-right: 12px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  line-height: 22px;
+  flex: none;
+}
+
+.cxd-Toast-wrap:not(.cxd-Toast-mobile) .cxd-Toast-icon > svg {
+  width: 16px;
+  height: 16px;
+  top: 2px;
+  color: var(--toast-status-color);
+}
+
+.cxd-Toast-wrap:not(.cxd-Toast-mobile) .cxd-Toast-close {
+  width: 24px;
+  min-width: 24px;
+  height: 24px;
+  margin-left: 0;
+  align-self: flex-start;
+  justify-content: center;
+  border-radius: 6px;
+  color: var(--color-text-tertiary);
+  transition: var(--transition-color);
+}
+
+.cxd-Toast-wrap:not(.cxd-Toast-mobile) .cxd-Toast-close:hover {
+  background-color: var(--color-fill-secondary);
+  color: var(--color-text);
+}
+
+.cxd-Toast-wrap:not(.cxd-Toast-mobile) .cxd-Toast-close > svg {
+  width: 14px;
+  height: 14px;
+  top: 0;
+}
+
+.cxd-Toast-wrap:not(.cxd-Toast-mobile) .cxd-Toast--info {
+  --toast-status-color: var(--color-info);
+  --toast-status-bg: var(--color-info-bg);
+}
+
+.cxd-Toast-wrap:not(.cxd-Toast-mobile) .cxd-Toast--success {
+  --toast-status-color: var(--color-success);
+  --toast-status-bg: var(--color-success-bg);
+}
+
+.cxd-Toast-wrap:not(.cxd-Toast-mobile) .cxd-Toast--warning {
+  --toast-status-color: var(--color-warning);
+  --toast-status-bg: var(--color-warning-bg);
+}
+
+.cxd-Toast-wrap:not(.cxd-Toast-mobile) .cxd-Toast--error {
+  --toast-status-color: var(--color-error);
+  --toast-status-bg: var(--color-error-bg);
+}
+
+.cxd-Toast-wrap--topRight:not(.cxd-Toast-mobile) .cxd-Toast.in,
+.cxd-Toast-wrap--bottomRight:not(.cxd-Toast-mobile) .cxd-Toast.in {
+  animation-name: toast-slide-in-right;
+}
+
+.cxd-Toast-wrap--topRight:not(.cxd-Toast-mobile) .cxd-Toast.out,
+.cxd-Toast-wrap--bottomRight:not(.cxd-Toast-mobile) .cxd-Toast.out {
+  animation-name: toast-slide-out-right;
+}
+
+.cxd-Toast-wrap--topLeft:not(.cxd-Toast-mobile) .cxd-Toast.in,
+.cxd-Toast-wrap--bottomLeft:not(.cxd-Toast-mobile) .cxd-Toast.in {
+  animation-name: toast-slide-in-left;
+}
+
+.cxd-Toast-wrap--topLeft:not(.cxd-Toast-mobile) .cxd-Toast.out,
+.cxd-Toast-wrap--bottomLeft:not(.cxd-Toast-mobile) .cxd-Toast.out {
+  animation-name: toast-slide-out-left;
+}
+
+.cxd-Toast-wrap--topCenter:not(.cxd-Toast-mobile) .cxd-Toast.in {
+  animation-name: toast-slide-in-down;
+}
+
+.cxd-Toast-wrap--topCenter:not(.cxd-Toast-mobile) .cxd-Toast.out {
+  animation-name: toast-slide-out-up;
+}
+
+.cxd-Toast-wrap--bottomCenter:not(.cxd-Toast-mobile) .cxd-Toast.in {
+  animation-name: toast-slide-in-up;
+}
+
+.cxd-Toast-wrap--bottomCenter:not(.cxd-Toast-mobile) .cxd-Toast.out {
+  animation-name: toast-slide-out-down;
+}
+
+.cxd-Toast-wrap:not(.cxd-Toast-mobile) .cxd-Toast.in,
+.cxd-Toast-wrap:not(.cxd-Toast-mobile) .cxd-Toast.out {
+  animation-duration: 300ms;
+  animation-timing-function: cubic-bezier(0.62, 0.63, 0, 1.13);
+}

@@ -1,0 +1,81 @@
+// ============================================================
+// CSS Variables 契约 - 基础变量导出
+// ============================================================
+// 导出 Tier 1 Core Contract 中定义的所有基础变量
+
+@use "../tokens" as tokens;
+
+@mixin export-primitives {
+  // ========== 间距 (Space) ==========
+  --space-xs: calc(var(--scale-space-xs) * var(--density-space));
+  --space-sm: calc(var(--scale-space-sm) * var(--density-space));
+  --space-md: calc(var(--scale-space-md) * var(--density-space));
+  --space-lg: calc(var(--scale-space-lg) * var(--density-space));
+  --space-xl: calc(var(--scale-space-xl) * var(--density-space));
+  --space-xxl: calc(var(--scale-space-xxl) * var(--density-space));
+  --space-xxxl: calc(var(--scale-space-xxxl) * var(--density-space));
+  --space: var(--space-md);
+  
+  // ========== 圆角 (Radius) ==========
+  --radius-sm: var(--scale-radius-sm);
+  --radius-md: var(--scale-radius-md);
+  --radius-lg: var(--scale-radius-lg);
+  --radius-xl: var(--scale-radius-xl);
+  --radius-pill: var(--scale-radius-pill);
+  --radius: var(--radius-md);
+  
+  // ========== 字号 (Font Size) ==========
+  --font-size-xs: calc(var(--scale-font-size-xs) * var(--density-font));
+  --font-size-sm: calc(var(--scale-font-size-sm) * var(--density-font));
+  --font-size-md: calc(var(--scale-font-size-md) * var(--density-font));
+  --font-size-lg: calc(var(--scale-font-size-lg) * var(--density-font));
+  --font-size-xl: calc(var(--scale-font-size-xl) * var(--density-font));
+  --font-size-xxl: calc(var(--scale-font-size-xxl) * var(--density-font));
+  --font-size-xxxl: calc(var(--scale-font-size-xxxl) * var(--density-font));
+  --font-size: var(--font-size-md);
+  
+  // ========== 控件高度 (Control Height) ==========
+  --control-height-sm: calc(var(--scale-control-height-sm) * var(--density-control));
+  --control-height-md: calc(var(--scale-control-height-md) * var(--density-control));
+  --control-height-lg: calc(var(--scale-control-height-lg) * var(--density-control));
+  --control-height: var(--control-height-md);
+  
+  // ========== 行高 (Line Height) ==========
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+  
+  // ========== 字重 (Font Weight) ==========
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  
+  // ========== Z-Index ==========
+  --z-index-base: 1000;
+  --z-index-dropdown: 1050;
+  --z-index-fixed: 1100;
+  --z-index-modal: 1200;
+  --z-index-popover: 1300;
+  --z-index-notification: 1400;
+  
+  // ========== 动效 (Motion) ==========
+  --motion-duration-fast: 150ms;
+  --motion-duration-normal: 250ms;
+  --motion-duration-medium: 350ms;
+  --motion-duration-slow: 500ms;
+  --motion-easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --motion-easing-decelerate: cubic-bezier(0, 0, 0.2, 1);
+  --motion-easing-accelerate: cubic-bezier(0.4, 0, 1, 1);
+  
+  // ========== 阴影 (Shadow) ==========
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.15);
+  
+  // ========== 断点 (Breakpoint) ==========
+  --breakpoint-xs: 0px;
+  --breakpoint-sm: 576px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 992px;
+}

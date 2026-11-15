@@ -1,0 +1,468 @@
+.cxd-Crud {
+  --table-border-color: var(--table-border, var(--color-border-secondary));
+  --Table-borderColor: var(--table-border-color);
+  --Table-borderWidth: 1px;
+  --table-header-color: var(--table-header-text, var(--color-text));
+  --table-header-bg-color: var(--table-header-bg, var(--color-bg-elevated));
+  --Table-thead-bg: var(--table-header-bg-color);
+  --Table-thead-color: var(--table-header-color);
+  --Table-thead-borderColor: var(
+    --table-header-separate-line-color,
+    var(--table-header-border-color, var(--table-border-color))
+  );
+  --Table-thead-borderWidth: 1px;
+  --table-body-color: var(--table-row-text, var(--color-text));
+  --Table-color: var(--table-body-color);
+  --Table-bg: var(--table-row-bg, var(--color-bg-container));
+  --table-body-bg-color: var(--table-row-bg, var(--color-bg-container));
+  --table-body-hover-bg-color: var(--table-row-bg-hover, var(--color-bg-hover));
+  --Table-onHover-bg: var(--table-body-hover-bg-color);
+  --Table-onHover-bg-rgb: 250, 250, 250;
+  --Table-fixedLeft-boxShadow: inset 10px 0 8px -8px var(--color-shadow);
+  --Table-fixedRight-boxShadow: inset -10px 0 8px -8px var(--color-shadow-strong);
+  --TableCell-height: 48px;
+  --TableCell-height-default: 48px;
+  --TableCell-paddingX: 16px;
+  --TableCell--edge-paddingX: 16px;
+  --TableCell-paddingY: 12px;
+  --TableCell-paddingY-default: 12px;
+  --table-placeholder-color: var(--color-text-tertiary);
+  --table-column-toggler-bg: var(--color-bg-container);
+  --table-column-toggler-shadow: var(--shadow-md);
+  --table-column-toggler-title-color: var(--color-text);
+  --table-column-toggler-divider-color: var(--color-border-secondary);
+  --table-column-toggler-hover-bg: var(--color-fill-secondary);
+  --table-column-toggler-drag-handle-color: var(--color-text-placeholder);
+  --table-column-toggler-drag-handle-color-disabled: var(--color-border);
+  --table-column-toggler-pin-color-hover: var(--color-primary-border);
+  --table-column-toggler-pin-color-active: var(--color-primary);
+  --table-operation-button-gap: 4px;
+  --table-operation-icon-button-gap: 4px;
+  --table-operation-icon-button-size: 22px;
+
+  .cxd-Table-table > thead > tr > th {
+    box-shadow: none;
+    font-weight: 600;
+  }
+
+  .cxd-Table-table > thead > tr > th:first-child {
+    padding-left: var(--TableCell--edge-paddingX);
+  }
+
+  .cxd-Table-table > thead > tr > th:last-child {
+    padding-right: var(--TableCell--edge-paddingX);
+  }
+
+  .cxd-Table-table > tbody > tr > td,
+  .cxd-Table-table > tbody > tr > th {
+    color: var(--Table-color);
+    vertical-align: middle;
+    box-shadow: none;
+  }
+
+  .cxd-Table-table > thead > tr > th.is-sticky-first-right,
+  .cxd-Table-table > thead > tr > th.cxd-Table-operationCell {
+    background: var(--Table-thead-bg);
+  }
+
+  .cxd-Table-table > tbody > tr > td.is-sticky-first-right,
+  .cxd-Table-table > tbody > tr > td.cxd-Table-operationCell,
+  .cxd-Table-table > tbody > tr > td:has(> .cxd-OperationField) {
+    background: var(--Table-bg);
+  }
+
+  .cxd-Table-table > tbody > tr:hover > td.is-sticky-first-right,
+  .cxd-Table-table > tbody > tr.is-hovered > td.is-sticky-first-right,
+  .cxd-Table-table > tbody > tr:hover > td.cxd-Table-operationCell,
+  .cxd-Table-table > tbody > tr.is-hovered > td.cxd-Table-operationCell,
+  .cxd-Table-table > tbody > tr:hover > td:has(> .cxd-OperationField),
+  .cxd-Table-table > tbody > tr.is-hovered > td:has(> .cxd-OperationField) {
+    background: var(--Table-onHover-bg);
+  }
+
+  .cxd-Table-table.is-layout-fixed > tbody > tr > td.is-sticky-last-left,
+  .cxd-Table-table.is-layout-fixed > tbody > tr > td.is-sticky-first-right {
+    overflow: visible;
+  }
+
+  .cxd-Table-placeholder > td {
+    color: var(--table-placeholder-color);
+  }
+
+  .cxd-Table-table .cxd-OperationField {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--table-operation-button-gap);
+    margin: 0;
+  }
+
+  .cxd-Table-table .cxd-OperationField:has(> .cxd-Button--iconOnly),
+  .cxd-Table-table
+    .cxd-OperationField:has(> .cxd-Button--link > .cxd-Button-icon:only-child),
+  .cxd-Table-table
+    .cxd-OperationField:has(
+      > .cxd-Button--disabled-wrap > .cxd-Button--iconOnly
+    ),
+  .cxd-Table-table
+    .cxd-OperationField:has(
+      > .cxd-Button--disabled-wrap
+        > .cxd-Button--link
+        > .cxd-Button-icon:only-child
+    ) {
+    gap: var(--table-operation-icon-button-gap);
+  }
+
+  .cxd-Table-table .cxd-OperationField > .cxd-Button,
+  .cxd-Table-table .cxd-OperationField > .cxd-Button--disabled-wrap > .cxd-Button {
+    margin: 0;
+  }
+
+  .cxd-Table-table
+    .cxd-OperationField
+    > .cxd-Button--iconOnly.cxd-Button--link,
+  .cxd-Table-table
+    .cxd-OperationField
+    > .cxd-Button--link:has(> .cxd-Button-icon:only-child),
+  .cxd-Table-table
+    .cxd-OperationField
+    > .cxd-Button--disabled-wrap
+    > .cxd-Button--iconOnly.cxd-Button--link,
+  .cxd-Table-table
+    .cxd-OperationField
+    > .cxd-Button--disabled-wrap
+    > .cxd-Button--link:has(> .cxd-Button-icon:only-child) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--table-operation-icon-button-size);
+    min-width: var(--table-operation-icon-button-size);
+    height: var(--table-operation-icon-button-size);
+    line-height: var(--table-operation-icon-button-size);
+  }
+
+  .cxd-Table-table .cxd-OperationField > .cxd-DropDown {
+    margin-left: 0 !important;
+  }
+
+}
+
+.cxd-Crud .cxd-Table-toolbar.cxd-Table-headToolbar {
+  display: flex;
+
+  > .cxd-Table-actions {
+    margin-top: -1px;
+    margin-left: 10px;
+  }
+
+  .filter-toggler.is-active {
+    color: var(--button-default-default-font-color);
+    border-color:
+      var(--button-default-default-top-border-color)
+      var(--button-default-default-right-border-color)
+      var(--button-default-default-bottom-border-color)
+      var(--button-default-default-left-border-color);
+
+    &:hover {
+      color: var(--button-default-hover-font-color);
+      border-color:
+        var(--button-default-hover-top-border-color)
+        var(--button-default-hover-right-border-color)
+        var(--button-default-hover-bottom-border-color)
+        var(--button-default-hover-left-border-color);
+    }
+
+    .default-arrow {
+      transform: rotate(180deg);
+    }
+  }
+}
+
+.cxd-EnhancedColumnToggler {
+  width: 320px;
+  max-height: 400px;
+  padding: 0 12px;
+  background: var(--table-column-toggler-bg);
+  border-radius: 4px;
+  box-shadow: var(--table-column-toggler-shadow);
+}
+
+.cxd-EnhancedColumnToggler-header h4 {
+  display: none;
+  margin: 0 0 12px;
+  color: var(--table-column-toggler-title-color);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.cxd-EnhancedColumnToggler-selectAll {
+  padding-top: 6px;
+  padding-bottom: 6px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid var(--table-column-toggler-divider-color);
+}
+
+.cxd-EnhancedColumnToggler-list {
+  max-height: 240px;
+  margin-bottom: 12px;
+  overflow-y: auto;
+}
+
+.cxd-EnhancedColumnToggler-item {
+  display: flex;
+  align-items: center;
+  padding: 6px 4px;
+  user-select: none;
+  border-radius: 3px;
+}
+
+.cxd-EnhancedColumnToggler-item:hover {
+  background-color: var(--table-column-toggler-hover-bg);
+}
+
+.cxd-EnhancedColumnToggler-item .drag-handle {
+  margin-right: 8px;
+  color: var(--table-column-toggler-drag-handle-color);
+  cursor: grab;
+
+  .icon {
+    margin-top: 4px;
+    margin-bottom: -4px;
+    font-size: 16px;
+  }
+
+  &.drag-handle--disabled,
+  &.drag-handle--disabled:active {
+    color: var(--table-column-toggler-drag-handle-color-disabled);
+    cursor: not-allowed;
+  }
+}
+
+.cxd-EnhancedColumnToggler-item .drag-handle:active {
+  cursor: grabbing;
+}
+
+.cxd-EnhancedColumnToggler-item .cxd-Checkbox {
+  margin-top: 0;
+  margin-right: 0;
+}
+
+.is-dragging {
+  opacity: 0.5;
+}
+
+.cxd-EnhancedColumnToggler-fixed {
+  display: flex;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.cxd-EnhancedColumnToggler-fixedBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  transition: all 0.2s;
+  border-radius: 3px;
+
+  &:hover .icon {
+    color: var(--table-column-toggler-pin-color-hover);
+  }
+
+  &.is-active .icon {
+    color: var(--table-column-toggler-pin-color-active);
+    text-shadow: none;
+  }
+
+  .icon {
+    color: var(--table-column-toggler-drag-handle-color);
+    font-size: 16px;
+  }
+}
+
+.cxd-EnhancedColumnToggler-footer {
+  display: flex;
+  justify-content: stretch;
+  padding: 6px 0;
+  border-top: 1px solid var(--table-column-toggler-divider-color);
+
+  > button:not(:disabled):not(.is-disabled) {
+    flex: 1;
+    font-size: 14px;
+    border: none;
+
+    &.cxd-Button--primary {
+      color: var(--button-enhance-default-font-color);
+      background-color: transparent;
+    }
+
+    &:hover {
+      color: var(--table-column-toggler-pin-color-hover);
+      border: none;
+    }
+  }
+}
+
+.cxd-EnhancedColumnToggler-btn {
+  min-width: 60px;
+}
+
+.cxd-Table-content-colDragLine.cxd-Table-content-colDragLine--left {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 1px;
+  z-index: 15;
+  display: none;
+  width: 7px;
+  cursor: col-resize;
+  user-select: none;
+  opacity: 0.5;
+}
+
+.cxd-Table-table th.table-cell--explicit-control-min-width
+  > .cxd-Form,
+.cxd-Table-table th.table-cell--explicit-control-min-width
+  > .cxd-Form-item
+  > .cxd-Form-control:not(.is-thin),
+.cxd-Table-table td.table-cell--explicit-control-min-width
+  > .cxd-Form,
+.cxd-Table-table td.table-cell--explicit-control-min-width
+  > .cxd-Form-item
+  > .cxd-Form-control:not(.is-thin) {
+  min-width: min(
+    var(--Form-control-widthBase),
+    var(--table-cell-control-min-width)
+  );
+}
+
+.table-fixed-right .cxd-Table-content-colDragLine.cxd-Table-content-colDragLine--left {
+  display: block;
+}
+
+.table-head-content {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+
+  > .cxd-TableCell--title {
+    display: inline-flex;
+    align-items: center;
+    min-width: 0;
+  }
+}
+
+.table-sort {
+  display: inline-flex;
+  flex-direction: column;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  row-gap: 2px;
+  margin-left: 6px;
+  line-height: 1;
+
+  > i {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 10px;
+    height: 6px;
+    color: var(--text--muted-color);
+    cursor: pointer;
+
+    &:hover,
+    &.is-active {
+      color: var(--primary);
+    }
+  }
+
+  .icon {
+    display: block;
+    width: 0;
+    height: 0;
+    border-right: 4px solid transparent;
+    border-left: 4px solid transparent;
+  }
+
+  &__up .icon {
+    border-bottom: 5px solid currentColor;
+  }
+
+  &__down .icon {
+    border-top: 5px solid currentColor;
+  }
+}
+
+.cxd-InputTable,
+.cxd-InputTable > .cxd-Table,
+.cxd-InputTable .cxd-Table-contentWrap,
+.cxd-Table .cxd-Table-content.input-table-virtual-scroll {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.cxd-Table .cxd-Table-content.input-table-virtual-scroll {
+  height: var(--Table-content-height);
+  min-height: var(--Table-content-minHeight);
+  max-height: var(--Table-content-maxHeight);
+  overflow: var(--Table-content-overflow, visible);
+  overflow-x: var(--Table-content-overflowX, var(--Table-content-overflow, auto));
+  overflow-y: var(--Table-content-overflowY, var(--Table-content-overflow, visible));
+}
+
+.cxd-Table .cxd-Table-expandBtn2 > svg {
+  transform: rotate(0deg);
+}
+
+.cxd-Table .cxd-Table-expandBtn2.is-active > svg {
+  transform: rotate(90deg);
+}
+
+.cxd-Table .cxd-Table-content.input-table-virtual-scroll
+  > table
+  > thead {
+  position: sticky;
+  top: 0;
+  z-index: 21;
+}
+
+// 固定表格布局下列宽是显式值，container 里的链接按钮可能比单元格内容宽，
+// 默认 inline-flex 会向右溢出，文字看起来偏右。这里让按钮占满内容宽度、
+// 去掉左右内边距并居中，文字中心与单元格中心对齐。
+.cxd-Table-table > tbody > tr > td .cxd-Container-body > .cxd-Button--link {
+  width: 100%;
+  min-width: 0;
+  padding-left: 0;
+  padding-right: 0;
+  justify-content: center;
+}
+
+// 宽表列很多，macOS 默认 overlay 滚动条不可见，用户容易误以为右侧列/数据没显示。
+// 给表格内容区保留一条细横向滚动条，明确提示可以左右滚动。
+.cxd-Table-content {
+  scrollbar-width: thin;
+  // 虚拟窗口切换时 spacer 高度会变化，禁止浏览器 scroll anchoring 自动拨动
+  // scrollTop；否则快速滚动会出现“上半屏空白、行被推到下半屏”的瞬态。
+  overflow-anchor: none;
+}
+
+.cxd-Table-content::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.cxd-Table-content::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.22);
+  border-radius: 5px;
+}
+
+.cxd-Table-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.35);
+}
+
+// 表格内部滚到顶/底后，滚轮不再链式带动整个页面跳动。
+.cxd-Table-content {
+  overscroll-behavior: contain;
+}

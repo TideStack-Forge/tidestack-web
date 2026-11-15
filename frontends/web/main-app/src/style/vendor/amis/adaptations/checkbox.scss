@@ -1,0 +1,20 @@
+:root {
+  /* ======================================================
+   * Checkbox
+   * ====================================================== */
+  --checkbox-size: 14px ;
+  --checkbox-border-radius: 2px ;
+
+  --checkbox-bg: var(--color-bg-container) ;
+  --checkbox-border-color: var(--color-border) ;
+
+  --checkbox-checked-bg: var(--color-primary) ;
+  --checkbox-checked-border-color: var(--color-primary) ;
+  --checkbox-checkmark-color: #fff ;
+
+  --checkbox-hover-border-color: var(--color-primary) ;
+
+  --checkbox-disabled-bg: var(--color-bg-disabled) ;
+  --checkbox-disabled-border-color: var(--color-border-disabled) ;
+  --checkbox-disabled-color: var(--color-text-disabled) ;
+}

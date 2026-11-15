@@ -1,0 +1,22 @@
+.workflow-approval-timeline {
+  .cxd-TimelineItem-time,
+  .cxd-TimelineItem-time span,
+  .cxd-Timeline-time,
+  .workflow-approval-timeline-time {
+    color: var(--color-text-secondary, #8c8c8c) !important;
+    font-size: var(--font-size-xs, 12px) !important;
+    line-height: 1.4 !important;
+  }
+
+  .workflow-approval-timeline-person {
+    color: var(--color-text, #1f2933) !important;
+    font-size: var(--font-size-sm, 14px) !important;
+    font-weight: var(--font-weight-medium, 500) !important;
+    line-height: 1.5 !important;
+  }
+
+  .workflow-approval-timeline-meta {
+    font-size: var(--font-size-xs, 12px) !important;
+    line-height: 1.45 !important;
+  }
+}

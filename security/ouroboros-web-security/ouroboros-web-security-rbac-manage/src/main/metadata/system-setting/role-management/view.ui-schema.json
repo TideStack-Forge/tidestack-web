@@ -1,0 +1,70 @@
+{
+  "name": "/system-setting/role-management/view",
+  "schema": {
+    "type": "form",
+    "static": true,
+    "mode": "horizontal",
+    "initApi": {
+      "url": "/api/sys/role/${id}/authority",
+      "method": "get",
+      "responseData": {
+        "authorities": "${items | pick:fullName~authority,accessControlParams}"
+      }
+    },
+    "api": {
+      "url": "/api/sys/role/${id}/authority",
+      "method": "put",
+      "data": "${authorities | pick:authority~fullName,accessControlParams}"
+    },
+    "body": [
+      {
+        "type": "selection-editor",
+        "label": false,
+        "name": "authorities",
+        "primaryField": "fullName",
+        "source": {
+          "url": "/api/sys/authority/define-tree",
+          "method": "get"
+        },
+        "value": [],
+        "columns": [
+          {
+            "label": "权限",
+            "name": "title"
+          }
+        ],
+        "selectedData": {
+          "fullName": "$fullName",
+          "accessControlParams": "${accessControlParams || {}}"
+        },
+        "editColumnProps": {
+          "label": "数据权限"
+        },
+        "editButtonProps": {
+          "level": "primary",
+          "label": "配置数据权限",
+          "visibleOn": "this.accessControlSettingSchema && this.accessControlSettingSchema.length"
+        },
+        "editDialogProps": {
+          "size": "md",
+          "title": "配置数据权限"
+        },
+        "editFormItems": [
+          {
+            "type": "amis-schema",
+            "source": "${accessControlSettingSchema}"
+          }
+        ],
+        "disabledOn": "${ !canEditAuthorities }"
+      }
+    ],
+    "actions": [
+      {
+        "type": "button",
+        "label": "关闭",
+        "actionType": "close"
+      }
+    ],
+    "wrapWithPanel": false
+  }
+}

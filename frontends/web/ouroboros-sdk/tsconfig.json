@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "lib": ["ES2020", "DOM"],
+    "importHelpers": true,
+    "baseUrl": ".",
+    "paths": {
+      "tslib": ["node_modules/tslib/tslib.d.ts"]
+    }
+  },
+  "exclude": ["tests/unit", "vitest.config.ts", "**/*.test.ts"]
+}

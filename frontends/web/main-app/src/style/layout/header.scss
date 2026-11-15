@@ -1,0 +1,82 @@
+// 头部布局样式
+.app-header {
+  display: flex;
+  align-items: center;
+  height: var(--layout-header-height);
+  padding: 0 var(--space-lg);
+  background-color: var(--color-bg-container);
+  border: 0;
+  border-bottom: 1px solid var(--color-border-secondary);
+
+  &__left {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    flex: 0 0 auto;
+  }
+
+  &__center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1 1 auto;
+  }
+
+  &__right {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    flex: 0 0 auto;
+  }
+
+  &__logo {
+    display: flex;
+    align-items: center;
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-medium);
+  }
+
+  &__toggle {
+    display: flex;
+    align-items: center;
+  }
+
+  &__nav {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+  }
+
+  &__nav-item {
+    padding: 0 var(--space-md);
+    height: var(--control-height-sm);
+    display: inline-flex;
+    align-items: center;
+    border-radius: var(--radius-md);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+
+    &.is-active {
+      color: #ffffff;
+      background-color: var(--color-primary);
+    }
+  }
+
+  &__actions-item {
+    padding: 0 var(--space-sm);
+    height: calc(var(--layout-header-height) - var(--space-sm));
+    display: inline-flex;
+    align-items: center;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+
+    &--user-menu {
+      padding-left: var(--space-md);
+      padding-right: var(--space-md);
+    }
+
+    &:hover {
+      background-color: var(--color-bg-hover);
+    }
+  }
+}

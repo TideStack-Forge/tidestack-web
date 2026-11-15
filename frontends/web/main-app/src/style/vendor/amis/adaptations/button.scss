@@ -1,0 +1,87 @@
+:root {
+  /* =====================================================
+   * Button · 基础尺寸 & 形态（所有 variant 共用）
+   * ===================================================== */
+
+  /* 尺寸 */
+  --button-height: var(--button-height-md);
+  --button-height-sm: var(--button-height-sm);
+  --button-height-lg: var(--button-height-lg);
+
+  /* 内边距 */
+  --button-padding-x: var(--space-lg);
+  --button-padding-y: 0px;
+
+  --button-padding-x-sm: var(--space-sm);
+  --button-padding-x-lg: var(--space-xl);
+
+  /* 字体 */
+  --button-font-size: var(--font-size-md);
+  --button-font-size-sm: var(--font-size-xs);
+  --button-font-size-lg: var(--font-size-lg);
+  --button-font-weight: var(--font-weight-regular);
+
+  /* 圆角 */
+  --button-border-radius: var(--button-radius);
+  --button-border-radius-sm: var(--button-radius);
+  --button-border-radius-lg: var(--button-radius);
+
+  /* 边框 */
+  --button-border-width: 1px;
+  --button-border-style: solid;
+
+  /* 阴影（amis 默认很弱） */
+  --button-shadow: none;
+  --button-shadow-active: inset 0 2px 0 rgba(0, 0, 0, 0.05);
+  --button-hover-shadow: none;
+
+
+  /* =====================================================
+   * Button · Default
+   * ===================================================== */
+
+  /* base */
+  --button-default-bg-color: var(--button-default-bg);
+  --button-default-text: var(--button-default-text);
+  --button-default-border-color: var(--button-default-border);
+
+  /* hover */
+  --button-default-bg-hover: var(--button-default-bg-hover);
+  --button-default-text-hover: var(--button-default-text);
+  --button-default-border-hover: var(--button-default-border);
+
+  /* active */
+  --button-default-bg-active: var(--button-default-bg-active);
+  --button-default-text-active: var(--button-default-text);
+  --button-default-border-active: var(--button-default-border);
+
+  /* disabled */
+  --button-default-bg-disabled: var(--button-default-bg-hover);
+  --button-default-text-disabled: var(--color-text-disabled);
+  --button-default-border-disabled: var(--button-default-border);
+
+
+  /* =====================================================
+   * Button · Primary
+   * ===================================================== */
+
+  /* base */
+  --button-primary-default-bg-color: var(--button-primary-bg);
+  --button-primary-default-text: #fff;
+  --button-primary-default-border-color: var(--button-primary-border);
+
+  /* hover */
+  --button-primary-default-bg-hover: var(--button-primary-bg-hover);
+  --button-primary-default-text-hover: #fff;
+  --button-primary-default-border-hover: var(--button-primary-border);
+
+  /* active */
+  --button-primary-default-bg-active: var(--button-primary-bg-active);
+  --button-primary-default-text-active: #fff;
+  --button-primary-default-border-active: var(--button-primary-border);
+
+  /* disabled */
+  --button-primary-default-bg-disabled: var(--button-primary-bg-disabled);
+  --button-primary-default-text-disabled: var(--button-primary-text-disabled);
+  --button-primary-default-border-disabled: var(--button-primary-bg-disabled);
+}

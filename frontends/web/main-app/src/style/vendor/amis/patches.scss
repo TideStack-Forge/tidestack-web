@@ -1,0 +1,77 @@
+// Amis 样式补丁集合
+:root {
+  // 修复 fieldset 样式问题
+  fieldset {
+    min-inline-size: unset;
+    margin-bottom: var(--space-md);
+  }
+
+  fieldset.cxd-Collapse {
+    margin-bottom: var(--space-md);
+
+    > legend .cxd-TplField {
+      color: var(--color-text);
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-semibold);
+      line-height: var(--line-height-normal);
+    }
+  }
+
+  .cxd-Form > fieldset {
+    margin-top: var(--space-xl);
+  }
+
+  .cxd-Form > fieldset:first-child {
+    margin-top: var(--space-md);
+  }
+
+  fieldset.tide-default-fieldset {
+    .cxd-Collapse-content {
+      background-color: rgba(204, 204, 204, 0.15);
+      border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+    }
+  }
+
+  // 修复页面高度问题
+  .cxd-Page {
+    min-height: 100%;
+  }
+
+  .cxd-Page-body.amis-page-placeholder-body {
+    height: 100%;
+  }
+
+  // 修复按钮级菜单模板宽度问题
+  .ae-ButtonLevel-MenuTpl {
+    width: 100%;
+  }
+
+  // 修复 crud 中 toolbar 按钮样式展示问题
+  .cxd-Crud-toolbar {
+    .cxd-Crud-toolbar-item:has(.cxd-Crud-actions) {
+      height: auto;
+    }
+    .cxd-Crud-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+      gap: var(--space-sm);
+      .cxd-Button {
+        margin: 0;
+      }
+    }
+  }
+
+  // 修复 Picker 组件换行问题
+  .cxd-Picker.cxd-Picker--single .cxd-Picker-valueWrap,
+  .cxd-Picker.cxd-Picker--multi .cxd-Picker-valueWrap {
+    flex-wrap: nowrap;
+  }
+
+  // 修复编辑器中 group 高度坍塌问题
+  [data-region]:not([data-region-placeholder]):empty::before {
+    content: '<空>';
+    min-height: 26px;
+    padding: var(--space-xs) 0;
+  }
+}

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Debug Topbar Main App Harness</title>
+  </head>
+  <body style="margin: 0">
+    <div
+      id="debug-topbar-playwright-status"
+      data-testid="debug-topbar-harness-status"
+      style="position: fixed; top: 8px; left: 8px; z-index: 9999; background: rgba(255, 255, 255, 0.92); padding: 4px 8px; border-radius: 4px; font: 12px/1.4 sans-serif;">
+      Booting debug topbar harness...
+    </div>
+    <div id="mothership-app-root" style="height: 100vh"></div>
+    <div id="custom-component"></div>
+    <div class="ouroboros-pop-over-container"></div>
+  </body>
+</html>

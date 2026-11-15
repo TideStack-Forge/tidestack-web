@@ -1,0 +1,35 @@
+// 布局工具类
+.fr {
+  float: right !important;
+}
+
+.fl {
+  float: left !important;
+}
+
+.clearfix {
+  &::after {
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: ' ';
+    clear: both;
+    height: 0;
+  }
+}
+
+.clear-both {
+  clear: both !important;
+}
+
+.clear-left {
+  clear: left !important;
+}
+
+.clear-right {
+  clear: right !important;
+}
+
+.clear-none {
+  clear: none !important;
+}

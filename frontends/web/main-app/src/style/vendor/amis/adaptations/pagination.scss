@@ -1,0 +1,17 @@
+:root {
+  /* ======================================================
+   * Pagination
+   * ====================================================== */
+  --pagination-height: 32px ;
+  --pagination-font-size: 14px ;
+
+  --pagination-bg: var(--color-bg-container) ;
+  --pagination-border-color: var(--color-border) ;
+  --pagination-hover-bg: var(--color-bg-hover) ;
+
+  --pagination-active-bg: var(--color-primary) ;
+  --pagination-active-color: #fff ;
+
+  --pagination-disabled-bg: var(--color-bg-disabled) ;
+  --pagination-disabled-color: var(--color-text-disabled) ;
+}

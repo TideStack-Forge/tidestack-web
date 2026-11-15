@@ -1,0 +1,53 @@
+// 移动端布局样式
+@media (max-width: calc(var(--breakpoint-sm) - 1px)) {
+  .top-navbar {
+    .title {
+      padding-left: 20px !important;
+      font-size: 18px !important;
+    }
+    .header-search {
+      width: 100% !important;
+      max-width: 100% !important;
+    }
+  }
+
+  .xs-search-modal {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: 9997;
+    .search-modal {
+      position: relative;
+      z-index: 9999;
+    }
+  }
+
+  .app-sidebar {
+    .app-sidebar__nav {
+      .app-sidebar__nav-link,
+      .tree-li-inner {
+        padding: 0 6px !important;
+        margin: 0 6px !important;
+        .menu-icon {
+          margin-right: 10px !important;
+        }
+      }
+    }
+  }
+
+  .app-sidebar.is-open .app-sidebar__body .app-sidebar__aux .fold-box ul {
+    padding-bottom: 10px !important;
+  }
+
+  ::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+  ::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+    background: rgba(0, 0, 0, 0.2);
+  }
+}

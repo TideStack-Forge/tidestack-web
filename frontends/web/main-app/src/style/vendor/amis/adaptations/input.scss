@@ -1,0 +1,28 @@
+:root {
+  /* ======================================================
+   * Input / TextControl（状态型组件）
+   * ====================================================== */
+  --input-font-size: 14px ;
+  --input-font-weight: 400 ;
+  --input-height: 32px ;
+  --input-padding-x: 12px ;
+  --input-border-radius: 4px ;
+  --input-border-width: 1px ;
+
+  --input-color: var(--color-text) ;
+  --input-bg: var(--color-bg-container) ;
+  --input-border-color: var(--color-border) ;
+  --input-placeholder-color: var(--color-text-placeholder) ;
+
+  --input-hover-border-color: var(--color-border-hover) ;
+
+  --input-focus-border-color: var(--color-primary) ;
+  --input-focus-shadow: 0 0 0 2px rgba(0, 0, 0, 0.05) ;
+
+  --input-error-border-color: var(--color-danger) ;
+  --input-error-bg: var(--color-bg-container) ;
+
+  --input-disabled-color: var(--color-text-disabled) ;
+  --input-disabled-bg: var(--color-bg-disabled) ;
+  --input-disabled-border-color: var(--color-border-disabled) ;
+}

@@ -1,0 +1,16 @@
+[
+  {
+    "name": "my-component-library",
+    "entry": "/micro/libs/my-component-library",
+    "publicPath": "/my-component-library",
+    "loadManifest": true,
+    "loadManage": true
+  },
+  {
+    "name": "another-library",
+    "entry": "/micro/libs/another-library",
+    "publicPath": "/another-library",
+    "loadManifest": false,
+    "loadManage": false
+  }
+]

@@ -1,0 +1,103 @@
+// ============================================================
+// 语义变量契约 (Semantic Tokens)
+// ============================================================
+// 表达设计意图的语义变量，主题切换的核心层
+// ⚠️ 禁止使用色阶数字（如 -500、-600）
+// v1.0.0
+
+// ============================================================
+// 语义色变量清单
+// ============================================================
+
+$contract-color-semantic: (
+  // 品牌色
+  primary,
+  primary-hover,
+  primary-active,
+  primary-bg,
+  primary-bg-hover,
+  primary-border,
+  primary-text,
+  
+  // 功能色 - Success
+  success,
+  success-bg,
+  success-bg-hover,
+  success-border,
+  success-text,
+  
+  // 功能色 - Warning
+  warning,
+  warning-bg,
+  warning-bg-hover,
+  warning-border,
+  warning-text,
+  
+  // 功能色 - Error
+  error,
+  error-bg,
+  error-bg-hover,
+  error-border,
+  error-text,
+  
+  // 功能色 - Info
+  info,
+  info-bg,
+  info-bg-hover,
+  info-border,
+  info-text,
+  
+  // 文本色
+  text,
+  text-primary,
+  text-secondary,
+  text-tertiary,
+  text-quaternary,
+  text-placeholder,
+  text-disabled,
+  
+  // 背景色
+  bg-page,
+  bg-body,
+  bg-layout,
+  bg-disabled,
+  bg-hover,
+  bg-selected,
+  bg-elevated,
+  bg-container,
+  bg-inverse,
+  bg-sidebar,
+  bg-spotlight,
+  bg-mask,
+  
+  // 边框色
+  border,
+  border-primary,
+  border-secondary,
+  border-tertiary,
+  border-hover,
+  border-strong,
+  border-stronger,
+  border-disabled,
+  border-focus,
+  
+  // 链接色
+  link,
+  link-hover,
+  link-active,
+  
+  // 填充色
+  fill,
+  fill-primary,
+  fill-secondary,
+  fill-tertiary,
+  fill-quaternary,
+  
+  // 其他
+  outline,
+  shadow,
+  shadow-strong,
+  danger
+);
+
+// 语义变量由 themes/_light.scss 和 themes/_dark.scss 具体定义

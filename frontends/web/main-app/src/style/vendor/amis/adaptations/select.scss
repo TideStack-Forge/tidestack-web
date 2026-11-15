@@ -1,0 +1,27 @@
+:root {
+  /* ======================================================
+   * Select
+   * ====================================================== */
+  --select-height: 32px ;
+  --select-padding-x: 12px ;
+  --select-font-size: 14px ;
+  --select-border-radius: 4px ;
+
+  --select-color: var(--color-text) ;
+  --select-bg: var(--color-bg-container) ;
+  --select-border-color: var(--color-border) ;
+
+  --select-hover-border-color: var(--color-primary) ;
+  --select-focus-border-color: var(--color-primary) ;
+
+  --select-dropdown-bg: var(--color-bg-container) ;
+  --select-option-color: var(--color-text) ;
+  --select-option-hover-bg: var(--color-bg-hover) ;
+
+  --select-option-selected-bg: var(--color-primary) ;
+  --select-option-selected-color: #fff ;
+
+  --select-disabled-color: var(--color-text-disabled) ;
+  --select-disabled-bg: var(--color-bg-disabled) ;
+  --select-disabled-border-color: var(--color-border-disabled) ;
+}

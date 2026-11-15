@@ -1,0 +1,107 @@
+.BusinessBehaviorCatalog {
+  display: grid;
+  gap: var(--space-lg);
+  min-width: 0;
+
+  p {
+    margin: 0;
+  }
+  label:not([class]) {
+    display: grid;
+    gap: var(--form-label-margin-bottom);
+    font-size: var(--form-label-font-size);
+    font-weight: var(--font-weight-regular);
+    > span {
+      color: var(--form-label-color);
+      font-weight: var(--form-label-font-weight);
+    }
+  }
+  [role='alert'] {
+    color: var(--form-error-color);
+  }
+  pre {
+    max-height: 420px;
+    overflow: auto;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+  details > summary {
+    cursor: pointer;
+    padding-block: var(--space-sm);
+  }
+  details[open] > :not(summary) {
+    margin-top: var(--space-sm);
+  }
+  small {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+  }
+  h4,
+  h5 {
+    margin: 0;
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-medium);
+  }
+  article {
+    display: grid;
+    gap: var(--space-lg);
+  }
+}
+.BusinessBehaviorCatalog-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-md);
+  > details {
+    margin-left: auto;
+  }
+  > details[open] {
+    display: grid;
+    gap: var(--space-sm);
+  }
+}
+.BusinessBehaviorCatalog-workbench {
+  display: grid;
+  grid-template-columns: minmax(180px, 240px) minmax(0, 1fr);
+  gap: var(--space-xl);
+  min-width: 0;
+  > aside {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-md);
+    min-width: 0;
+  }
+  > main {
+    min-width: 0;
+  }
+}
+.BusinessBehaviorCatalog-member {
+  display: grid;
+  gap: var(--space-xs);
+  padding: var(--space-md);
+  border: 1px solid var(--borderColor);
+  background: var(--color-bg-container);
+  color: var(--color-text);
+  border-radius: var(--radius);
+  font: inherit;
+  text-align: left;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+  &:hover {
+    border-color: var(--color-border-hover);
+  }
+  &[aria-pressed='true'] {
+    border-color: var(--color-primary);
+    background: var(--color-primary-bg);
+  }
+  &:focus-visible {
+    outline: 2px solid var(--color-border-focus);
+    outline-offset: 2px;
+  }
+}
+@media (max-width: 760px) {
+  .BusinessBehaviorCatalog-workbench {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

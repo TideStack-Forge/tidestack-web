@@ -1,0 +1,21 @@
+/**
+ * Animation System
+ * 
+ * 动画系统入口文件
+ * 
+ * 包含：
+ * - keyframes: 关键帧动画定义
+ * - transitions: 过渡效果定义
+ * - micro-interactions: 微交互动画
+ * 
+ * 使用方式：
+ * @use 'animations';
+ * 
+ * 注意：
+ * - 动画系统应该在组件系统之后导入
+ * - 支持通过CSS变量进行主题定制
+ */
+
+@forward 'keyframes';
+@forward 'transitions';
+@forward 'micro-interactions';

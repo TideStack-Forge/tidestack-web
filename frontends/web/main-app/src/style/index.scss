@@ -1,0 +1,43 @@
+// ============================================================
+// 样式系统主入口文件
+// ============================================================
+
+// 1. SCSS 工具层（内部使用，不产生 CSS 输出）
+@use 'utils';
+
+// 2. 设计令牌层（SCSS 变量）
+@use 'tokens';
+
+// 3. CSS Variables 契约（对外 API）
+@use 'contract';
+
+// 4. 基础样式层（CSS 重置和标准化）
+@use 'base';
+
+// 5. 组件系统（UI 组件）
+@use 'components';
+
+// 6. 布局系统（页面结构）
+@use 'layout';
+
+// 7. 配置维度
+@use 'themes';    // 色彩模式（light/dark）
+@use 'density';   // 密度（compact/normal/comfortable）
+
+// 8. 工具类系统（原子类）
+@use 'utilities';
+
+// 9. RTL 支持
+@use 'rtl';
+
+// 10. 动画系统
+@use 'animations';
+
+// 10. 页面特定样式
+@use 'pages';
+
+// 11. 全局样式（应用容器）
+@use 'global';
+
+// 12. 第三方库覆盖（最后导入，优先级最高）
+@use 'vendor';

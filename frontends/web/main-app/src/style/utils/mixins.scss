@@ -1,0 +1,124 @@
+// ============================================================
+// SCSS 混合器
+// ============================================================
+
+@use "sass:map";
+@use "sass:list";
+
+// ========== 断点混合器 ==========
+
+// 断点配置
+$breakpoints: (
+  xs: 480px,
+  sm: 576px,
+  md: 768px,
+  lg: 960px,
+  xl: 1200px
+);
+
+$breakpoint-order: (xs, sm, md, lg, xl);
+
+@function breakpoint-value($name) {
+  @return map.get($breakpoints, $name);
+}
+
+@function next-breakpoint-value($name) {
+  $index: list.index($breakpoint-order, $name);
+  @if $index == null or $index >= list.length($breakpoint-order) {
+    @return null;
+  }
+  $next-name: list.nth($breakpoint-order, $index + 1);
+  @return map.get($breakpoints, $next-name);
+}
+
+// 最小宽度断点
+@mixin media-up($name) {
+  $min: breakpoint-value($name);
+  @if $min {
+    @media (min-width: $min) {
+      @content;
+    }
+  } @else {
+    @content;
+  }
+}
+
+// 最大宽度断点
+@mixin media-down($name) {
+  $max: breakpoint-value($name);
+  @if $max {
+    @media (max-width: $max - 1px) {
+      @content;
+    }
+  } @else {
+    @content;
+  }
+}
+
+// 仅移动端
+@mixin mobile-only {
+  @media (max-width: breakpoint-value(sm) - 1px) {
+    @content;
+  }
+}
+
+// 平板及以上
+@mixin tablet-up {
+  @media (min-width: breakpoint-value(sm)) {
+    @content;
+  }
+}
+
+// 桌面及以上
+@mixin desktop-up {
+  @media (min-width: breakpoint-value(md)) {
+    @content;
+  }
+}
+
+// ========== 工具混合器 ==========
+
+// 清除浮动
+@mixin clearfix {
+  &::after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+}
+
+// 绝对居中
+@mixin center-absolute {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+// 视觉隐藏（保持可访问性）
+@mixin visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+// 文本截断
+@mixin text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// 多行文本截断
+@mixin text-truncate-lines($lines: 2) {
+  display: -webkit-box;
+  -webkit-line-clamp: $lines;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

@@ -1,0 +1,42 @@
+{
+  "name": "ouroboros-sdk",
+  "version": "1.6.0-beta.6",
+  "description": "平台提供的能力包",
+  "main": "./esm/index.js",
+  "exports": {
+    ".": "./esm/index.js",
+    "./lifecycle": "./esm/lifecycle.js"
+  },
+  "files": [
+    "esm"
+  ],
+  "type": "module",
+  "scripts": {
+    "test": "npm run test:unit",
+    "pretest:unit": "npm run build",
+    "test:unit": "vitest run",
+    "test:watch": "vitest --watch",
+    "test:ui": "vitest --ui",
+    "build": "rollup -c",
+    "serve": "rollup -c -w"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.29.7",
+    "@babel/eslint-parser": "^7.29.7",
+    "@babel/preset-env": "^7.28.3",
+    "@rollup/plugin-babel": "^6.1.0",
+    "@vitest/ui": "^4.1.0",
+    "eslint": "^9.39.5",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^4.2.5",
+    "eslint-plugin-vue": "^9.33.0",
+    "rollup": "^4.62.2",
+    "rollup-plugin-dts": "^6.4.1",
+    "rollup-plugin-typescript2": "^0.37.0",
+    "tslib": "^2.8.1",
+    "typescript": "^5.8.3",
+    "vitest": "^4.1.10"
+  }
+}

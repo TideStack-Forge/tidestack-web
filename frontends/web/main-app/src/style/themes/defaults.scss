@@ -1,0 +1,578 @@
+// ============================================================
+// 主题默认值层 (Theme Defaults)
+// ============================================================
+// 组件与布局的默认 token 发射，和 light/dark 的语义值分离
+
+@use "sass:color";
+@use "sass:map";
+@use "../tokens" as tokens;
+
+@mixin light-theme-default-vars(
+  $palette-primary,
+  $palette-success,
+  $palette-warning,
+  $palette-error,
+  $palette-info,
+  $palette-neutral
+) {
+  // Layout
+  --layout-nav-item-bg-active: #{map.get($palette-primary, 50)};
+  --layout-nav-item-text-active: #{map.get($palette-primary, 700)};
+
+  // ========== 组件变量（Components）==========
+  // Button
+  --button-primary-bg: #{map.get($palette-primary, 500)};
+  --button-primary-bg-hover: #{map.get($palette-primary, 600)};
+  --button-primary-bg-active: #{map.get($palette-primary, 700)};
+  --button-primary-text: #{map.get($palette-neutral, 50)};
+  --button-primary-border: #{map.get($palette-primary, 600)};
+  --button-primary-bg-disabled: #{map.get($palette-neutral, 200)};
+  --button-primary-text-disabled: #{map.get($palette-neutral, 400)};
+
+  --button-success-bg: #{map.get($palette-success, 500)};
+  --button-success-bg-hover: #{map.get($palette-success, 600)};
+  --button-success-bg-active: #{map.get($palette-success, 700)};
+  --button-success-text: #{map.get($palette-neutral, 50)};
+  --button-success-border: #{map.get($palette-success, 600)};
+
+  --button-warning-bg: #{map.get($palette-warning, 500)};
+  --button-warning-bg-hover: #{map.get($palette-warning, 600)};
+  --button-warning-bg-active: #{map.get($palette-warning, 700)};
+  --button-warning-text: #{map.get($palette-neutral, 50)};
+  --button-warning-border: #{map.get($palette-warning, 600)};
+
+  --button-error-bg: #{map.get($palette-error, 500)};
+  --button-error-bg-hover: #{map.get($palette-error, 600)};
+  --button-error-bg-active: #{map.get($palette-error, 700)};
+  --button-error-text: #{map.get($palette-neutral, 50)};
+  --button-error-border: #{map.get($palette-error, 600)};
+
+  --button-info-bg: #{map.get($palette-info, 500)};
+  --button-info-bg-hover: #{map.get($palette-info, 600)};
+  --button-info-bg-active: #{map.get($palette-info, 700)};
+  --button-info-text: #{map.get($palette-neutral, 50)};
+  --button-info-border: #{map.get($palette-info, 600)};
+
+  --button-default-bg: #{map.get($palette-neutral, 50)};
+  --button-default-bg-hover: #{map.get($palette-neutral, 100)};
+  --button-default-bg-active: #{map.get($palette-neutral, 200)};
+  --button-default-text: #{map.get($palette-neutral, 900)};
+  --button-default-border: #{map.get($palette-neutral, 200)};
+
+  // Input
+  --input-bg: #ffffff;
+  --input-bg-disabled: #{map.get($palette-neutral, 100)};
+  --input-text: #{map.get($palette-neutral, 900)};
+  --input-placeholder: #{map.get($palette-neutral, 400)};
+  --input-border: #{map.get($palette-neutral, 200)};
+  --input-border-hover: #{map.get($palette-primary, 400)};
+  --input-border-focus: #{map.get($palette-primary, 500)};
+  --input-border-error: #{map.get($palette-error, 500)};
+  --input-outline-error: #{map.get($palette-error, 50)};
+
+  // Form
+  --form-label-color: #{map.get($palette-neutral, 600)};
+  --form-error-color: #{map.get($palette-error, 700)};
+  --form-required-color: #{map.get($palette-error, 500)};
+
+  // Tabs
+  --tabs-text: rgba(35, 52, 94, 0.6);
+  --tabs-text-active: #ffffff;
+  --tabs-line: #ddd;
+  --tabs-line-active: #{map.get($palette-primary, 500)};
+  --tabs-bg: #ffffff;
+  --tabs-color: rgba(35, 52, 94, 0.6);
+  --tabs-hover-color: #{map.get($palette-primary, 600)};
+  --tabs-active-color: #ffffff;
+  --tabs-active-border-color: #{map.get($palette-primary, 500)};
+  --tabs-border-color: #ddd;
+  --tabs-bg-hover: #ffffff;
+  --tabs-bg-selected: #{map.get($palette-primary, 50)};
+  --tabs-border-focus: #{map.get($palette-primary, 500)};
+
+  // Tabs Item
+  --tabs-item-text: rgba(35, 52, 94, 0.6);
+  --tabs-item-text-hover: #0243f2;
+  --tabs-item-text-active: #ffffff;
+  --tabs-item-bg: linear-gradient(#f5f5f5 0%, #ffffff 100%);
+  --tabs-item-bg-hover: #ffffff;
+  --tabs-item-bg-active: linear-gradient(#4676fb 0%, #6c93ff 100%);
+  --tabs-item-border: #d8dbe1;
+  --tabs-item-border-hover: #d8dbe1;
+  --tabs-item-border-active: #4676fb;
+  --tabs-item-border-active-bottom: #6c93ff;
+  --tabs-menu-bg: var(--color-bg-container);
+  --tabs-menu-text: var(--color-text);
+  --tabs-menu-text-disabled: var(--color-text-tertiary);
+  --tabs-menu-border: var(--color-border-secondary);
+  --tabs-menu-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --tabs-menu-item-bg-hover: rgba(47, 124, 255, 0.12);
+  --tabs-menu-item-text-hover: var(--tabs-menu-text);
+  --tabbar-item-bg-hover: #{map.get($palette-neutral, 150)};
+  --tabbar-item-bg-active: #{map.get($palette-primary, 500)};
+  --tabbar-item-text: #{map.get($palette-neutral, 700)};
+  --tabbar-item-text-active: #ffffff;
+  --tabbar-item-border: #{map.get($palette-neutral, 200)};
+
+  // Modal
+  --modal-mask-bg: rgba(0, 0, 0, 0.45);
+  --modal-bg: #ffffff;
+  --modal-text: #{map.get($palette-neutral, 900)};
+  --modal-header-bg: #ffffff;
+  --modal-header-text: #{map.get($palette-neutral, 900)};
+  --modal-border: #{map.get($palette-neutral, 200)};
+  --modal-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  --toast-shadow: 0 0 0 1px rgba(202, 209, 227, 0.32), 0 8px 18px rgba(67, 80, 120, 0.13), 0 2px 6px rgba(67, 80, 120, 0.08);
+
+  // Table
+  --table-header-bg: #{map.get($palette-neutral, 50)};
+  --table-header-text: #{map.get($palette-neutral, 900)};
+  --table-row-bg: #{tokens.$color-bg};
+  --table-row-bg-hover: #{map.get($palette-neutral, 100)};
+  --table-row-text: #{map.get($palette-neutral, 900)};
+  --table-border: #{map.get($palette-neutral, 200)};
+  --table-row-bg-selected: #{map.get($palette-primary, 50)};
+  --table-border-focus: #{map.get($palette-primary, 500)};
+
+  // Select
+  --select-bg: #{map.get($palette-neutral, 50)};
+  --select-bg-hover: #{map.get($palette-neutral, 100)};
+  --select-bg-active: #{map.get($palette-neutral, 200)};
+  --select-text: #{map.get($palette-neutral, 900)};
+  --select-text-disabled: #{map.get($palette-neutral, 400)};
+  --select-placeholder: #{map.get($palette-neutral, 400)};
+  --select-border: #{map.get($palette-neutral, 200)};
+  --select-border-hover: #{map.get($palette-primary, 400)};
+  --select-border-focus: #{map.get($palette-primary, 500)};
+  --select-border-error: #{map.get($palette-error, 500)};
+  --select-outline: #{rgba(map.get($palette-primary, 500), 0.20)};
+  --select-arrow: #{map.get($palette-neutral, 600)};
+  --select-bg-disabled: #{map.get($palette-neutral, 100)};
+
+  // Dropdown
+  --dropdown-menu-bg: #{map.get($palette-neutral, 50)};
+  --dropdown-menu-border: #{map.get($palette-neutral, 200)};
+  --dropdown-menu-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  --dropdown-item-text: #{map.get($palette-neutral, 900)};
+  --dropdown-item-bg-hover: #{map.get($palette-neutral, 100)};
+  --dropdown-item-bg-active: #{map.get($palette-primary, 50)};
+  --dropdown-item-bg-selected: #{map.get($palette-primary, 50)};
+  --dropdown-item-text-selected: #{map.get($palette-primary, 700)};
+  --dropdown-item-text-disabled: #{map.get($palette-neutral, 400)};
+  --dropdown-divider: #{map.get($palette-neutral, 200)};
+
+  // Checkbox
+  --checkbox-bg: #{map.get($palette-neutral, 50)};
+  --checkbox-border: #{map.get($palette-neutral, 200)};
+  --checkbox-border-hover: #{map.get($palette-primary, 500)};
+  --checkbox-checked-bg: #{map.get($palette-primary, 500)};
+  --checkbox-checked-border: #{map.get($palette-primary, 500)};
+  --checkbox-outline: #{rgba(map.get($palette-primary, 500), 0.20)};
+  --checkbox-bg-hover: #{map.get($palette-neutral, 100)};
+  --checkbox-bg-disabled: #{map.get($palette-neutral, 100)};
+  --checkbox-border-disabled: #{map.get($palette-neutral, 200)};
+
+  // Radio
+  --radio-bg: #{map.get($palette-neutral, 50)};
+  --radio-border: #{map.get($palette-neutral, 200)};
+  --radio-border-hover: #{map.get($palette-primary, 500)};
+  --radio-checked-border: #{map.get($palette-primary, 500)};
+  --radio-dot: #{map.get($palette-primary, 500)};
+  --radio-outline: #{rgba(map.get($palette-primary, 500), 0.20)};
+  --radio-bg-hover: #{map.get($palette-neutral, 100)};
+  --radio-bg-disabled: #{map.get($palette-neutral, 100)};
+  --radio-border-disabled: #{map.get($palette-neutral, 200)};
+
+  // Switch
+  --switch-track-bg: #{color.mix(black, tokens.$color-bg, 16%)};
+  --switch-track-border: #{color.mix(black, tokens.$color-bg, 6%)};
+  --switch-track-bg-checked: #{map.get($palette-primary, 500)};
+  --switch-track-border-checked: #{map.get($palette-primary, 500)};
+  --switch-thumb-bg: #{map.get($palette-neutral, 50)};
+  --switch-thumb-shadow: #{tokens.$shadow-base};
+  --switch-outline: #{rgba(map.get($palette-primary, 500), 0.20)};
+  --switch-track-bg-hover: #{color.mix(black, tokens.$color-bg, 20%)};
+  --switch-track-bg-disabled: #{map.get($palette-neutral, 100)};
+
+  // Scrollbar
+  --scrollbar-thumb-bg: rgba(127, 137, 154, 0.34);
+  --scrollbar-thumb-bg-hover: rgba(127, 137, 154, 0.48);
+  --scrollbar-thumb-bg-active: rgba(127, 137, 154, 0.64);
+  --scrollbar-rail-bg: transparent;
+
+  // Sidebar
+  --sidebar-bg: #ffffff;
+  --sidebar-border: rgba(202, 209, 227, 0.34);
+  --sidebar-text: #2f3440;
+  --sidebar-text-secondary: #707888;
+  --sidebar-item-bg-hover: rgba(47, 124, 255, 0.08);
+  --sidebar-search-bg: #f3f7fc;
+  --sidebar-search-text: #{map.get($palette-neutral, 900)};
+  --sidebar-search-placeholder: #707888;
+  --sidebar-search-icon: #8b94a4;
+  --sidebar-search-meta-text: #707888;
+  --sidebar-search-empty-text: #707888;
+  --sidebar-search-focus-shadow: 0 0 0 2px rgba(47, 124, 255, 0.12);
+  --sidebar-gradient-top: #ffffff;
+  --sidebar-gradient-mid: #ffffff;
+  --sidebar-gradient-bottom: #ffffff;
+  --sidebar-user-menu-text: #37404d;
+  --sidebar-user-menu-text-secondary: #707888;
+  --sidebar-user-menu-avatar: #707888;
+  --sidebar-user-menu-avatar-bg: #{map.get($palette-primary, 500)};
+  --sidebar-user-menu-avatar-border: #ffffff;
+  --sidebar-user-menu-avatar-text: #ffffff;
+  --sidebar-user-menu-arrow: #707888;
+  --sidebar-user-menu-bg-hover: rgba(255, 255, 255, 0.62);
+  --sidebar-user-menu-item-bg-hover: rgba(47, 124, 255, 0.12);
+  --sidebar-user-menu-bg-open: rgba(255, 255, 255, 0.96);
+  --sidebar-user-menu-shadow-open: 0 0 0 1px rgba(202, 209, 227, 0.32), 0 8px 18px rgba(67, 80, 120, 0.13), 0 2px 6px rgba(67, 80, 120, 0.08);
+  --sidebar-user-menu-item-text: #37404d;
+  --sidebar-user-menu-text-hover: #2f3440;
+  --sidebar-user-menu-avatar-hover: #2f7cff;
+  --sidebar-user-menu-arrow-hover: #2f7cff;
+  --sidebar-toggle-text-hover: #2f7cff;
+  --sidebar-float-item-bg-hover: rgba(255, 255, 255, 0.68);
+  --sidebar-float-item-text: #2f3440;
+  --sidebar-float-item-text-active: #2f3440;
+  --sidebar-float-border: rgba(202, 209, 227, 0.34);
+  --sidebar-float-menu-title-bg: rgba(252, 252, 255, 0.97);
+  --sidebar-float-menu-item-bg: rgba(255, 255, 255, 0.88);
+  --sidebar-float-menu-bg: rgba(248, 250, 255, 0.98);
+
+  // Search
+  --search-input-bg: #f3f7fc;
+  --search-input-focus-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
+  --search-results-bg: #ffffff;
+  --search-results-border: #{map.get($palette-neutral, 200)};
+  --search-results-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  --search-item-text: #{map.get($palette-neutral, 700)};
+  --search-item-bg-hover: #{map.get($palette-neutral, 100)};
+  --search-divider: #{map.get($palette-neutral, 200)};
+
+  // Menu
+  --menu-bg: transparent;
+  --menu-border: rgba(202, 209, 227, 0.34);
+  --menu-text: #2f3440;
+  --menu-text-secondary: #555d6d;
+  --menu-item-text-active: #2f3440;
+  --menu-item-bg-hover: #f1f9ff;
+  --menu-item-bg-active: #dcefff;
+  --menu-item-bg-ancestor: #e8f4ff;
+  --menu-item-text-ancestor: #2f3440;
+  --menu-item-bg-selected: #{map.get($palette-primary, 100)};
+  --menu-arrow-color: #767f8f;
+  --menu-icon: #666f7f;
+  --menu-icon-hover: #2f7cff;
+  --menu-icon-active: #2f7cff;
+  --menu-icon-ancestor: #2f7cff;
+  --menu-float-title-bg: #{map.get($palette-primary, 500)};
+  --menu-submenu-bg: transparent;
+
+  // Topbar（仅颜色）
+  --topbar-bg: #ffffff;
+  --topbar-color: #{map.get($palette-primary, 500)};
+
+  // Layout (仅颜色相关)
+  --layout-content-bg: var(--color-bg-body);
+  --layout-shell-bg: #ffffff;
+  --layout-shell-surface: #ffffff;
+  --layout-shell-border: rgba(214, 226, 245, 0.22);
+  --layout-shell-shadow: 0 6px 18px rgba(31, 66, 128, 0.08);
+}
+
+@mixin dark-theme-default-vars(
+  $palette-primary,
+  $palette-success,
+  $palette-warning,
+  $palette-error,
+  $palette_info,
+  $palette-neutral,
+  $content-palette-primary: $palette-primary,
+  $content-palette-success: $palette-success,
+  $content-palette-warning: $palette-warning,
+  $content-palette-error: $palette-error,
+  $content-palette-info: $palette_info,
+  $content-palette-neutral: $palette-neutral
+) {
+  // Layout
+  --layout-nav-item-bg-active: #{map.get($palette-primary, 50)};
+  --layout-nav-item-text-active: #{map.get($palette-primary, 700)};
+
+  // ========== 组件变量（Components）==========
+  // Button
+  --button-primary-bg: #{map.get($content-palette-primary, 500)};
+  --button-primary-bg-hover: #{map.get($content-palette-primary, 600)};
+  --button-primary-bg-active: #{map.get($content-palette-primary, 700)};
+  --button-primary-text: #{map.get($content-palette-neutral, 50)};
+  --button-primary-border: #{map.get($content-palette-primary, 600)};
+  --button-primary-bg-disabled: #{map.get($content-palette-neutral, 200)};
+  --button-primary-text-disabled: #{map.get($content-palette-neutral, 400)};
+
+  --button-success-bg: #{map.get($content-palette-success, 500)};
+  --button-success-bg-hover: #{map.get($content-palette-success, 600)};
+  --button-success-bg-active: #{map.get($content-palette-success, 700)};
+  --button-success-text: #{map.get($content-palette-neutral, 50)};
+  --button-success-border: #{map.get($content-palette-success, 600)};
+
+  --button-warning-bg: #{map.get($content-palette-warning, 500)};
+  --button-warning-bg-hover: #{map.get($content-palette-warning, 600)};
+  --button-warning-bg-active: #{map.get($content-palette-warning, 700)};
+  --button-warning-text: #{map.get($content-palette-neutral, 50)};
+  --button-warning-border: #{map.get($content-palette-warning, 600)};
+
+  --button-error-bg: #{map.get($content-palette-error, 500)};
+  --button-error-bg-hover: #{map.get($content-palette-error, 600)};
+  --button-error-bg-active: #{map.get($content-palette-error, 700)};
+  --button-error-text: #{map.get($content-palette-neutral, 50)};
+  --button-error-border: #{map.get($content-palette-error, 600)};
+
+  --button-info-bg: #{map.get($content-palette-info, 500)};
+  --button-info-bg-hover: #{map.get($content-palette-info, 600)};
+  --button-info-bg-active: #{map.get($content-palette-info, 700)};
+  --button-info-text: #{map.get($content-palette-neutral, 50)};
+  --button-info-border: #{map.get($content-palette-info, 600)};
+
+  --button-default-bg: #{map.get($content-palette-neutral, 50)};
+  --button-default-bg-hover: #{map.get($content-palette-neutral, 100)};
+  --button-default-bg-active: #{map.get($content-palette-neutral, 200)};
+  --button-default-text: #{map.get($content-palette-neutral, 900)};
+  --button-default-border: #{map.get($content-palette-neutral, 200)};
+
+  // Input
+  --input-bg: #ffffff;
+  --input-bg-disabled: #{map.get($content-palette-neutral, 100)};
+  --input-text: #{map.get($content-palette-neutral, 900)};
+  --input-placeholder: #{map.get($content-palette-neutral, 400)};
+  --input-border: #{map.get($content-palette-neutral, 200)};
+  --input-border-hover: #{map.get($content-palette-primary, 400)};
+  --input-border-focus: #{map.get($content-palette-primary, 500)};
+  --input-border-error: #{map.get($content-palette-error, 500)};
+  --input-outline-error: #{map.get($content-palette-error, 50)};
+
+  // Form
+  --form-label-color: #{map.get($content-palette-neutral, 600)};
+  --form-error-color: #{map.get($content-palette-error, 700)};
+  --form-required-color: #{map.get($content-palette-error, 500)};
+
+  // Tabs
+  --tabs-text: rgba(35, 52, 94, 0.6);
+  --tabs-text-active: #ffffff;
+  --tabs-line: #ddd;
+  --tabs-line-active: #{map.get($palette-primary, 500)};
+  --tabs-bg: #ffffff;
+  --tabs-bg-hover: #ffffff;
+  --tabs-bg-selected: #{map.get($palette-primary, 50)};
+  --tabs-color: rgba(35, 52, 94, 0.6);
+  --tabs-hover-color: #{map.get($palette-primary, 600)};
+  --tabs-active-color: #ffffff;
+  --tabs-active-border-color: #{map.get($palette-primary, 500)};
+  --tabs-border-color: #ddd;
+  --tabs-border-focus: #{map.get($palette-primary, 500)};
+
+  // Tabs Item
+  --tabs-item-text: rgba(35, 52, 94, 0.6);
+  --tabs-item-text-hover: #0243f2;
+  --tabs-item-text-active: #ffffff;
+  --tabs-item-bg: linear-gradient(#f5f5f5 0%, #ffffff 100%);
+  --tabs-item-bg-hover: #ffffff;
+  --tabs-item-bg-active: linear-gradient(#4676fb 0%, #6c93ff 100%);
+  --tabs-item-border: #d8dbe1;
+  --tabs-item-border-hover: #d8dbe1;
+  --tabs-item-border-active: #4676fb;
+  --tabs-item-border-active-bottom: #6c93ff;
+  --tabs-menu-bg: var(--color-bg-container);
+  --tabs-menu-text: var(--color-text);
+  --tabs-menu-text-disabled: var(--color-text-tertiary);
+  --tabs-menu-border: var(--color-border-secondary);
+  --tabs-menu-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --tabs-menu-item-bg-hover: rgba(139, 166, 237, 0.18);
+  --tabs-menu-item-text-hover: var(--tabs-menu-text);
+  --tabbar-item-bg-hover: #{map.get($palette-neutral, 150)};
+  --tabbar-item-bg-active: #{map.get($palette-primary, 500)};
+  --tabbar-item-text: #{map.get($palette-neutral, 700)};
+
+  // Sidebar
+  --sidebar-bg: #31467f;
+  --sidebar-border: rgba(255, 255, 255, 0.08);
+  --sidebar-text: #eef4ff;
+  --sidebar-text-secondary: rgba(238, 244, 255, 0.84);
+  --sidebar-item-bg-hover: rgba(255, 255, 255, 0.08);
+  --sidebar-search-bg: rgba(255, 255, 255, 0.1);
+  --sidebar-search-text: #eef4ff;
+  --sidebar-search-placeholder: rgba(238, 244, 255, 0.76);
+  --sidebar-search-icon: rgba(238, 244, 255, 0.5);
+  --sidebar-search-meta-text: rgba(238, 244, 255, 0.72);
+  --sidebar-search-empty-text: #b5bfd3;
+  --sidebar-search-focus-shadow: 0 0 0 2px rgba(255, 255, 255, 0.14), 0 6px 16px rgba(0, 0, 0, 0.24);
+  --sidebar-gradient-top: rgba(163, 186, 255, 0.24);
+  --sidebar-gradient-mid: rgba(115, 144, 222, 0.18);
+  --sidebar-gradient-bottom: rgba(28, 44, 88, 0.34);
+  --sidebar-user-menu-text: #eef4ff;
+  --sidebar-user-menu-text-secondary: rgba(238, 244, 255, 0.78);
+  --sidebar-user-menu-avatar: rgba(238, 244, 255, 0.78);
+  --sidebar-user-menu-avatar-bg: #{map.get($palette-primary, 500)};
+  --sidebar-user-menu-avatar-border: var(--sidebar-user-menu-bg-open);
+  --sidebar-user-menu-avatar-text: #ffffff;
+  --sidebar-user-menu-arrow: rgba(238, 244, 255, 0.72);
+  --sidebar-user-menu-bg-hover: rgba(255, 255, 255, 0.08);
+  --sidebar-user-menu-item-bg-hover: rgba(255, 255, 255, 0.08);
+  --sidebar-user-menu-bg-open: #415589;
+  --sidebar-user-menu-shadow-open: 0 0 0 1px var(--sidebar-user-menu-bg-open), 0 8px 18px rgba(0, 0, 0, 0.28), 0 2px 6px rgba(0, 0, 0, 0.2);
+  --sidebar-user-menu-item-text: #eef4ff;
+  --sidebar-user-menu-text-hover: #ffffff;
+  --sidebar-user-menu-avatar-hover: #ffffff;
+  --sidebar-user-menu-arrow-hover: #ffffff;
+  --sidebar-toggle-text-hover: #ffffff;
+
+  // Header
+  --header-user-menu-text: #{map.get($palette-neutral, 900)};
+  --header-user-menu-text-secondary: #{map.get($palette-neutral, 600)};
+  --header-user-menu-avatar: #{map.get($palette-neutral, 600)};
+  --header-user-menu-avatar-bg: #{map.get($palette-primary, 500)};
+  --header-user-menu-avatar-border: var(--header-user-menu-bg-open);
+  --header-user-menu-avatar-text: #ffffff;
+  --header-user-menu-arrow: #{map.get($palette-neutral, 600)};
+  --header-user-menu-bg-hover: #{map.get($palette-neutral, 100)};
+  --header-user-menu-item-bg-hover: #{map.get($palette-neutral, 100)};
+  --header-user-menu-bg-open: #{map.get($palette-neutral, 50)};
+  --header-user-menu-shadow-open: 0 0 0 1px rgba(238, 244, 255, 0.12), 0 8px 18px rgba(0, 0, 0, 0.28), 0 2px 6px rgba(0, 0, 0, 0.2);
+  --header-user-menu-item-text: #{map.get($palette-neutral, 900)};
+  --header-user-menu-avatar-hover: #{map.get($palette-primary, 500)};
+  --header-user-menu-arrow-hover: #{map.get($palette-primary, 500)};
+
+  // Modal
+  --modal-mask-bg: rgba(0, 0, 0, 0.45);
+  --modal-bg: #ffffff;
+  --modal-text: #{map.get($content-palette-neutral, 900)};
+  --modal-header-bg: #ffffff;
+  --modal-header-text: #{map.get($content-palette-neutral, 900)};
+  --modal-border: #{map.get($content-palette-neutral, 200)};
+  --modal-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  --toast-shadow: 0 0 0 1px rgba(202, 209, 227, 0.32), 0 8px 18px rgba(67, 80, 120, 0.13), 0 2px 6px rgba(67, 80, 120, 0.08);
+
+  // Table
+  --table-header-bg: #{map.get($content-palette-neutral, 50)};
+  --table-header-text: #{map.get($content-palette-neutral, 900)};
+  --table-row-bg: #{tokens.$color-bg};
+  --table-row-bg-hover: #{map.get($content-palette-neutral, 100)};
+  --table-row-text: #{map.get($content-palette-neutral, 900)};
+  --table-border: #{map.get($content-palette-neutral, 200)};
+  --table-row-bg-selected: #{map.get($content-palette-primary, 50)};
+  --table-border-focus: #{map.get($content-palette-primary, 500)};
+
+  // Select
+  --select-bg: #{map.get($content-palette-neutral, 50)};
+  --select-bg-hover: #{map.get($content-palette-neutral, 100)};
+  --select-bg-active: #{map.get($content-palette-neutral, 200)};
+  --select-text: #{map.get($content-palette-neutral, 900)};
+  --select-text-disabled: #{map.get($content-palette-neutral, 400)};
+  --select-placeholder: #{map.get($content-palette-neutral, 400)};
+  --select-border: #{map.get($content-palette-neutral, 200)};
+  --select-border-hover: #{map.get($content-palette-primary, 400)};
+  --select-border-focus: #{map.get($content-palette-primary, 500)};
+  --select-border-error: #{map.get($content-palette-error, 500)};
+  --select-outline: #{rgba(map.get($content-palette-primary, 500), 0.20)};
+  --select-arrow: #{map.get($content-palette-neutral, 600)};
+  --select-bg-disabled: #{map.get($content-palette-neutral, 100)};
+
+  // Dropdown
+  --dropdown-menu-bg: #{map.get($content-palette-neutral, 50)};
+  --dropdown-menu-border: #{map.get($content-palette-neutral, 200)};
+  --dropdown-menu-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  --dropdown-item-text: #{map.get($content-palette-neutral, 900)};
+  --dropdown-item-bg-hover: #{map.get($content-palette-neutral, 100)};
+  --dropdown-item-bg-active: #{map.get($content-palette-primary, 50)};
+  --dropdown-item-bg-selected: #{map.get($content-palette-primary, 50)};
+  --dropdown-item-text-selected: #{map.get($content-palette-primary, 700)};
+  --dropdown-item-text-disabled: #{map.get($content-palette-neutral, 400)};
+  --dropdown-divider: #{map.get($content-palette-neutral, 200)};
+
+  // Checkbox
+  --checkbox-bg: #{map.get($content-palette-neutral, 50)};
+  --checkbox-border: #{map.get($content-palette-neutral, 200)};
+  --checkbox-border-hover: #{map.get($content-palette-primary, 500)};
+  --checkbox-checked-bg: #{map.get($content-palette-primary, 500)};
+  --checkbox-checked-border: #{map.get($content-palette-primary, 500)};
+  --checkbox-outline: #{rgba(map.get($content-palette-primary, 500), 0.20)};
+  --checkbox-bg-hover: #{map.get($content-palette-neutral, 100)};
+  --checkbox-bg-disabled: #{map.get($content-palette-neutral, 100)};
+  --checkbox-border-disabled: #{map.get($content-palette-neutral, 200)};
+
+  // Radio
+  --radio-bg: #{map.get($content-palette-neutral, 50)};
+  --radio-border: #{map.get($content-palette-neutral, 200)};
+  --radio-border-hover: #{map.get($content-palette-primary, 500)};
+  --radio-checked-border: #{map.get($content-palette-primary, 500)};
+  --radio-dot: #{map.get($content-palette-primary, 500)};
+  --radio-outline: #{rgba(map.get($content-palette-primary, 500), 0.20)};
+  --radio-bg-hover: #{map.get($content-palette-neutral, 100)};
+  --radio-bg-disabled: #{map.get($content-palette-neutral, 100)};
+  --radio-border-disabled: #{map.get($content-palette-neutral, 200)};
+
+  // Switch
+  --switch-track-bg: #{color.mix(black, tokens.$color-bg, 16%)};
+  --switch-track-border: #{color.mix(black, tokens.$color-bg, 6%)};
+  --switch-track-bg-checked: #{map.get($content-palette-primary, 500)};
+  --switch-track-border-checked: #{map.get($content-palette-primary, 500)};
+  --switch-thumb-bg: #{map.get($content-palette-neutral, 50)};
+  --switch-thumb-shadow: #{tokens.$shadow-base};
+  --switch-outline: #{rgba(map.get($content-palette-primary, 500), 0.20)};
+  --switch-track-bg-hover: #{color.mix(black, tokens.$color-bg, 20%)};
+  --switch-track-bg-disabled: #{map.get($content-palette-neutral, 100)};
+
+  // Scrollbar
+  --scrollbar-thumb-bg: rgba(127, 137, 154, 0.34);
+  --scrollbar-thumb-bg-hover: rgba(127, 137, 154, 0.48);
+  --scrollbar-thumb-bg-active: rgba(127, 137, 154, 0.64);
+  --scrollbar-rail-bg: transparent;
+
+  // Sidebar
+  --sidebar-float-item-bg-hover: rgba(139, 166, 237, 0.22);
+  --sidebar-float-item-text: #ffffff;
+  --sidebar-float-item-text-active: #{map.get($palette-primary, 300)};
+  --sidebar-float-border: rgba(188, 205, 255, 0.18);
+  --sidebar-float-menu-title-bg: #31467f;
+  --sidebar-float-menu-item-bg: rgba(139, 166, 237, 0.16);
+  --sidebar-float-menu-bg: #31467f;
+
+  // Search
+  --search-input-bg: rgba(255, 255, 255, 0.1);
+  --search-input-focus-shadow: 0 0 0 2px rgba(255, 255, 255, 0.14), 0 6px 16px rgba(0, 0, 0, 0.24);
+  --search-results-bg: #23345e;
+  --search-results-border: rgba(193, 208, 255, 0.14);
+  --search-results-shadow: 0 10px 20px rgba(0, 0, 0, 0.28), 0 2px 6px rgba(0, 0, 0, 0.18);
+  --search-item-text: #f0f4ff;
+  --search-item-bg-hover: rgba(255, 255, 255, 0.08);
+  --search-divider: #172957;
+
+  // Menu
+  --menu-bg: transparent;
+  --menu-border: rgba(188, 205, 255, 0.12);
+  --menu-text: #eef4ff;
+  --menu-text-secondary: rgba(238, 244, 255, 0.78);
+  --menu-item-text-active: #ffffff;
+  --menu-item-bg-hover: rgba(139, 166, 237, 0.18);
+  --menu-item-bg-active: rgba(156, 180, 244, 0.28);
+  --menu-item-bg-ancestor: rgba(94, 127, 214, 0.18);
+  --menu-item-text-ancestor: #dbe7ff;
+  --menu-item-bg-selected: #{map.get($palette-primary, 100)};
+  --menu-arrow-color: rgba(238, 244, 255, 0.78);
+  --menu-icon: rgba(238, 244, 255, 0.86);
+  --menu-icon-hover: #ffffff;
+  --menu-icon-active: #ffffff;
+  --menu-icon-ancestor: rgba(238, 244, 255, 0.86);
+  --menu-float-title-bg: #{map.get($palette-neutral, 100)};
+  --menu-submenu-bg: transparent;
+
+  // Topbar（仅颜色）
+  --topbar-bg: #1a1a1a;
+  --topbar-color: #23345e;
+
+  // Layout (仅颜色相关)
+  --layout-content-bg: var(--color-bg-body);
+  --layout-shell-bg: linear-gradient(180deg, #405a9b 0%, #344b87 36%, #24386d 100%);
+  --layout-shell-surface: rgba(255, 255, 255, 0.98);
+  --layout-shell-border: rgba(188, 205, 255, 0.18);
+  --layout-shell-shadow: 0 24px 48px rgba(18, 29, 63, 0.24);
+}

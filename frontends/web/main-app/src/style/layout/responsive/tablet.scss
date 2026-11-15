@@ -1,0 +1,18 @@
+// 平板端布局样式
+@media (min-width: var(--breakpoint-sm)) and (max-width: calc(var(--breakpoint-md) - 1px)) {
+  .app-sidebar {
+    width: var(--sidebar-width-tablet, 200px);
+  }
+
+  .app-header {
+    &__nav {
+      gap: var(--space-sm);
+    }
+  }
+
+  .app-content {
+    &__main {
+      padding: var(--space-md);
+    }
+  }
+}

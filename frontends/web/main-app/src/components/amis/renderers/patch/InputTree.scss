@@ -1,0 +1,20 @@
+.cxd-TreeControl.cxd-TreeControl--autoFillHeight,
+.cxd-TreeControl.cxd-TreeControl--autoFillHeight.h-auto {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-height: 100%;
+  min-height: 0;
+  overflow: hidden;
+
+  > .cxd-TreeControl-searchbox {
+    flex: 0 0 auto;
+  }
+
+  > .cxd-Tree {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: none;
+    overflow: auto;
+  }
+}

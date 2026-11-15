@@ -1,0 +1,82 @@
+/**
+ * Keyframes Animations
+ * 
+ * 关键帧动画定义集合
+ * 
+ * 用途：
+ * - 定义可复用的关键帧动画
+ * - 统一管理动画效果
+ * - 提供标准的动画库
+ * 
+ * 使用方式：
+ * animation: app-spin 1s linear infinite;
+ * animation: app-shimmer 1.2s ease-in-out infinite;
+ * 
+ * 注意：
+ * - 所有动画名称使用 app- 前缀避免冲突
+ * - 动画参数通过 CSS 变量控制，支持主题定制
+ */
+
+// 旋转动画（用于加载图标）
+@keyframes app-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// 闪烁动画（用于骨架屏）
+@keyframes app-shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+// 淡入动画
+@keyframes app-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// 淡出动画
+@keyframes app-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+// 滑入动画（从上方）
+@keyframes app-slide-in-down {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+// 滑入动画（从左侧）
+@keyframes app-slide-in-left {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}

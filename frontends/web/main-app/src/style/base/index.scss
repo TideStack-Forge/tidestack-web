@@ -1,0 +1,74 @@
+// 基础样式 - CSS重置和标准化
+html {
+  height: 100%;
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+body {
+  height: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-family: "PingFang SC", "Microsoft Yahei", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", system-ui, sans-serif;
+}
+
+ul,
+ol,
+li,
+p {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a:focus,
+a:active {
+  outline: none;
+}
+
+img {
+  max-width: 100%;
+  border: 0;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+label {
+  font-weight: 700;
+}
+
+// 容器样式
+#app,
+#micro-app,
+#mothership-app-root {
+  height: 100%;
+}
+
+#micro-app > div,
+.micro-custom,
+.micro-custom > div[data-qiankun] {
+  height: 100%;
+}
+
+div:focus {
+  outline: none;
+}

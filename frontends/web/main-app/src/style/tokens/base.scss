@@ -1,0 +1,23 @@
+@use "sass:map";
+
+// 基础单位系统
+$space-unit: 4px;
+
+// 字号基准（正文 md）
+$font-size-base: 14px;
+
+// 圆角基准
+$radius-base: 2px;
+
+// 阴影基准（其余档位由 theme 推导）
+$shadow-base: 0 1px 2px rgba(0, 0, 0, 0.06);
+
+// 响应式断点基准（sm 起点）
+$breakpoint-base: 576px;
+
+// Z-index 基准层级
+$zindex-base: 1000;
+
+// 动效基准：持续时间 & 缓动
+$motion-duration-base: 250ms;
+$motion-easing-base: cubic-bezier(0.4, 0, 0.2, 1);

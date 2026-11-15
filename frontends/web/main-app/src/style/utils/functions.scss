@@ -1,0 +1,77 @@
+// ============================================================
+// SCSS 纯函数
+// ============================================================
+
+@use "sass:color";
+@use "sass:map";
+@use "sass:list";
+
+// ========== 色板生成函数 ==========
+
+// 生成色阶色板（50-900）
+@function scale($base) {
+  @return (
+    50:  color.mix(white, $base, 92%),
+    100: color.mix(white, $base, 85%),
+    200: color.mix(white, $base, 75%),
+    300: color.mix(white, $base, 65%),
+    400: color.mix(white, $base, 45%),
+    500: $base,
+    600: color.mix(black, $base, 10%),
+    700: color.mix(black, $base, 22%),
+    800: color.mix(black, $base, 34%),
+    900: color.mix(black, $base, 46%)
+  );
+}
+
+// 生成中性色板
+@function neutral($bg, $fg) {
+  @return (
+    50:  color.mix($bg, $fg, 96%),
+    100: color.mix($bg, $fg, 92%),
+    200: color.mix($bg, $fg, 84%),
+    300: color.mix($bg, $fg, 74%),
+    400: color.mix($bg, $fg, 60%),
+    500: color.mix($bg, $fg, 46%),
+    600: color.mix($bg, $fg, 32%),
+    700: color.mix($bg, $fg, 20%),
+    800: color.mix($bg, $fg, 12%),
+    900: $fg
+  );
+}
+
+// 深色主题背景色转换
+@function dark-bg($light-bg) {
+  @return color.mix(black, $light-bg, 92%);
+}
+
+// 深色主题文本色转换
+@function dark-text($light-text) {
+  @return color.mix(white, $light-text, 90%);
+}
+
+// 深色主题强调色转换
+@function dark-accent($light-accent) {
+  @return color.mix(black, $light-accent, 8%);
+}
+
+// ========== 断点函数 ==========
+
+@function breakpoint($breakpoints, $name) {
+  @return map.get($breakpoints, $name);
+}
+
+@function next-breakpoint($breakpoint-order, $breakpoints, $name) {
+  $index: list.index($breakpoint-order, $name);
+  @if $index == null {
+    @return null;
+  }
+
+  $next-index: $index + 1;
+  @if $next-index > list.length($breakpoint-order) {
+    @return null;
+  }
+
+  $next-name: list.nth($breakpoint-order, $next-index);
+  @return breakpoint($breakpoints, $next-name);
+}

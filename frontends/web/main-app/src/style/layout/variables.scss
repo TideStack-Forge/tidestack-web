@@ -1,0 +1,43 @@
+// 布局变量文件
+// 包含所有布局相关的变量定义
+
+// 侧边栏变量
+$layout-sidebar-width: 72px;
+$layout-sidebar-width-open: 200px;
+$layout-sidebar-width-collapsed: 72px;
+$layout-sidebar-secondary-width: 234px;
+
+// 头部变量
+$layout-header-height: 60px;
+$layout-footer-height: 0px;
+
+// 容器变量
+$layout-container-max-width: 1200px;
+
+// 内容区变量
+$layout-content-bg: #ffffff;
+
+// 断点变量
+$layout-breakpoint-sm: 576px;
+$layout-breakpoint-md: 768px;
+$layout-breakpoint-lg: 960px;
+
+// 标签栏变量（从主题文件中提取）
+$layout-tabs-height: 60px;
+$layout-tabs-item-height: 32px;
+$layout-tabs-padding-x: 20px;
+$layout-tabs-padding-t: 12px;
+
+// 响应式布局变量
+$layout-sidebar-width-tablet: 200px;
+$layout-sidebar-width-mobile: 280px;
+
+// 内容区变量
+$layout-content-padding: 24px;
+$layout-content-padding-mobile: 16px;
+
+// Z-index 布局层级
+$layout-z-header: 1000;
+$layout-z-sidebar: 900;
+$layout-z-tabs: 800;
+$layout-z-content: 100;

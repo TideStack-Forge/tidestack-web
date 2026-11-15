@@ -1,0 +1,70 @@
+{
+  "name": "/system-setting/user-dashboard-template-manage/detail",
+  "schema": {
+    "type": "form",
+    "mode": "horizontal",
+    "title": false,
+    "static": true,
+    "wrapWithPanel": false,
+    "initApi": {
+      "method": "get",
+      "url": "/api/user-dashboard-template/${id}"
+    },
+    "body": [
+      {
+        "type": "input-text",
+        "name": "name",
+        "label": "模板名称"
+      },
+      {
+        "type": "textarea",
+        "name": "description",
+        "label": "模板描述",
+        "maxRows": 5
+      },
+      {
+        "type": "switch",
+        "name": "isDefault",
+        "label": "默认模板"
+      },
+      {
+        "type": "input-text",
+        "name": "createdBy",
+        "label": "创建人"
+      },
+      {
+        "type": "input-datetime",
+        "name": "createdAt",
+        "label": "创建时间",
+        "format": "YYYY-MM-DD HH:mm:ss",
+        "inputFormat": "YYYY-MM-DD HH:mm:ss"
+      },
+      {
+        "type": "input-text",
+        "name": "updatedBy",
+        "label": "更新人"
+      },
+      {
+        "type": "input-datetime",
+        "name": "updatedAt",
+        "label": "更新时间",
+        "format": "YYYY-MM-DD HH:mm:ss",
+        "inputFormat": "YYYY-MM-DD HH:mm:ss"
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "dashboard",
+        "name": "template",
+        "placeholderImage": "",
+        "label": "仪表盘布局",
+        "required": true,
+        "widgetDefinitionsApi": {
+          "method": "get",
+          "url": "/api/widget-definition"
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,146 @@
+{
+  "renderers": [
+    {
+      "name": "custom-chart",
+      "label": "自定义图表",
+      "description": "支持多种图表类型的可视化组件",
+      "tags": ["数据展示", "图表"]
+    },
+    {
+      "name": "custom-table",
+      "label": "自定义表格",
+      "description": "功能强大的数据表格组件",
+      "tags": ["数据展示", "表格"]
+    },
+    {
+      "name": "custom-form",
+      "label": "自定义表单",
+      "description": "灵活的表单容器组件",
+      "tags": ["表单", "容器"]
+    },
+    {
+      "name": "custom-card",
+      "label": "自定义卡片",
+      "description": "卡片式内容展示组件",
+      "tags": ["布局", "容器"]
+    },
+    {
+      "name": "custom-timeline",
+      "label": "自定义时间轴",
+      "description": "时间轴展示组件",
+      "tags": ["数据展示", "时间"]
+    }
+  ],
+  "formItems": [
+    {
+      "name": "custom-input",
+      "label": "自定义输入框",
+      "description": "增强的文本输入组件",
+      "tags": ["表单", "输入"]
+    },
+    {
+      "name": "custom-select",
+      "label": "自定义下拉选择",
+      "description": "支持搜索和多选的下拉组件",
+      "tags": ["表单", "选择"]
+    },
+    {
+      "name": "custom-date-picker",
+      "label": "自定义日期选择",
+      "description": "日期和时间选择组件",
+      "tags": ["表单", "日期"]
+    },
+    {
+      "name": "custom-upload",
+      "label": "自定义上传",
+      "description": "文件上传组件",
+      "tags": ["表单", "上传"]
+    },
+    {
+      "name": "custom-rich-editor",
+      "label": "自定义富文本编辑器",
+      "description": "所见即所得的富文本编辑器",
+      "tags": ["表单", "编辑器"]
+    }
+  ],
+  "optionsControls": [
+    {
+      "name": "custom-options-editor",
+      "label": "自定义选项编辑器",
+      "description": "用于编辑选项数据的组件",
+      "tags": ["编辑器", "配置"]
+    },
+    {
+      "name": "custom-data-source-editor",
+      "label": "自定义数据源编辑器",
+      "description": "用于配置数据源的编辑器",
+      "tags": ["编辑器", "数据源"]
+    }
+  ],
+  "actions": [
+    {
+      "name": "custom-export-action",
+      "label": "自定义导出动作",
+      "description": "用于数据导出的自定义动作",
+      "tags": ["动作", "导出"]
+    },
+    {
+      "name": "custom-import-action",
+      "label": "自定义导入动作",
+      "description": "用于数据导入的自定义动作",
+      "tags": ["动作", "导入"]
+    }
+  ],
+  "rules": [
+    {
+      "name": "custom-phone-rule",
+      "label": "自定义手机号校验",
+      "description": "用于校验手机号格式的规则",
+      "tags": ["校验", "手机"]
+    },
+    {
+      "name": "custom-idcard-rule",
+      "label": "自定义身份证校验",
+      "description": "用于校验身份证号的规则",
+      "tags": ["校验", "身份证"]
+    }
+  ],
+  "formulas": [
+    {
+      "name": "custom-date-format",
+      "label": "自定义日期格式化",
+      "description": "用于日期格式化的自定义公式",
+      "tags": ["公式", "日期"]
+    },
+    {
+      "name": "custom-currency-format",
+      "label": "自定义货币格式化",
+      "description": "用于货币格式化的自定义公式",
+      "tags": ["公式", "货币"]
+    }
+  ],
+  "rendererEditorPlugins": [
+    {
+      "name": "custom-chart-editor-plugin",
+      "label": "自定义图表编辑器插件",
+      "description": "用于图表组件的编辑器插件",
+      "tags": ["编辑器插件", "图表"]
+    }
+  ],
+  "actionEditorPlugins": [
+    {
+      "name": "custom-action-editor-plugin",
+      "label": "自定义动作编辑器插件",
+      "description": "用于动作配置的编辑器插件",
+      "tags": ["编辑器插件", "动作"]
+    }
+  ],
+  "validatorEditorPlugins": [
+    {
+      "name": "custom-validator-editor-plugin",
+      "label": "自定义校验器编辑器插件",
+      "description": "用于校验规则配置的编辑器插件",
+      "tags": ["编辑器插件", "校验"]
+    }
+  ]
+}

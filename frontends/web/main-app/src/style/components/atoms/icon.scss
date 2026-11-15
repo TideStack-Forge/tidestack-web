@@ -1,0 +1,34 @@
+// Icon Component
+.built-in-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: inherit;
+  width: var(--built-in-icon-size, auto);
+  height: var(--built-in-icon-size, auto);
+  font-size: var(--built-in-icon-size, inherit);
+
+  img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: contain;
+    align-items: center;
+  }
+
+  .svg-icon {
+    width: var(--built-in-icon-size, 1em);
+    height: var(--built-in-icon-size, 1em);
+    display: block;
+    vertical-align: -0.15em;
+    fill: currentColor;
+    overflow: hidden;
+    color: inherit;
+  }
+
+  i {
+    color: inherit;
+    font-size: inherit;
+    line-height: 1;
+  }
+}

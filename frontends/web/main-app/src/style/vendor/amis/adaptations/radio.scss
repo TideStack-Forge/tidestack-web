@@ -1,0 +1,18 @@
+:root {
+  /* ======================================================
+   * Radio
+   * ====================================================== */
+  --radio-size: 14px ;
+
+  --radio-bg: var(--color-bg-container) ;
+  --radio-border-color: var(--color-border) ;
+
+  --radio-checked-bg: var(--color-primary) ;
+  --radio-dot-color: #fff ;
+
+  --radio-hover-border-color: var(--color-primary) ;
+
+  --radio-disabled-bg: var(--color-bg-disabled) ;
+  --radio-disabled-border-color: var(--color-border-disabled) ;
+  --radio-disabled-color: var(--color-text-disabled) ;
+}

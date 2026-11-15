@@ -1,0 +1,23 @@
+$ns: cxd-;
+.static-selection-editor-table .#{$ns}Table-table .#{$ns}Table-checkCell {
+  > .#{$ns}Checkbox--checkbox.#{$ns}Checkbox:hover > input:checked + i {
+    border-color: silver;
+  }
+  > .#{$ns}Checkbox--checkbox.#{$ns}Checkbox:hover > input + i {
+    border-color: var(--Checkbox-color);
+  }
+  > .#{$ns}Checkbox--checkbox input:checked + i {
+    background-color: silver;
+    border-color: silver;
+    &:before {
+      background-color: #eee;
+    }
+  }
+  > .#{$ns}Checkbox--full.#{$ns}Checkbox--checkbox input:checked + i {
+    background-color: silver;
+    border-color: silver;
+    &:before {
+      background-color: silver;
+    }
+  }
+}

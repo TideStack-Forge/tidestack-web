@@ -1,0 +1,25 @@
+// Brand 组件 (Logo + Name)
+.app-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--sidebar-text);
+  width: 100%;
+  min-width: 0;
+
+  &__logo {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+  }
+
+  &__name {
+    font-weight: var(--font-weight-bold);
+    font-size: var(--font-size-lg);
+    margin: 0;
+    color: inherit;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}

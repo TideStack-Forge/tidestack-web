@@ -1,0 +1,210 @@
+/**
+ * RTL (Right-to-Left) 样式适配
+ * 当 html[dir="rtl"] 时应用这些样式
+ */
+
+[dir="rtl"] {
+  /* ==================== 侧边栏菜单 RTL 适配 ==================== */
+  
+  .app-sidebar {
+    left: auto;
+    right: 0;
+  }
+
+  .app-main {
+    margin-left: 0;
+    margin-right: var(--sidebar-width);
+  }
+
+  /* 菜单图标和文本 */
+  .tree-menu__icon,
+  .dual-mode-menu__icon {
+    margin-left: 8px;
+    margin-right: 0;
+  }
+
+  /* 菜单项 padding 翻转 */
+  .tree-menu--level-0 > .tree-menu__item > .tree-menu__link {
+    padding-left: 0;
+    padding-right: var(--menu-item-padding-left);
+  }
+  
+  .tree-menu--level-1 > .tree-menu__item > .tree-menu__link {
+    padding-left: 0;
+    padding-right: var(--menu-submenu-item-padding-left);
+  }
+
+  /* 菜单箭头移到左边 */
+  .tree-menu__item--parent > .tree-menu__link > .tree-menu__arrow {
+    left: var(--space-md);
+    right: auto;
+  }
+  
+  /* 箭头图标翻转方向 */
+  .tree-menu__arrow-icon {
+    transform: rotate(90deg) !important;
+  }
+  
+  .tree-menu__item.is-opened > .tree-menu__link > .tree-menu__arrow > .tree-menu__arrow-icon {
+    transform: rotate(0deg) !important;
+  }
+
+  /* 三级及以上菜单 padding 翻转 */
+  .tree-menu--level-2,
+  .tree-menu--level-3,
+  .tree-menu--level-4,
+  .tree-menu--level-5 {
+    padding-left: 0;
+  }
+
+  .tree-menu--level-2 > .tree-menu__item > .tree-menu__link {
+    padding-left: 0;
+    padding-right: calc(var(--menu-submenu-item-padding-left) + var(--menu-indent-step));
+  }
+
+  .tree-menu--level-3 > .tree-menu__item > .tree-menu__link {
+    padding-left: 0;
+    padding-right: calc(var(--menu-submenu-item-padding-left) + (var(--menu-indent-step) * 2));
+  }
+
+  .tree-menu--level-4 > .tree-menu__item > .tree-menu__link {
+    padding-left: 0;
+    padding-right: calc(var(--menu-submenu-item-padding-left) + (var(--menu-indent-step) * 3));
+  }
+
+  .tree-menu--level-5 > .tree-menu__item > .tree-menu__link {
+    padding-left: 0;
+    padding-right: calc(var(--menu-submenu-item-padding-left) + (var(--menu-indent-step) * 4));
+  }
+
+  /* ==================== 用户菜单 RTL 适配 ==================== */
+  
+  /* 用户菜单弹出位置 */
+  .app-user-menu__dropdown {
+    left: auto;
+    right: 0;
+    width: auto;
+  }
+  
+  /* 用户菜单项 padding */
+  .app-user-menu__item {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  /* ==================== AMIS Tree 组件 RTL 适配 ==================== */
+  
+  /* Tree 缩进方向翻转 */
+  .cxd-Tree-sublist {
+    margin-left: 0;
+    margin-right: var(--Tree-indent);
+  }
+  
+  .cxd-Tree-item {
+    padding-left: 0;
+    padding-right: calc(var(--Tree-depth) * var(--Tree-indent));
+  }
+  
+  /* Tree 箭头位置和方向 */
+  .cxd-Tree-itemArrow {
+    margin-right: 0;
+    margin-left: var(--inputTree-base-size-expandMarginRight);
+  }
+  
+  .cxd-Tree-itemArrowPlaceholder {
+    margin-right: 0;
+    margin-left: var(--inputTree-base-size-expandMarginRight);
+  }
+  
+  /* Tree 箭头图标翻转 */
+  .cxd-Tree-itemArrow > svg {
+    transform: rotate(180deg);
+  }
+  
+  .cxd-Tree-itemArrow.is-folded > svg {
+    transform: rotate(90deg);
+  }
+  
+  /* Tree 项内容对齐 */
+  .cxd-Tree-itemLabel {
+    text-align: right;
+  }
+  
+  /* Tree 图标间距翻转 */
+  .cxd-Tree-itemIcon {
+    margin-right: 0;
+    margin-left: var(--inputTree-base-size-nodeMarginRight);
+  }
+  
+  /* Tree outline 线翻转 */
+  .cxd-Tree--outline .cxd-Tree-item--isLeaf.is-child::before {
+    left: auto;
+    right: calc(var(--Tree-depth) * var(--Tree-indent) + var(--Tree-itemArrowWidth) / 2);
+    border-left: none;
+    border-right: 1px solid var(--borderColor);
+  }
+
+  /* ==================== 顶部栏 RTL 适配 ==================== */
+  
+  .app-brand {
+    margin-left: auto;
+    margin-right: 0;
+  }
+
+  .right-menu {
+    left: 0;
+    right: auto;
+  }
+
+  /* ==================== Tab 栏 RTL 适配 ==================== */
+  
+  /* Tab 项间距翻转 */
+  .app-tabs__item {
+    margin-right: 0;
+    margin-left: 2px;
+    padding: 0 calc((var(--tabs-item-height) - 14px) / 2) 0 calc(var(--space-md) * 2 + 14px);
+  }
+  
+  .app-tabs__item:first-child {
+    margin-left: 0;
+  }
+
+  .app-tabs__item-icon {
+    margin-right: 0;
+    margin-left: calc(var(--space-xs) + 2px);
+  }
+  
+  /* Tab 关闭按钮间距翻转 */
+  .app-tabs__item-close,
+  .app-tabs__item-pin {
+    right: auto;
+    left: 16px;
+  }
+
+  .app-tabs__item-close {
+    right: auto;
+    left: 10px;
+  }
+
+  .app-tabs__menu-button {
+    text-align: right;
+  }
+  
+  /* Tab 箭头间距翻转 */
+  .app-tabs__arrow--left {
+    left: auto;
+    right: calc(var(--tabs-padding-x) * -1 + var(--space-sm));
+  }
+  
+  .app-tabs__arrow--right {
+    right: auto;
+    left: calc(var(--tabs-padding-x) * -1 + var(--space-sm));
+  }
+
+  /* ==================== 通用工具类 RTL 适配 ==================== */
+  
+  .float-left { float: right !important; }
+  .float-right { float: left !important; }
+  .text-left { text-align: right !important; }
+  .text-right { text-align: left !important; }
+}

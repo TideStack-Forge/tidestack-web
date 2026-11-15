@@ -1,0 +1,474 @@
+.cxd-Crud-filter.cxd-Crud-filter--flat {
+  --crud-filter-gap: 16px;
+  --crud-filter-panel-bg: var(--table-header-bg, var(--color-bg-elevated));
+  --crud-filter-divider-color: var(--color-border-secondary);
+  --crud-filter-toolbar-divider-color: var(--color-border);
+  --crud-filter-date-range-width: 16rem;
+  --crud-filter-date-range-max-width: 22rem;
+  --crud-filter-datetime-range-width: 24rem;
+  --crud-filter-datetime-range-max-width: 24rem;
+  --crud-filter-toolbar-width: 10.5rem;
+  --crud-filter-toolbar-height: 32px;
+  --crud-filter-toolbar-button-gap: 8px;
+  --crud-filter-inline-toolbar-button-gap: 4px;
+  --crud-filter-rail-top: 0px;
+  --crud-filter-tail-rail-space: calc(
+    var(--crud-filter-toolbar-width) + var(--crud-filter-gap) + 12px
+  );
+  --Form-row-gutterWidth: var(--crud-filter-gap);
+
+  margin-bottom: 0;
+  background: var(--crud-filter-panel-bg);
+  border: none;
+  border-radius: 6px;
+  box-shadow: none;
+
+  > .cxd-Panel-body {
+    padding: 20px 16px;
+  }
+
+  .cxd-Form {
+    --Form-row-gutterWidth: var(--crud-filter-gap);
+    position: relative;
+  }
+
+  .cxd-Form-row {
+    row-gap: var(--crud-filter-gap);
+  }
+
+  .cxd-Form-row > .cxd-Form-col > .cxd-Form-item,
+  .cxd-Form-row > .cxd-Form-item,
+  .cxd-Form > .cxd-Form-item {
+    margin-right: 0 !important;
+    margin-bottom: 0 !important;
+    background: transparent;
+  }
+
+  .cxd-Form-row,
+  .cxd-Form-row > .cxd-Form-col,
+  .cxd-Form-row > .crud-filter-item,
+  .cxd-Form-row > .crud-filter-item > .cxd-Form-item,
+  .cxd-Form-row > .cxd-Form-item,
+  .cxd-Form-rowInner,
+  .cxd-Form-value {
+    background: transparent;
+  }
+
+  .cxd-Form-row > .crud-filter-item {
+    --crud-filter-item-span: 1;
+    --crud-filter-item-available-width: 100%;
+    flex: 0 0
+      calc(
+        var(--crud-filter-item-available-width) *
+          min(var(--crud-filter-item-span), var(--crud-filter-columns)) /
+          var(--crud-filter-columns)
+      ) !important;
+    max-width: calc(
+      var(--crud-filter-item-available-width) *
+        min(var(--crud-filter-item-span), var(--crud-filter-columns)) /
+        var(--crud-filter-columns)
+    ) !important;
+    min-width: 0;
+  }
+
+  .cxd-Form-row > .crud-filter-item--span-2 {
+    --crud-filter-item-span: 2;
+  }
+
+  .cxd-Form-row > .crud-filter-item--span-3 {
+    --crud-filter-item-span: 3;
+  }
+
+  .cxd-Form-row > .crud-filter-item--span-4 {
+    --crud-filter-item-span: 4;
+  }
+
+  .cxd-Form-row > .crud-filter-item--span-5 {
+    --crud-filter-item-span: 5;
+  }
+
+  .cxd-Form-row > .crud-filter-item--span-6 {
+    --crud-filter-item-span: 6;
+  }
+
+  .cxd-Form-row > .crud-filter-item--span-7 {
+    --crud-filter-item-span: 7;
+  }
+
+  .cxd-Form-row > .crud-filter-item--span-full {
+    --crud-filter-item-span: var(--crud-filter-columns);
+    flex-basis: 100% !important;
+    max-width: 100% !important;
+    width: 100%;
+  }
+
+  .cxd-Form-row > .crud-filter-wide-tooltip,
+  .cxd-Form-row > .crud-filter-item > .crud-filter-wide-tooltip {
+    max-width: 100%;
+    vertical-align: top;
+  }
+
+  .cxd-Form-row > .crud-filter-wide-tooltip > .cxd-Form-control,
+  .cxd-Form-row > .crud-filter-item > .crud-filter-wide-tooltip > .cxd-Form-control {
+    display: block;
+    max-width: 100%;
+  }
+
+  .cxd-Form.crud-filter-layout--inline
+    > .cxd-Form-row
+    > .cxd-Form-item--inline:not(.crud-filter-toolbar-item),
+  .cxd-Form.crud-filter-layout--inline > .cxd-Form-row > .crud-filter-wide-tooltip {
+    flex: 0 0 auto !important;
+    max-width: none !important;
+    width: auto;
+  }
+
+  .cxd-Form.crud-filter-layout--inline > .cxd-Form-row > .crud-filter-toolbar-item {
+    --crud-filter-toolbar-button-gap: var(--crud-filter-inline-toolbar-button-gap);
+    display: inline-block;
+    align-self: flex-start;
+    width: auto;
+  }
+
+  .cxd-Form.crud-filter-layout--inline
+    > .cxd-Form-row
+    > .crud-filter-toolbar-item
+    .crud-filter-toolbar,
+  .cxd-Form.crud-filter-layout--inline
+    > .cxd-Form-row
+    > .crud-filter-toolbar-item
+    .cxd-Form-value,
+  .cxd-Form.crud-filter-layout--inline
+    > .cxd-Form-row
+    > .crud-filter-toolbar-item
+    .cxd-ButtonToolbar {
+    width: auto;
+  }
+
+  .cxd-Form-row > .crud-filter-item--toolbar {
+    flex: 0 0 auto !important;
+    max-width: none !important;
+    align-self: stretch;
+  }
+
+  .cxd-Form-row > .crud-filter-item .cxd-DateRangeControl {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .cxd-Form-row > .crud-filter-item .cxd-Form-item--row > .cxd-Form-rowInner {
+    align-items: center;
+  }
+
+  .cxd-Form.crud-filter-form--label-aligned
+    > .cxd-Form-row
+    > .crud-filter-item--field
+    .cxd-Form-label {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: auto;
+    min-width: calc(var(--crud-filter-label-width, 0px) + 24px);
+    max-width: none;
+    padding-left: 8px;
+    padding-right: 16px;
+    white-space: nowrap;
+    text-align: left;
+  }
+
+  .cxd-Form.crud-filter-form--label-aligned
+    > .cxd-Form-row
+    > .crud-filter-item--field
+    .cxd-Form-label
+    > span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: auto;
+    min-width: 0;
+    text-align: left;
+  }
+
+  .cxd-Form-row > .crud-filter-item .cxd-DateRangePicker {
+    width: 100%;
+  }
+
+  .cxd-Form-row > .crud-filter-wide-tooltip--auto-width .cxd-DateRangeControl.is-date,
+  .cxd-Form-row > .crud-filter-wide-tooltip--auto-width .cxd-DateRangeControl.is-datetime,
+  .cxd-Form-row
+    > .crud-filter-item--wide-head.crud-filter-wide-tooltip
+    .cxd-DateRangeControl.is-date,
+  .cxd-Form-row
+    > .crud-filter-item--wide-head.crud-filter-wide-tooltip
+    .cxd-DateRangeControl.is-datetime {
+    width: 100%;
+    max-width: none;
+  }
+
+  .cxd-Form-row
+    > .crud-filter-wide-tooltip--auto-width.crud-filter-wide-tooltip--date-range
+    .cxd-DateRangeControl {
+    width: var(--crud-filter-date-range-width);
+    max-width: 100%;
+  }
+
+  .cxd-Form-row
+    > .crud-filter-wide-tooltip--auto-width.crud-filter-wide-tooltip--datetime-range
+    .cxd-DateRangeControl {
+    width: var(--crud-filter-datetime-range-width);
+    max-width: 100%;
+  }
+
+  .cxd-Form-row > .crud-filter-item--wide-head .cxd-DateRangeControl.is-date,
+  .cxd-Form-row > .crud-filter-item--wide-head .cxd-DateRangeControl.is-datetime {
+    max-width: none;
+  }
+
+  .cxd-Form-row > .crud-filter-item--divider {
+    display: flex;
+    align-items: center;
+  }
+
+  .cxd-Form-row > .crud-filter-item--divider .crud-filter-divider {
+    width: 100%;
+    margin: 0;
+    border-bottom-color: var(--crud-filter-divider-color);
+  }
+
+  .cxd-Form-row > .crud-filter-item .cxd-DateRangeControl.is-date {
+    max-width: var(--crud-filter-date-range-max-width);
+  }
+
+  .cxd-Form-row > .crud-filter-item .cxd-DateRangeControl.is-datetime {
+    max-width: var(--crud-filter-datetime-range-max-width);
+  }
+
+  .cxd-Form-row .crud-filter-control--fill-width {
+    width: 100%;
+    max-width: none;
+  }
+
+  .cxd-Form-row .crud-filter-control--fill-width > .cxd-Select,
+  .cxd-Form-row .crud-filter-control--fill-width > .cxd-TextControl-input,
+  .cxd-Form-row .crud-filter-control--fill-width > .cxd-DateRangePicker,
+  .cxd-Form-row .crud-filter-control--fill-width > .cxd-DateRangeControl,
+  .cxd-Form-row .crud-filter-control--fill-width > .cxd-DatePicker {
+    width: 100%;
+    max-width: none;
+  }
+
+  .cxd-Form.crud-filter-layout--rail,
+  .cxd-Form.crud-filter-layout--stacked {
+    padding-right: var(--crud-filter-tail-rail-space);
+    min-height: calc(var(--crud-filter-toolbar-height) + 6px);
+  }
+
+  .cxd-Form.crud-filter-layout--rail > .cxd-Form-row > .crud-filter-item--toolbar,
+  .cxd-Form.crud-filter-layout--stacked > .cxd-Form-row > .crud-filter-item--toolbar {
+    position: absolute;
+    right: 0;
+    margin-left: 0;
+    min-width: var(--crud-filter-toolbar-width);
+    width: var(--crud-filter-toolbar-width);
+  }
+
+  .cxd-Form.crud-filter-layout--rail > .cxd-Form-row > .crud-filter-item--toolbar {
+    top: 0;
+    bottom: auto;
+    height: 35px;
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: -8px;
+      top: 50%;
+      width: 1px;
+      height: 18px;
+      background: var(--crud-filter-toolbar-divider-color);
+      transform: translateY(-50%);
+    }
+  }
+
+  .cxd-Form.crud-filter-layout--rail.crud-filter-layout-topology--wide-head,
+  .cxd-Form.crud-filter-layout--stacked.crud-filter-layout-topology--wide-head {
+    padding-right: 0;
+  }
+
+  .cxd-Form.crud-filter-layout--rail.crud-filter-layout-topology--wide-head
+    > .cxd-Form-row
+    > .crud-filter-item--field,
+  .cxd-Form.crud-filter-layout--stacked.crud-filter-layout-topology--wide-head
+    > .cxd-Form-row
+    > .crud-filter-item--field {
+    --crud-filter-item-available-width: calc(100% - var(--crud-filter-tail-rail-space));
+  }
+
+  .cxd-Form.crud-filter-layout--rail.crud-filter-layout-topology--wide-head
+    > .cxd-Form-row
+    > .crud-filter-item--toolbar,
+  .cxd-Form.crud-filter-layout--stacked.crud-filter-layout-topology--wide-head
+    > .cxd-Form-row
+    > .crud-filter-item--toolbar {
+    top: var(--crud-filter-rail-top);
+  }
+
+  .cxd-Form.crud-filter-layout--stacked > .cxd-Form-row > .crud-filter-item--toolbar {
+    top: 0;
+    bottom: 0;
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: -8px;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: var(--crud-filter-toolbar-divider-color);
+    }
+  }
+
+  .cxd-Form.crud-filter-layout--rail .crud-filter-toolbar .cxd-ButtonToolbar,
+  .cxd-Form.crud-filter-layout--stacked .crud-filter-toolbar .cxd-ButtonToolbar {
+    justify-content: flex-start;
+  }
+
+  .cxd-Form.crud-filter-form--mobile-stacked {
+    --crud-filter-columns: 1;
+
+    padding-right: 0;
+    min-height: 0;
+
+    > .crud-filter-item--mobile-stacked {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    > .crud-filter-item--mobile-stacked > .cxd-Form-label,
+    > .crud-filter-item--mobile-stacked > .cxd-Form-item-controlBox {
+      display: block;
+      width: 100%;
+      max-width: none;
+      padding-left: 0;
+      padding-right: 0;
+      text-align: left;
+    }
+
+    > .crud-filter-item--mobile-stacked > .cxd-Form-item-controlBox {
+      margin-left: 0;
+    }
+
+    > .cxd-Form-row > .crud-filter-item,
+    > .cxd-Form-row > .crud-filter-wide-tooltip,
+    > .cxd-Form-row > .cxd-Form-item--inline:not(.crud-filter-toolbar-item),
+    > .cxd-Form-row > .crud-filter-toolbar-item {
+      flex-basis: 100% !important;
+      max-width: 100% !important;
+      width: 100%;
+    }
+
+    > .cxd-Form-row > .crud-filter-item--toolbar {
+      position: static;
+      min-width: 0;
+      margin-left: 0;
+      top: auto;
+      right: auto;
+      bottom: auto;
+      height: auto;
+
+      &::before {
+        content: none;
+      }
+    }
+
+    > .cxd-Form-row > .crud-filter-item .cxd-DateRangeControl.is-date,
+    > .cxd-Form-row > .crud-filter-item .cxd-DateRangeControl.is-datetime {
+      max-width: none;
+    }
+
+    > .cxd-Form-row > .crud-filter-item .cxd-Form-item--row,
+    > .cxd-Form-row > .crud-filter-item .cxd-Form-item--row > .cxd-Form-rowInner {
+      width: 100%;
+    }
+
+    > .cxd-Form-row > .crud-filter-item .cxd-Form-item--row > .cxd-Form-rowInner {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    > .cxd-Form-row > .crud-filter-item .cxd-Form-label {
+      width: 100%;
+      min-width: 0;
+      padding-left: 0;
+      padding-right: 0;
+      text-align: left;
+    }
+  }
+}
+
+.crud-filter-toolbar {
+  margin-bottom: 0 !important;
+  display: flex;
+  align-items: flex-end;
+  width: 100%;
+  height: 100%;
+
+  > .cxd-Form-rowInner {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    height: 100%;
+  }
+
+  .cxd-Form-control,
+  .cxd-Form-value {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: 100%;
+    min-height: 100%;
+  }
+
+  .cxd-ButtonToolbar {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: var(--crud-filter-toolbar-button-gap);
+    align-items: center;
+    justify-content: flex-end;
+    margin-left: 0;
+    margin-top: 0;
+    width: 100%;
+  }
+
+  .cxd-ButtonToolbar.cxd-Form-control {
+    display: flex;
+  }
+
+  .cxd-Button {
+    margin: 0;
+    white-space: nowrap;
+  }
+
+  &.crud-filter-toolbar--mobile-stacked {
+    align-items: stretch;
+
+    > .cxd-Form-rowInner {
+      justify-content: stretch;
+    }
+
+    .cxd-Form-control,
+    .cxd-Form-value {
+      justify-content: stretch;
+    }
+
+    .cxd-ButtonToolbar {
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: flex-start;
+    }
+
+    .cxd-Button {
+      width: 100%;
+    }
+  }
+}

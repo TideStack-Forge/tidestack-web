@@ -1,0 +1,464 @@
+// ============================================================
+// 登录页面样式 - 灵活布局系统
+// ============================================================
+
+// 登录页面容器
+.login-page {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  
+  // 背景层
+  &__background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('~@/assets/images/login-bg.svg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: 0;
+  }
+  
+  // 内容容器
+  &__container {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    display: flex;
+  }
+  
+  // 微前端登录
+  &__micro {
+    width: 100%;
+    height: 100%;
+  }
+  
+  // 布局变体：水平垂直居中
+  &--center {
+    .login-page__container {
+      justify-content: center;
+      align-items: center;
+    }
+  }
+  
+  // 布局变体：水平垂直居中，垂直向下偏移
+  &--center-offset {
+    .login-page__container {
+      justify-content: center;
+      align-items: center;
+      padding-top: 10vh;
+    }
+  }
+  
+  // 布局变体：垂直居中，水平居右
+  &--right {
+    .login-page__container {
+      justify-content: flex-end;
+      align-items: center;
+      padding-right: 10vw;
+    }
+  }
+  
+  // 布局变体：垂直居中，水平居右（距中线）
+  &--right-center {
+    .login-page__container {
+      justify-content: center;
+      align-items: center;
+      padding-left: 25vw;
+    }
+  }
+  
+  // 布局变体：水平居中，垂直居下
+  &--bottom {
+    .login-page__container {
+      justify-content: center;
+      align-items: flex-end;
+      padding-bottom: 10vh;
+    }
+  }
+}
+
+.login-page__language-selector {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+.language-selector-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.language-selector-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #606266;
+  font-size: 16px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.language-selector {
+  padding: 8px 12px 8px 36px;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  background-color: #fff;
+  color: #606266;
+  font-size: 14px;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s;
+
+  &:hover {
+    border-color: #c0c4cc;
+  }
+
+  &:focus {
+    border-color: #409eff;
+  }
+}
+
+// 登录卡片
+.login-card {
+  width: 420px;
+  max-width: 90%;
+  padding: var(--space-xxxl) var(--space-xxl);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  
+  &__logo {
+    display: flex;
+    justify-content: center;
+    margin-bottom: var(--space-xl);
+    
+    img,
+    .built-in-icon {
+      width: 64px;
+      height: 64px;
+      object-fit: contain;
+    }
+  }
+  
+  &__title {
+    margin: 0 0 var(--space-sm);
+    font-size: var(--font-size-xxxl);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text);
+    text-align: center;
+    letter-spacing: 0.5px;
+  }
+  
+  &__slogan {
+    margin: 0 0 var(--space-sm);
+    font-size: var(--font-size-md);
+    color: var(--color-text-secondary);
+    text-align: center;
+    line-height: var(--line-height-relaxed);
+  }
+  
+  &__welcome {
+    margin: 0 0 var(--space-xxl);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text);
+    text-align: center;
+  }
+
+  &__credential-header {
+    margin-bottom: var(--space-xl);
+  }
+
+  &__credential-hint {
+    margin: 0;
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-relaxed);
+    color: var(--color-text-secondary);
+  }
+
+  &__divider {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    margin-top: var(--space-xxl);
+    color: var(--color-text-tertiary);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-normal);
+
+    &::before,
+    &::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(
+        90deg,
+        rgba(148, 163, 184, 0.14) 0%,
+        rgba(148, 163, 184, 0.45) 50%,
+        rgba(148, 163, 184, 0.14) 100%
+      );
+    }
+  }
+
+  &__provider-group.external-provider-list {
+    margin-top: var(--space-lg);
+  }
+}
+
+.login-mode-switcher + .login-card__credential-hint {
+  margin-top: var(--space-md);
+}
+
+.login-mode-switcher {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding: 4px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.05);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+
+  &__option {
+    flex: 1;
+    min-height: 36px;
+    padding: 0 var(--space-md);
+    border: none;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: var(--transition-fast);
+
+    &:hover:not(.is-disabled) {
+      color: var(--color-text);
+    }
+
+    &.is-active {
+      background: rgba(255, 255, 255, 0.96);
+      color: var(--color-primary);
+      box-shadow:
+        0 1px 2px rgba(15, 23, 42, 0.08),
+        0 8px 20px rgba(15, 23, 42, 0.06);
+    }
+
+    &.is-disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+  }
+}
+
+// 登录表单
+.login-form {
+  &__button {
+    width: 100%;
+    height: var(--control-height-lg);
+    margin-top: var(--space-xxl);
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-medium);
+    border-radius: var(--radius-md);
+    background: var(--color-primary);
+    border: 1px solid var(--color-primary);
+    color: var(--button-primary-text);
+    cursor: pointer;
+    transition: var(--transition-fast);
+    
+    &:not(.is-loading):hover {
+      background: var(--color-primary-hover);
+      border-color: var(--color-primary-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px var(--color-primary-bg-hover);
+    }
+    
+    &:not(.is-loading):active {
+      background: var(--color-primary-active);
+      border-color: var(--color-primary-active);
+      transform: translateY(0);
+    }
+    
+    &.is-loading {
+      cursor: not-allowed;
+      opacity: 0.8;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
+      box-shadow: none;
+      transform: none;
+    }
+  }
+  
+  &__loading {
+    margin-right: var(--space-sm);
+    animation: spin 1s linear infinite;
+  }
+}
+
+// 登录表单项
+.login-form-item {
+  margin-bottom: var(--space-xl);
+  position: relative;
+  
+  &__label {
+    display: block;
+    margin-bottom: var(--space-sm);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-secondary);
+    letter-spacing: 0.3px;
+    line-height: var(--line-height-normal);
+  }
+  
+  &__control {
+    position: relative;
+  }
+  
+  &__error {
+    color: var(--color-error-text);
+    font-size: var(--font-size-xs);
+    line-height: var(--line-height-normal);
+    padding-top: var(--space-xs);
+    position: absolute;
+    top: 100%;
+    left: 0;
+  }
+  
+  // 必填标识
+  &.is-required > &__label::before {
+    content: '*';
+    color: var(--color-error);
+    margin-right: var(--space-xs);
+  }
+  
+  // 错误状态
+  &.is-error {
+    .login-input__field {
+      border-color: var(--color-error-border);
+      
+      &:hover,
+      &:focus {
+        border-color: var(--color-error);
+        box-shadow: 0 0 0 3px var(--color-error-bg);
+      }
+    }
+  }
+}
+
+// 登录输入框
+.login-input {
+  position: relative;
+  
+  &__field {
+    width: 100%;
+    height: var(--control-height-lg);
+    padding: 0 var(--space-xxl);
+    font-size: var(--font-size-md);
+    line-height: var(--control-height-lg);
+    color: var(--color-text);
+    background: var(--color-bg-container);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    transition: var(--transition-fast);
+    
+    &::placeholder {
+      color: var(--color-text-placeholder);
+    }
+    
+    &:hover {
+      border-color: var(--color-border-hover);
+    }
+    
+    &:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px var(--color-primary-bg);
+    }
+  }
+  
+  &__prefix {
+    position: absolute;
+    left: var(--space-md);
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    color: var(--color-text-tertiary);
+    font-size: var(--font-size-lg);
+  }
+  
+  &__suffix {
+    position: absolute;
+    right: var(--space-md);
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    color: var(--color-text-tertiary);
+  }
+  
+  &__clear {
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+    transition: var(--transition-color);
+    
+    &:hover {
+      color: var(--color-text-secondary);
+    }
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// 响应式
+@media (max-width: 768px) {
+  .login-card {
+    padding: var(--space-xxl) var(--space-xl);
+    
+    &__title {
+      font-size: var(--font-size-xxl);
+      margin-bottom: var(--space-xl);
+    }
+  }
+  
+  .login-form {
+    &__button {
+      margin-top: var(--space-xl);
+    }
+  }
+  
+  .login-form-item {
+    margin-bottom: var(--space-lg);
+  }
+  
+  // 移动端强制居中
+  .login-page {
+    &--right,
+    &--right-center,
+    &--bottom {
+      .login-page__container {
+        justify-content: center !important;
+        align-items: center !important;
+        padding: 0 !important;
+      }
+    }
+  }
+}

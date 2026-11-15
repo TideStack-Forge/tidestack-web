@@ -1,0 +1,118 @@
+// ============================================================
+// 浅色主题 (Light Theme)
+// ============================================================
+// 切换方式：data-theme="light"
+
+@use "sass:color";
+@use "sass:map";
+@use "../tokens" as tokens;
+@use "../utils/functions" as fn;
+@use "./defaults" as defaults;
+
+// 生成色板
+$palette-primary: fn.scale(tokens.$color-primary);
+$palette-success: fn.scale(tokens.$color-success);
+$palette-warning: fn.scale(tokens.$color-warning);
+$palette-error: fn.scale(tokens.$color-error);
+$palette-info: fn.scale(tokens.$color-info);
+$palette-neutral: fn.neutral(tokens.$color-bg, tokens.$color-text-main);
+
+@mixin light-theme-vars {
+  // ========== 语义变量（Semantic）- 仅浅色主题特有 ==========
+  // 品牌色
+  --color-primary: #{map.get($palette-primary, 500)};
+  --color-primary-hover: #{map.get($palette-primary, 600)};
+  --color-primary-active: #{map.get($palette-primary, 700)};
+  --color-primary-bg: #{map.get($palette-primary, 50)};
+  --color-primary-bg-hover: #{map.get($palette-primary, 100)};
+  --color-primary-border: #{map.get($palette-primary, 200)};
+  --color-primary-text: #{map.get($palette-primary, 700)};
+  
+  // 功能色 - Success
+  --color-success: #{map.get($palette-success, 500)};
+  --color-success-bg: #{map.get($palette-success, 50)};
+  --color-success-bg-hover: #{map.get($palette-success, 100)};
+  --color-success-border: #{map.get($palette-success, 200)};
+  --color-success-text: #{map.get($palette-success, 700)};
+  
+  // 功能色 - Warning
+  --color-warning: #{map.get($palette-warning, 500)};
+  --color-warning-bg: #{map.get($palette-warning, 50)};
+  --color-warning-bg-hover: #{map.get($palette-warning, 100)};
+  --color-warning-border: #{map.get($palette-warning, 200)};
+  --color-warning-text: #{map.get($palette-warning, 700)};
+  
+  // 功能色 - Error
+  --color-error: #{map.get($palette-error, 500)};
+  --color-error-bg: #{map.get($palette-error, 50)};
+  --color-error-bg-hover: #{map.get($palette-error, 100)};
+  --color-error-border: #{map.get($palette-error, 200)};
+  --color-error-text: #{map.get($palette-error, 700)};
+  
+  // 功能色 - Info
+  --color-info: #{map.get($palette-info, 500)};
+  --color-info-bg: #{map.get($palette-info, 50)};
+  --color-info-bg-hover: #{map.get($palette-info, 100)};
+  --color-info-border: #{map.get($palette-info, 200)};
+  --color-info-text: #{map.get($palette-info, 700)};
+  
+  // 文本色
+  --color-text: #{tokens.$color-text-main};
+  --color-text-primary: #{tokens.$color-primary};
+  --color-text-secondary: #{color.mix(white, tokens.$color-text-main, 35%)};
+  --color-text-tertiary: #{color.mix(white, tokens.$color-text-main, 55%)};
+  --color-text-quaternary: #{color.mix(white, tokens.$color-text-main, 85%)};
+  --color-text-placeholder: #{color.mix(white, tokens.$color-text-main, 75%)};
+  --color-text-disabled: #{color.mix(white, tokens.$color-text-main, 75%)};
+  
+  // 背景色
+  --color-bg-page: #{tokens.$color-bg};
+  --color-bg-body: #{color.mix(black, tokens.$color-bg, 4%)};
+  --color-bg-layout: #{color.mix(black, tokens.$color-bg, 4%)};
+  --color-bg-disabled: #{color.mix(black, tokens.$color-bg, 4%)};
+  --color-bg-hover: #{color.mix(black, tokens.$color-bg, 2%)};
+  --color-bg-selected: #{color.mix(white, map.get($palette-primary, 500), 80%)};
+  --color-bg-elevated: #{color.mix(black, tokens.$color-bg, 10%)};
+  --color-bg-container: #{tokens.$color-bg};
+  --color-bg-inverse: #{map.get($palette-neutral, 600)};
+  
+  // 边框色
+  --color-border: #{color.mix(black, tokens.$color-bg, 16%)};
+  --color-border-primary: #{color.mix(black, tokens.$color-bg, 16%)};
+  --color-border-secondary: #{color.mix(black, tokens.$color-bg, 6%)};
+  --color-border-tertiary: #{color.mix(black, tokens.$color-bg, 10%)};
+  --color-border-hover: #{color.mix(black, tokens.$color-bg, 24%)};
+  --color-border-strong: #{color.mix(black, tokens.$color-bg, 30%)};
+  --color-border-stronger: #{color.mix(black, tokens.$color-bg, 36%)};
+  --color-border-disabled: #{color.mix(black, tokens.$color-bg, 4%)};
+  --color-border-focus: #{map.get($palette-primary, 500)};
+  
+  // 链接色
+  --color-link: #{map.get($palette-primary, 500)};
+  --color-link-hover: #{map.get($palette-primary, 600)};
+  --color-link-active: #{map.get($palette-primary, 700)};
+  
+  // 填充色
+  --color-fill: #{color.mix(black, tokens.$color-bg, 8%)};
+  --color-fill-primary: #{color.mix(black, tokens.$color-bg, 8%)};
+  --color-fill-secondary: #{color.mix(black, tokens.$color-bg, 4%)};
+  --color-fill-tertiary: #{color.mix(black, tokens.$color-bg, 12%)};
+  --color-fill-quaternary: #{color.mix(black, tokens.$color-bg, 16%)};
+  
+  // 其他
+  --color-outline: #{rgba(map.get($palette-primary, 500), 0.20)};
+  --color-shadow: rgba(0, 0, 0, 0.12);
+  --color-shadow-strong: rgba(0, 0, 0, 0.24);
+  --color-bg-spotlight: rgba(0, 0, 0, 0.85);
+  --color-bg-mask: rgba(0, 0, 0, 0.45);
+  --color-danger: #{map.get($palette-error, 500)};
+  --color-bg-sidebar: #ffffff;
+  @include defaults.light-theme-default-vars(
+    $palette-primary,
+    $palette-success,
+    $palette-warning,
+    $palette-error,
+    $palette-info,
+    $palette-neutral
+  );
+}

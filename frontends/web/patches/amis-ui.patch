@@ -1,0 +1,78 @@
+diff --git a/esm/components/TooltipWrapper.js b/esm/components/TooltipWrapper.js
+index 1557808c5496e2dfb960d005dce735b350312c34..91753a224f94d114e35c6aa56e3a92c8c26d7574 100644
+--- a/esm/components/TooltipWrapper.js
++++ b/esm/components/TooltipWrapper.js
+@@ -40,6 +40,7 @@ var TooltipWrapper = /** @class */ (function (_super) {
+         _this.handleShow = _this.handleShow.bind(_this);
+         _this.handleHide = _this.handleHide.bind(_this);
+         _this.handleClick = _this.handleClick.bind(_this);
++        _this.handleTargetClick = _this.handleTargetClick.bind(_this);
+         _this.handleFocus = _this.handleFocus.bind(_this);
+         _this.handleBlur = _this.handleBlur.bind(_this);
+         _this.handleMouseOver = _this.handleMouseOver.bind(_this);
+@@ -131,9 +132,16 @@ var TooltipWrapper = /** @class */ (function (_super) {
+     };
+     TooltipWrapper.prototype.handleClick = function (e) {
+         var onClick = this.getChildProps().onClick;
++        clearTimeout(this.timer);
+         this.state.show ? this.hide() : this.show();
+         onClick && onClick(e);
+     };
++    TooltipWrapper.prototype.handleTargetClick = function (e) {
++        var onClick = this.getChildProps().onClick;
++        clearTimeout(this.timer);
++        this.state.show && this.hide();
++        onClick && onClick(e);
++    };
+     TooltipWrapper.prototype.render = function () {
+         var props = this.props;
+         var child = React__default.Children.only(props.children);
+@@ -152,6 +160,9 @@ var TooltipWrapper = /** @class */ (function (_super) {
+         if (~triggers.indexOf('click')) {
+             childProps.onClick = this.handleClick;
+         }
++        else {
++            childProps.onClick = this.handleTargetClick;
++        }
+         if (~triggers.indexOf('focus')) {
+             childProps.onFocus = this.handleShow;
+             childProps.onBlur = this.handleHide;
+diff --git a/lib/components/TooltipWrapper.js b/lib/components/TooltipWrapper.js
+index 796ae45f1484c79c64b18203f80085448eeec134..b4e10c4ebeffb5b44a2df76bb8299db402817462 100644
+--- a/lib/components/TooltipWrapper.js
++++ b/lib/components/TooltipWrapper.js
+@@ -46,6 +46,7 @@ var TooltipWrapper = /** @class */ (function (_super) {
+         _this.handleShow = _this.handleShow.bind(_this);
+         _this.handleHide = _this.handleHide.bind(_this);
+         _this.handleClick = _this.handleClick.bind(_this);
++        _this.handleTargetClick = _this.handleTargetClick.bind(_this);
+         _this.handleFocus = _this.handleFocus.bind(_this);
+         _this.handleBlur = _this.handleBlur.bind(_this);
+         _this.handleMouseOver = _this.handleMouseOver.bind(_this);
+@@ -137,9 +138,16 @@ var TooltipWrapper = /** @class */ (function (_super) {
+     };
+     TooltipWrapper.prototype.handleClick = function (e) {
+         var onClick = this.getChildProps().onClick;
++        clearTimeout(this.timer);
+         this.state.show ? this.hide() : this.show();
+         onClick && onClick(e);
+     };
++    TooltipWrapper.prototype.handleTargetClick = function (e) {
++        var onClick = this.getChildProps().onClick;
++        clearTimeout(this.timer);
++        this.state.show && this.hide();
++        onClick && onClick(e);
++    };
+     TooltipWrapper.prototype.render = function () {
+         var props = this.props;
+         var child = React__default["default"].Children.only(props.children);
+@@ -158,6 +166,9 @@ var TooltipWrapper = /** @class */ (function (_super) {
+         if (~triggers.indexOf('click')) {
+             childProps.onClick = this.handleClick;
+         }
++        else {
++            childProps.onClick = this.handleTargetClick;
++        }
+         if (~triggers.indexOf('focus')) {
+             childProps.onFocus = this.handleShow;
+             childProps.onBlur = this.handleHide;

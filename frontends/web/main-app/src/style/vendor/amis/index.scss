@@ -1,0 +1,5 @@
+// 先导入适配样式（覆盖 amis 默认样式）
+@forward 'adaptations';
+
+// 后导入补丁样式（修复 amis bug）
+@forward 'patches';

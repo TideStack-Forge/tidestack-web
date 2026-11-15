@@ -1,0 +1,265 @@
+// User Menu Component
+.app-user-menu {
+  &__container {
+    width: 100%;
+    position: relative;
+    height: 44px;
+  }
+
+  &__card {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    min-width: 0;
+    box-sizing: border-box;
+
+    &.is-open {
+      z-index: var(--z-index-dropdown);
+      overflow: hidden;
+      background: var(--user-menu-trigger-bg-open, var(--color-bg-container));
+      border-radius: 22px;
+      box-shadow: var(--user-menu-trigger-shadow-open, var(--shadow-lg));
+
+      .app-user-menu__trigger,
+      .app-user-menu__trigger:hover {
+        background: transparent;
+        border-radius: 0;
+      }
+    }
+  }
+
+  &__trigger {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: var(--space-sm);
+    position: relative;
+    cursor: pointer;
+    padding: 0 10px 0 4px;
+    border-radius: var(--scale-radius-pill);
+    transition:
+      background-color var(--motion-duration-fast) ease,
+      box-shadow var(--motion-duration-fast) ease,
+      color var(--motion-duration-fast) ease;
+    height: 44px;
+    width: 100%;
+    box-sizing: border-box;
+    min-width: 0;
+    max-width: 100%;
+
+    &:hover {
+      background-color: var(--color-bg-hover);
+    }
+  }
+
+  &__overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: calc(var(--z-index-dropdown) - 1);
+    background: transparent;
+  }
+
+  &__avatar {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    border: 2px solid var(--user-menu-avatar-border, var(--color-bg-container));
+    border-radius: 50%;
+    background: var(--user-menu-avatar-bg, var(--color-primary));
+    color: var(--user-menu-avatar-text, var(--color-bg-container));
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  &__name {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--user-menu-item-text, var(--color-text));
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+  }
+
+  &__arrow {
+    flex-shrink: 0;
+    color: inherit;
+    transform: rotate(180deg);
+    transition: transform var(--motion-duration-fast) ease;
+
+    &.is-open {
+      transform: rotate(0deg);
+    }
+  }
+
+  &__dropdown {
+    width: 100%;
+    box-sizing: border-box;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    list-style: none;
+    margin: 0 0 var(--space-xs);
+    padding: 0;
+    box-shadow: none;
+    min-width: 0;
+    white-space: nowrap;
+  }
+
+  &__item {
+    height: 38px;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    color: var(--user-menu-item-text, var(--color-text));
+    cursor: pointer;
+    transition: background-color var(--motion-duration-fast) ease;
+
+    &:hover {
+      background-color: var(--user-menu-item-bg-hover, var(--color-bg-hover));
+    }
+
+    p {
+      margin: 0;
+      font-size: var(--font-size-sm);
+    }
+  }
+  &__item-icon {
+    flex-shrink: 0;
+    margin-right: 8px;
+    color: var(--user-menu-item-text, var(--color-text-secondary));
+  }
+
+  &__item.is-disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+
+    &:hover {
+      background-color: transparent;
+    }
+  }
+
+  &__item .menu-badge {
+    margin-left: 8px;
+  }
+
+  &__divider {
+    height: 1px;
+    margin: var(--space-xs) 0;
+    background: var(--user-menu-divider-bg, var(--color-border));
+    list-style: none;
+  }
+}
+
+// Sidebar context styles
+.app-sidebar {
+  .app-user-menu {
+    --user-menu-avatar-bg: var(--sidebar-user-menu-avatar-bg, var(--color-primary));
+    --user-menu-avatar-border: var(--sidebar-user-menu-avatar-border, var(--color-bg-container));
+    --user-menu-avatar-text: var(--sidebar-user-menu-avatar-text, var(--color-bg-container));
+    --user-menu-item-text: var(--sidebar-user-menu-item-text, var(--sidebar-user-menu-text));
+    --user-menu-item-bg-hover: var(--sidebar-user-menu-item-bg-hover, var(--sidebar-user-menu-bg-hover));
+
+    &__trigger {
+      color: var(--sidebar-user-menu-text);
+
+      &:hover {
+        background-color: var(--sidebar-user-menu-bg-hover);
+
+        .app-user-menu__name {
+          color: var(--sidebar-user-menu-text-hover);
+        }
+
+        .app-user-menu__arrow {
+          color: var(--sidebar-user-menu-arrow-hover);
+        }
+      }
+    }
+
+    &__name {
+      color: var(--sidebar-user-menu-text);
+    }
+
+    &__arrow {
+      color: var(--sidebar-user-menu-arrow);
+    }
+
+    &__card.is-open {
+      --user-menu-trigger-bg-open: var(--sidebar-user-menu-bg-open);
+      --user-menu-trigger-shadow-open: var(--sidebar-user-menu-shadow-open);
+
+      .app-user-menu__name {
+        color: var(--sidebar-user-menu-text-hover);
+      }
+
+      .app-user-menu__arrow {
+        color: var(--sidebar-user-menu-arrow-hover);
+      }
+    }
+  }
+}
+
+// Header context styles
+.app-header {
+  .app-user-menu {
+    // Keep the header action measurable when its trigger uses width: 100%.
+    // Without an explicit flex basis, the percentage-width descendants can
+    // collapse the menu to zero in the header's auto-sized action group.
+    width: 160px;
+    flex: 0 0 160px;
+
+    --user-menu-avatar-bg: var(--header-user-menu-avatar-bg, var(--color-primary));
+    --user-menu-avatar-border: var(--header-user-menu-avatar-border, var(--color-bg-container));
+    --user-menu-avatar-text: var(--header-user-menu-avatar-text, var(--color-bg-container));
+    --user-menu-item-text: var(--header-user-menu-item-text, var(--header-user-menu-text));
+    --user-menu-item-bg-hover: var(--header-user-menu-item-bg-hover, var(--header-user-menu-bg-hover));
+
+    &__trigger {
+      color: var(--header-user-menu-text);
+
+      &:hover {
+        background-color: var(--header-user-menu-bg-hover);
+
+        .app-user-menu__arrow {
+          color: var(--header-user-menu-arrow-hover);
+        }
+
+        .app-user-menu__avatar {
+          color: var(--header-user-menu-avatar-hover);
+        }
+      }
+    }
+
+    &__name {
+      color: var(--header-user-menu-text);
+    }
+
+    &__arrow {
+      color: var(--header-user-menu-arrow);
+    }
+
+    &__card.is-open {
+      --user-menu-trigger-bg-open: var(--header-user-menu-bg-open);
+      --user-menu-trigger-shadow-open: var(--header-user-menu-shadow-open);
+
+      .app-user-menu__arrow {
+        color: var(--header-user-menu-arrow-hover);
+      }
+    }
+  }
+}

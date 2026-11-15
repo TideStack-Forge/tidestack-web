@@ -1,0 +1,48 @@
+{
+  "name": "/system-setting/user-dashboard-template-manage/edit",
+  "schema": {
+    "type": "form",
+    "wrapWithPanel": false,
+    "initApi": {
+      "method": "get",
+      "url": "/api/user-dashboard-template/${id}"
+    },
+    "api": {
+      "method": "put",
+      "url": "/api/user-dashboard-template/${id}"
+    },
+    "body": [
+      {
+        "type": "input-text",
+        "name": "name",
+        "label": "模板名称",
+        "required": true,
+        "placeholder": "请输入模板名称"
+      },
+      {
+        "type": "textarea",
+        "name": "description",
+        "label": "模板描述",
+        "placeholder": "请输入模板描述",
+        "maxRows": 5
+      },
+      {
+        "type": "switch",
+        "name": "isDefault",
+        "label": "设为默认模板"
+      },
+      {
+        "type": "dashboard",
+        "name": "template",
+        "placeholderImage": "",
+        "label": "仪表盘布局",
+        "required": true,
+        "widgetDefinitionsApi": {
+          "method": "get",
+          "url": "/api/widget-definition"
+        },
+        "editable": true
+      }
+    ]
+  }
+}

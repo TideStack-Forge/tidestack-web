@@ -1,0 +1,81 @@
+.BusinessBehaviorEditor {
+  display: grid;
+  gap: var(--space-lg);
+  min-width: 0;
+
+  label:not([class]),
+  .BusinessBehaviorEditor-field {
+    display: grid;
+    gap: var(--form-label-margin-bottom);
+    min-width: 0;
+    font-size: var(--form-label-font-size);
+    font-weight: var(--font-weight-regular);
+    > span {
+      color: var(--form-label-color);
+      font-weight: var(--form-label-font-weight);
+    }
+  }
+  p {
+    margin: 0;
+  }
+  .cxd-Button {
+    justify-self: start;
+  }
+  > article {
+    display: grid;
+    gap: var(--space-lg);
+  }
+  > article > section,
+  .BusinessBehaviorMapping > section {
+    display: grid;
+    gap: var(--space-md);
+    min-width: 0;
+    padding-block: var(--space-sm);
+  }
+  summary {
+    cursor: pointer;
+  }
+  .cxd-SchemaEditor {
+    min-width: 0;
+    overflow-x: auto;
+  }
+}
+.BusinessBehaviorEditor-basics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-lg);
+}
+.BusinessBehaviorEditor-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+.BusinessBehaviorMapping {
+  display: grid;
+  gap: var(--space-md);
+  min-width: 0;
+}
+.BusinessBehaviorMapping-row {
+  display: grid;
+  grid-template-columns: minmax(120px, 1fr) minmax(160px, 1fr) minmax(160px, 1.5fr) auto;
+  align-items: start;
+  gap: var(--space-md);
+  > div {
+    display: grid;
+    gap: var(--form-label-margin-bottom);
+    min-width: 0;
+  }
+  small {
+    overflow-wrap: anywhere;
+  }
+}
+@media (max-width: 1000px) {
+  .BusinessBehaviorMapping-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 600px) {
+  .BusinessBehaviorEditor-basics {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

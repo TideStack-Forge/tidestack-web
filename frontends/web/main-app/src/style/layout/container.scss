@@ -1,0 +1,15 @@
+.content-container {
+  height: 100%;
+  width: 100%;
+
+  > .internal-page,
+  > .micro-page {
+    height: 100%;
+    width: 100%;
+  }
+
+  > .internal-page > .route-view {
+    height: 100%;
+    width: 100%;
+  }
+}

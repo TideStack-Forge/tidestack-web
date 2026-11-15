@@ -1,0 +1,131 @@
+gzip              on;
+gzip_min_length   1k;
+gzip_buffers      4 16k;
+gzip_http_version 1.1;
+gzip_comp_level   5;
+gzip_types text/css
+    text/javascript
+    application/javascript
+    application/json
+    application/xml
+    font/ttf
+    image/svg+xml
+    image/bmp;
+gzip_proxied any;
+gzip_static on;
+gzip_vary on;
+gzip_disable "MSIE [1-6]\.";
+
+server {
+    listen      ${LISTEN_PORT};
+    server_name _;
+
+    access_log /app/deploy/logs/web/access.log;
+    error_log /app/deploy/logs/web/error.log;
+
+    include /etc/nginx/server-includes/micro-proxies.conf;
+
+    location ^~ /actuator/ {
+        proxy_pass              ${BACKEND_URL};
+        proxy_set_header        Host $host;
+        proxy_set_header        X-Real-IP $remote_addr;
+        proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header        X-Forwarded-Proto $scheme;
+    }
+
+    location ^~ /api/ {
+        add_header Access-Control-Allow-Origin $http_origin always;
+        add_header Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS" always;
+        add_header Access-Control-Allow-Headers "Content-Type, Authorization, token" always;
+        add_header Access-Control-Allow-Credentials true always;
+        if ($request_method = OPTIONS) {
+            return 204;
+        }
+
+        proxy_pass              ${BACKEND_URL};
+        proxy_set_header        Host $host;
+        proxy_set_header        X-Real-IP $remote_addr;
+        proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header        X-Forwarded-Proto $scheme;
+        client_max_body_size    2G;
+    }
+
+    location ~ ^/(oauth2/|\.well-known/|userinfo$|connect/logout$) {
+        proxy_pass              ${BACKEND_URL};
+        proxy_set_header        Host $host;
+        proxy_set_header        X-Real-IP $remote_addr;
+        proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header        X-Forwarded-Proto $scheme;
+    }
+
+    location ^~ /file/ {
+        add_header Access-Control-Allow-Origin $http_origin always;
+        add_header Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS" always;
+        add_header Access-Control-Allow-Headers "Content-Type, Authorization, token" always;
+        add_header Access-Control-Allow-Credentials true always;
+        if ($request_method = OPTIONS) {
+            return 204;
+        }
+
+        proxy_pass              ${BACKEND_URL};
+        proxy_set_header        Host $host;
+        proxy_set_header        X-Real-IP $remote_addr;
+        proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header        X-Forwarded-Proto $scheme;
+    }
+
+    location ^~ /websocket/ {
+        add_header Access-Control-Allow-Origin $http_origin always;
+        add_header Access-Control-Allow-Credentials true always;
+
+        proxy_pass              ${BACKEND_URL};
+        proxy_http_version      1.1;
+        proxy_set_header        Upgrade $http_upgrade;
+        proxy_set_header        Connection "upgrade";
+        proxy_set_header        Host $host;
+        proxy_set_header        X-Real-IP $remote_addr;
+        proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header        X-Forwarded-Proto $scheme;
+        proxy_read_timeout      3600s;
+        proxy_send_timeout      3600s;
+    }
+
+    location ~* ^.*?\.(js|css|jpg|jpeg|png|gif|ico|svg|bmp|webp|ttf|woff|woff2|eot|otf|mp3|mp4|webm|avi|mpeg|flv|swf|wav|mid|midi|m4a|m4v|aac|flac)$ {
+        add_header Cache-Control "public, max-age=31536000";
+        add_header Pragma "public";
+        expires 31536000;
+
+        root            ${WEB_ROOT};
+        try_files       $uri @another-root-static;
+    }
+
+    location ~* ^.*?(\.json|\.xml|\.html)$ {
+        add_header Cache-Control "no-cache, no-store, must-revalidate";
+        add_header Pragma "no-cache";
+        expires 0;
+
+        root            ${WEB_ROOT};
+        try_files       $uri @another-root-static;
+    }
+
+    location / {
+        root            ${WEB_ROOT};
+        index           index.html;
+
+        try_files       $uri $uri/index.html @another-root-index;
+    }
+
+    location @another-root-index {
+      root            ${DEPLOY_WEB_ROOT};
+      try_files       $uri $uri/index.html @rewrite-to-index;
+    }
+
+    location @another-root-static {
+      root            ${DEPLOY_WEB_ROOT};
+      try_files       $uri =404;
+    }
+
+    location @rewrite-to-index {
+        rewrite ^.*$ /index.html last;
+    }
+}

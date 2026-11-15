@@ -1,0 +1,11 @@
+.min-w-15 {
+  min-width: 130px;
+}
+
+.ouroboros-data-dict-picker.is-error {
+  > .cxd-Select,
+  > .cxd-TreeSelect {
+    border-color: var(--Form-input-onError-borderColor);
+    background: var(--Form-input-onError-bg);
+  }
+}

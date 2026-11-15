@@ -1,0 +1,14 @@
+:root {
+  /* ======================================================
+   * Switch
+   * ====================================================== */
+  --switch-width: 40px ;
+  --switch-height: 20px ;
+  --switch-handle-size: 16px ;
+
+  --switch-bg: var(--color-border) ;
+  --switch-checked-bg: var(--color-primary) ;
+  --switch-handle-bg: #fff ;
+
+  --switch-disabled-bg: var(--color-border-disabled) ;
+}

@@ -1,0 +1,142 @@
+.dev-app-dashboard {
+  .modules > g:hover {
+    cursor: pointer;
+    filter: drop-shadow(1px 1px 3px rgba(0, 0, 0, 0.2));
+  }
+
+  /* 主连线样式 - 粗实线 */
+  .line-main {
+    fill: none;
+    stroke: #f5f5f5;
+    stroke-linecap: butt;
+    stroke-linejoin: miter;
+    stroke-width: 8;
+  }
+
+  /* 虚线样式 */
+  .line-dash {
+    fill: none;
+    stroke: #eaeaea;
+    stroke-linecap: butt;
+    stroke-linejoin: miter;
+    stroke-width: 3;
+  }
+
+  .lg-module {
+    .icon {
+      transform: translateY(20px);
+    }
+  }
+
+  /* 模块背景样式 */
+  .module-box {
+    fill-rule: evenodd;
+    stroke: #7e8494;
+    stroke-linecap: butt;
+    stroke-linejoin: miter;
+    stroke-width: 1;
+  }
+
+  .box-blue {
+    fill: #effeff;
+  }
+
+  .box-light-blue {
+    fill: #f3fbff;
+  }
+
+  .box-light-yellow {
+    fill: #fffcec;
+  }
+
+  .box-light-green {
+    fill: #f9fff3;
+  }
+
+  .box-yellow-light {
+    fill: #fff7d5;
+  }
+
+  .box-yellow {
+    fill: #ffe484;
+  }
+
+  .box-green-light {
+    fill: #effff2;
+  }
+
+  .box-light-pink {
+    fill: #fff3f4;
+  }
+
+  .box-purple-light {
+    fill: #f4f0ff;
+  }
+
+  .box-light-purple {
+    fill: #e6efff;
+  }
+
+  .box-orange-light {
+    fill: #fff4e9;
+  }
+
+  /* 文本样式 */
+  .text-main {
+    fill: #1a1918;
+    font-family: Helvetica;
+    font-size: 18px;
+    stroke: none;
+    text-anchor: start;
+  }
+
+  .text-cn {
+    font-family: PingFangSC-Regular;
+  }
+
+  .text-sub {
+    fill: #585c66;
+    font-family: Helvetica;
+    font-size: 14px;
+    stroke: none;
+    text-anchor: start;
+  }
+
+  .text-value {
+    fill: #2b2100;
+    font-family: Helvetica;
+    font-size: 24px;
+    stroke: none;
+    text-anchor: start;
+    display: none;
+  }
+
+  .text-label {
+    fill: #2b2100;
+    font-family: PingFangSC-Regular;
+    font-size: 16px;
+    stroke: none;
+    text-anchor: start;
+    display: none;
+  }
+
+  /* 图标样式 */
+  .icon-fill {
+    fill: #70778a;
+    fill-rule: nonzero;
+    stroke: none;
+  }
+
+  .icon-micro-web-fill {
+    fill: #7e8494;
+    fill-rule: evenodd;
+    stroke: none;
+  }
+
+  .icon-micro-web-stroke {
+    fill: none;
+    stroke: #70778a;
+    stroke-linecap: butt;
+    stroke-linejoin: miter;
+  }
+}

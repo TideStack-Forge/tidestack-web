@@ -1,0 +1,29 @@
+{
+  "renderers": {
+    "disabled": ["custom-timeline"]
+  },
+  "formItems": {
+    "disabled": ["custom-rich-editor"]
+  },
+  "optionsControls": {
+    "disabled": []
+  },
+  "actions": {
+    "disabled": ["custom-import-action"]
+  },
+  "rules": {
+    "disabled": []
+  },
+  "formulas": {
+    "disabled": ["custom-currency-format"]
+  },
+  "rendererEditorPlugins": {
+    "disabled": []
+  },
+  "actionEditorPlugins": {
+    "disabled": []
+  },
+  "validatorEditorPlugins": {
+    "disabled": []
+  }
+}

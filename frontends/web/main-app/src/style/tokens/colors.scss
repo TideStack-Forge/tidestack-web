@@ -1,0 +1,35 @@
+@use "sass:map";
+
+// 基础色板 seed（多色相）：改这里会自动推导完整色板
+$palette-base-hues: (
+  "red": #ff4d4f,
+  "volcano": #fa541c,
+  "orange": #fa8c16,
+  "gold": #faad14,
+  "yellow": #fadb14,
+  "lime": #a0d911,
+  "green": #52c41a,
+  "cyan": #00D2E9,
+  "blue": #00A1E9,
+  "geekblue": #0057E4,
+  "purple": #722ed1,
+  "magenta": #eb2f96
+); 
+
+// 品牌层 seed：brand-primary / secondary / accent（品牌主色/辅色/强调色）
+$brand-default: (
+  primary:   #2468f2,
+  secondary: map.get($palette-base-hues, "cyan"),      // 辅助品牌色
+  accent:    map.get($palette-base-hues, "geekblue"),   // 强调/点缀色
+);
+
+// 颜色 seed：主色 + 功能色（由 brand / palette-base-hues 派生）
+$color-primary: map.get($brand-default, primary);
+$color-success: map.get($palette-base-hues, "green");
+$color-warning: map.get($palette-base-hues, "gold");
+$color-error: map.get($palette-base-hues, "red");
+$color-info: $color-primary;
+
+// 文本 & 背景基色（neutral/gray 色板端点）
+$color-text-main: #1f1f1f;
+$color-bg: #ffffff;

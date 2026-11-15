@@ -1,0 +1,126 @@
+#!/bin/sh
+set -eu
+
+WEB_ROOT=${WEB_ROOT:-/app/base/web}
+DEPLOY_WEB_ROOT=${DEPLOY_WEB_ROOT:-/app/deploy/web}
+if [ "${BACKEND_URL+x}" != x ]; then
+  BACKEND_URL=http://127.0.0.1:8080
+fi
+MICRO_PROXY_MAP=${MICRO_PROXY_MAP:-}
+LISTEN_PORT=${LISTEN_PORT:-80}
+NGINX_CONF_TEMPLATE=/etc/nginx/templates/default.conf.template
+NGINX_CONF_OUTPUT=/etc/nginx/conf.d/default.conf
+MICRO_PROXY_CONF=/etc/nginx/server-includes/micro-proxies.conf
+
+append_micro_proxy_location() {
+  micro_context=$1
+  micro_target=$2
+
+  cat >> "$MICRO_PROXY_CONF" <<EOF
+location ^~ ${micro_context} {
+    proxy_pass              ${micro_target};
+    proxy_set_header        Host \$host;
+    proxy_set_header        X-Real-IP \$remote_addr;
+    proxy_set_header        X-Forwarded-For \$proxy_add_x_forwarded_for;
+    proxy_set_header        X-Forwarded-Proto \$scheme;
+}
+
+EOF
+}
+
+normalize_micro_context() {
+  raw_context=$1
+  case "$raw_context" in
+    /*)
+      micro_context=$raw_context
+      ;;
+    *)
+      micro_context=/$raw_context
+      ;;
+  esac
+
+  case "$micro_context" in
+    */)
+      printf '%s\n' "$micro_context"
+      ;;
+    *)
+      printf '%s/\n' "$micro_context"
+      ;;
+  esac
+}
+
+render_micro_proxy_conf() {
+  : > "$MICRO_PROXY_CONF"
+
+  if [ -z "$MICRO_PROXY_MAP" ]; then
+    return
+  fi
+
+  OLD_IFS=$IFS
+  IFS=','
+  set -f
+  for raw_mapping in $MICRO_PROXY_MAP; do
+    mapping=$(printf '%s' "$raw_mapping" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+    if [ -z "$mapping" ]; then
+      continue
+    fi
+
+    case "$mapping" in
+      *=*)
+        raw_context=${mapping%%=*}
+        target=${mapping#*=}
+        ;;
+      *)
+        echo "Ignoring invalid MICRO_PROXY_MAP entry: $mapping" >&2
+        continue
+        ;;
+    esac
+
+    context=$(normalize_micro_context "$raw_context")
+    if [ -z "$target" ]; then
+      echo "Ignoring invalid MICRO_PROXY_MAP entry with empty target: $mapping" >&2
+      continue
+    fi
+
+    case "$target" in
+      http://*|https://*)
+        append_micro_proxy_location "$context" "$target"
+        ;;
+      *)
+        echo "Ignoring invalid MICRO_PROXY_MAP target for $context: $target" >&2
+        ;;
+    esac
+  done
+  set +f
+  IFS=$OLD_IFS
+}
+
+if [ -z "$BACKEND_URL" ]; then
+  echo "BACKEND_URL cannot be empty" >&2
+  exit 1
+fi
+
+case "$BACKEND_URL" in
+  http://*|https://*)
+    ;;
+  *)
+    echo "BACKEND_URL must start with http:// or https://: $BACKEND_URL" >&2
+    exit 1
+    ;;
+esac
+
+mkdir -p "$DEPLOY_WEB_ROOT" /app/deploy/logs/web /run/nginx /etc/nginx/server-includes
+
+render_micro_proxy_conf
+
+export WEB_ROOT
+export DEPLOY_WEB_ROOT
+export BACKEND_URL
+export LISTEN_PORT
+
+envsubst '${WEB_ROOT} ${DEPLOY_WEB_ROOT} ${BACKEND_URL} ${LISTEN_PORT}' \
+  < "$NGINX_CONF_TEMPLATE" \
+  > "$NGINX_CONF_OUTPUT"
+
+echo "Starting ouroboros-web with backend target: $BACKEND_URL"
+exec nginx -g 'daemon off;'

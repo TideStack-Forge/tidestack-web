@@ -1,0 +1,20 @@
+// 桌面端布局样式
+@media (min-width: var(--breakpoint-md)) {
+  .app-layout {
+    // 桌面端特定样式
+  }
+
+  .app-sidebar {
+    width: var(--sidebar-width);
+    
+    &.is-open {
+      width: var(--sidebar-width-open);
+    }
+  }
+
+  .app-content {
+    &__main {
+      padding: var(--space-lg);
+    }
+  }
+}

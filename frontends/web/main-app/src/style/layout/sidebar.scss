@@ -1,0 +1,338 @@
+// Sidebar Layout Styles
+// Contains all sidebar-related styles including main sidebar, float menu, and auxiliary controls
+
+/* 浮动二级菜单（折叠态悬浮层） */
+
+.app-sidebar {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: var(--sidebar-width);
+  background: transparent;
+  color: var(--sidebar-text);
+  border-right: 0;
+  flex-shrink: 0;
+  min-width: 0;
+  transition: width var(--motion-duration-medium) ease;
+  height: 100%;
+  overflow: visible;
+
+  &.is-open {
+    width: var(--sidebar-width-open);
+
+    // 展开态：显示文案、调整内边距
+    &__nav-link {
+      justify-content: flex-start;
+      padding: 0 var(--space-lg);
+    }
+
+    &__nav-text {
+      display: inline;
+      opacity: 1;
+    }
+  }
+
+  &__resize-handle {
+    position: absolute;
+    top: 12px;
+    right: -6px;
+    bottom: 12px;
+    width: 12px;
+    cursor: col-resize;
+    z-index: 2;
+    touch-action: none;
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+
+    &::before {
+      content: '';
+      width: 4px;
+      height: 100%;
+      border-radius: 999px;
+      background: transparent;
+      transition: background-color var(--motion-duration-fast) ease;
+    }
+
+    &:hover::before,
+    &.is-dragging::before {
+      background: var(--sidebar-border);
+    }
+  }
+
+  &__header {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    background: transparent;
+    padding: 12px var(--sidebar-content-inset-x) 10px;
+    gap: 10px;
+    
+    .app-brand {
+      align-self: center;
+      width: fit-content;
+      max-width: 100%;
+      padding: 0;
+      border-bottom: 0;
+      background: transparent;
+    }
+
+    .sidebar-search {
+      background: transparent;
+      width: 100%;
+    }
+  }
+
+  &__body {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    overflow: visible;
+    min-height: 0;
+    position: relative;
+    width: 100%;
+    background: transparent;
+    height: 100%;
+    padding: 0 var(--sidebar-content-inset-x) var(--sidebar-content-inset-y);
+
+    > .app-sidebar__scrollbar {
+      flex: 1 1 auto;
+      min-height: 0;
+      width: 100%;
+      box-sizing: border-box;
+      margin-right: 0;
+      overflow: visible;
+      --c-scrollbar-track-size: 5px;
+      --c-scrollbar-rail-offset-inline-end: calc(-1 * var(--sidebar-scrollbar-gutter));
+      --c-scrollbar-rail-inset-block: 4px;
+      --c-scrollbar-rail-bg: rgba(127, 137, 154, 0.08);
+      --c-scrollbar-thumb-bg: rgba(127, 137, 154, 0.42);
+      --c-scrollbar-thumb-bg-hover: rgba(127, 137, 154, 0.58);
+      --c-scrollbar-thumb-bg-active: rgba(127, 137, 154, 0.74);
+
+      > .c-scrollbar__viewport--vertical {
+        width: 100%;
+        padding-right: 0;
+      }
+    }
+  }
+
+  &__footer {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    background: transparent;
+    padding-bottom: 0;
+  }
+
+  &__subnav {
+    padding: 8px var(--sidebar-content-inset-x) 0;
+    background: transparent;
+
+    > .tree-menu {
+      padding: 0;
+    }
+  }
+
+  &__user-section {
+    padding: 0 var(--sidebar-content-inset-x) 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    background: transparent;
+    min-height: 48px;
+
+    .app-user-menu {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+  }
+
+  /* 折叠态：brand 居中 */
+  &:not(.is-open) {
+    .app-brand {
+      justify-content: center;
+    }
+
+    .app-sidebar__header {
+      align-items: center;
+      padding: 12px var(--sidebar-content-inset-x) 8px;
+
+      .sidebar-search {
+        display: flex;
+        justify-content: center;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--sidebar-border);
+      }
+    }
+
+    .app-sidebar__body {
+      padding: 0 var(--sidebar-content-inset-x) 12px;
+
+      > .app-sidebar__scrollbar {
+        --c-scrollbar-track-size: 4px;
+        --c-scrollbar-rail-offset-inline-end: calc(-1 * var(--sidebar-scrollbar-gutter));
+        --c-scrollbar-rail-bg: rgba(127, 137, 154, 0.06);
+      }
+    }
+
+    .app-sidebar__user-section {
+      justify-content: center;
+      padding: 6px var(--sidebar-content-inset-x) 14px;
+      min-height: 48px;
+    }
+
+    .app-sidebar__resize-handle {
+      display: none;
+    }
+  }
+
+  &__scroll {
+    flex: 1 1 auto;
+    overflow: auto;
+    min-height: 0;
+    width: 100%;
+  }
+
+  &__nav {
+    padding: var(--space-md) var(--space-md);
+    list-style: none;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+
+    &-item {
+      color: var(--color-text);
+      cursor: pointer;
+      font-size: var(--font-size-md);
+
+      &-link {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        height: var(--control-height-md);
+        padding: 0 var(--space-md);
+        border-radius: var(--radius-md);
+        font-weight: var(--font-weight-regular);
+        column-gap: var(--space-sm);
+        transition:
+          background-color var(--motion-duration-fast) ease,
+          color var(--motion-duration-fast) ease;
+
+        .menu-icon {
+          width: 18px;
+          height: 18px;
+          flex-shrink: 0;
+          color: inherit;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 18px;
+          line-height: 18px;
+          overflow: hidden;
+          text-align: center;
+        }
+      }
+
+      &:hover &-link {
+        background: var(--color-bg-hover);
+        color: var(--color-primary);
+      }
+
+      &.is-active &-link {
+        background: var(--layout-nav-item-bg-active);
+        color: var(--layout-nav-item-text-active);
+        font-weight: var(--font-weight-medium);
+      }
+
+      &-text {
+        white-space: nowrap;
+        display: inline;
+        opacity: 1;
+      }
+    }
+
+    /* 折叠态：仅显示图标并居中 */
+    .app-sidebar:not(.is-open) & {
+      padding: var(--space-md) var(--space-sm);
+
+      .app-sidebar__nav-item-link {
+        justify-content: center;
+        padding: 0;
+      }
+      .app-sidebar__nav-item-text {
+        display: none;
+      }
+    }
+  }
+
+  &__mask {
+    height: var(--space-xl);
+    width: 100%;
+    margin-top: var(--space-xs);
+    background: linear-gradient(transparent 0%, var(--color-bg-container) 100%);
+  }
+
+  // User Menu in Sidebar (位置相关样式)
+  .app-user-menu {
+    /* 折叠态: 内容隐藏，仅显示 toggle */
+    .app-sidebar:not(.is-open) & {
+      justify-content: center;
+      padding: var(--space-sm) var(--space-md);
+
+      &__trigger {
+        display: none;
+      }
+    }
+  }
+
+  &__secondary {
+    flex: 1 1 auto;
+    overflow: hidden;
+  }
+
+  &__toggle {
+    flex: 0 0 auto;
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-md);
+    color: var(--sidebar-text);
+    background: transparent;
+    cursor: pointer;
+    transition:
+      background-color var(--motion-duration-fast) ease,
+      color var(--motion-duration-fast) ease,
+      transform var(--motion-duration-fast) ease;
+
+    &:hover {
+      background: var(--sidebar-item-bg-hover);
+      color: var(--sidebar-toggle-text-hover);
+    }
+
+    i {
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform var(--motion-duration-fast) ease;
+    }
+  }
+
+  /* 折叠态：toggle 按钮无左边距 */
+  .app-sidebar:not(.is-open) & {
+    .app-sidebar__toggle {
+      margin-left: 0;
+    }
+  }
+
+  /* Tree menu collapsed state */
+  &:not(.is-open) .tree-menu {
+    padding: var(--space-md) var(--space-sm);
+  }
+}

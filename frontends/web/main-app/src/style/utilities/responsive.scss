@@ -1,0 +1,65 @@
+// 响应式工具类
+@media (max-width: calc(var(--breakpoint-sm) - 1px)) {
+  .hidden-xs {
+    display: none !important;
+  }
+}
+
+@media (min-width: var(--breakpoint-sm)) {
+  .hidden-sm {
+    display: none !important;
+  }
+}
+
+@media (min-width: var(--breakpoint-md)) {
+  .hidden-md {
+    display: none !important;
+  }
+}
+
+@media (min-width: var(--breakpoint-lg)) {
+  .hidden-lg {
+    display: none !important;
+  }
+}
+
+// 显示类
+.visible-xs {
+  display: none !important;
+
+  @media (max-width: calc(var(--breakpoint-sm) - 1px)) {
+    display: block !important;
+  }
+}
+
+.visible-xs-inline {
+  display: none !important;
+
+  @media (max-width: calc(var(--breakpoint-sm) - 1px)) {
+    display: inline !important;
+  }
+}
+
+.visible-xs-inline-block {
+  display: none !important;
+
+  @media (max-width: calc(var(--breakpoint-sm) - 1px)) {
+    display: inline-block !important;
+  }
+}
+
+.visible-xs-flex {
+  display: none !important;
+
+  @media (max-width: calc(var(--breakpoint-sm) - 1px)) {
+    display: flex !important;
+  }
+}
+
+.visible-xs-inline-flex {
+  display: none !important;
+
+  @media (max-width: calc(var(--breakpoint-sm) - 1px)) {
+    display: inline-flex !important;
+  }
+}

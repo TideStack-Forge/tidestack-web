@@ -1,0 +1,91 @@
+<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" fill="none">
+  <path
+    d="M162 122c0-17.673 14.327-32 32-32h142.118a32 32 0 0 1 22.627 9.373l38.882 38.882A32 32 0 0 1 407 160.882V356c0 17.673-14.327 32-32 32H194c-17.673 0-32-14.327-32-32V122Z"
+    stroke="currentColor"
+    stroke-width="18"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+  <path
+    d="M336 92v52c0 13.255 10.745 24 24 24h45"
+    stroke="currentColor"
+    stroke-width="18"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+  <path
+    d="M206 176h94"
+    stroke="currentColor"
+    stroke-width="18"
+    stroke-linecap="round"
+  />
+  <path
+    d="M206 224h112"
+    stroke="currentColor"
+    stroke-width="18"
+    stroke-linecap="round"
+  />
+  <path
+    d="M206 272h58"
+    stroke="currentColor"
+    stroke-width="18"
+    stroke-linecap="round"
+  />
+  <circle
+    cx="255"
+    cy="314"
+    r="48"
+    stroke="currentColor"
+    stroke-width="18"
+  />
+  <path
+    d="M289 348l54 54"
+    stroke="currentColor"
+    stroke-width="22"
+    stroke-linecap="round"
+  />
+  <path
+    d="M92 124h28"
+    stroke="currentColor"
+    stroke-width="14"
+    stroke-linecap="round"
+  />
+  <path
+    d="M106 110v28"
+    stroke="currentColor"
+    stroke-width="14"
+    stroke-linecap="round"
+  />
+  <circle
+    cx="88"
+    cy="256"
+    r="14"
+    stroke="currentColor"
+    stroke-width="12"
+  />
+  <path
+    d="M406 245h22"
+    stroke="currentColor"
+    stroke-width="14"
+    stroke-linecap="round"
+  />
+  <path
+    d="M417 234v22"
+    stroke="currentColor"
+    stroke-width="14"
+    stroke-linecap="round"
+  />
+  <circle
+    cx="422"
+    cy="130"
+    r="16"
+    stroke="currentColor"
+    stroke-width="12"
+  />
+  <path
+    d="M70 392h38"
+    stroke="currentColor"
+    stroke-width="14"
+    stroke-linecap="round"
+  />
+</svg>

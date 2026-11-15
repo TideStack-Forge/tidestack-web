@@ -1,0 +1,6 @@
+import './formItemName'
+import './frontendResource'
+import './label'
+import './status'
+import './formItemValidations'
+import './tplDefaultEditorComponent'

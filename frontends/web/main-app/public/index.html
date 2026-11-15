@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+
+    <link rel="icon" href="<%= BASE_URL %>favicon.ico" />
+    <title></title>
+    <meta name="app-name" content="ouroboros-mothership-app" />
+<%
+  const jsFiles = htmlWebpackPlugin.files.js;
+  jsFiles.forEach(file => {
+%>
+    <script defer="defer" src="<%= file %>"></script>
+<% }) %>
+<% 
+  const cssOrder = ['amis-style', 'amis-editor-style', 'vendors', 'mothership']; 
+  function findAsset(name) {
+    return htmlWebpackPlugin.files.css.find(href => href.includes(name + '.'));
+  }
+  const orderCssFiles = cssOrder.map(name => findAsset(name)).filter(href => href);
+  const otherCssFiles = htmlWebpackPlugin.files.css.filter(href => !orderCssFiles.includes(href));
+  const allCssFiles = [...orderCssFiles, ...otherCssFiles];
+  
+  for(const href of allCssFiles) { %>
+    <link rel="stylesheet" href="<%= href %>" />
+<% } %>
+  </head>
+  <body>
+    <noscript>
+      <strong>本应用需要启用JavaScript，请启用后刷新</strong>
+    </noscript>
+    <div id="mothership-app-root"></div>
+    <div id="custom-component"></div>
+    <div class="ouroboros-pop-over-container"></div>
+  </body>
+</html>

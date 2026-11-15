@@ -1,0 +1,86 @@
+<svg
+  width="1920"
+  height="1080"
+  viewBox="0 0 1920 1080"
+  xmlns="http://www.w3.org/2000/svg"
+  preserveAspectRatio="xMidYMid slice"
+>
+  <defs>
+    <!-- 主背景渐变 -->
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#00d2e9" />
+      <stop offset="55%" stop-color="#00a1e9" />
+      <stop offset="100%" stop-color="#0057e4" />
+    </linearGradient>
+
+    <!-- 能量多边形 -->
+    <linearGradient id="energy1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#00d2e9" stop-opacity="0.65" />
+      <stop offset="100%" stop-color="#0057e4" stop-opacity="0.15" />
+    </linearGradient>
+
+    <linearGradient id="energy2" x1="1" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#00a1e9" stop-opacity="0.55" />
+      <stop offset="100%" stop-color="#0057e4" stop-opacity="0.12" />
+    </linearGradient>
+
+    <!-- 冷光晕 -->
+    <radialGradient id="techGlow" cx="25%" cy="45%" r="55%">
+      <stop offset="0%" stop-color="#00d2e9" stop-opacity="0.28" />
+      <stop offset="100%" stop-color="#00d2e9" stop-opacity="0" />
+    </radialGradient>
+
+    <!-- 节点发光 -->
+    <radialGradient id="nodeGlow" r="50%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="1920" height="1080" fill="url(#bg)" />
+  <rect width="1920" height="1080" fill="url(#techGlow)" />
+
+  <!-- 左侧晶体结构 -->
+  <g>
+    <polygon points="0,0 420,0 300,260" fill="url(#energy1)" />
+    <polygon points="300,260 420,0 620,320" fill="url(#energy2)" />
+    <polygon points="0,0 300,260 0,360" fill="url(#energy2)" />
+    <polygon points="0,360 300,260 260,520" fill="url(#energy1)" />
+    <polygon points="260,520 300,260 540,580" fill="url(#energy2)" />
+    <polygon points="0,360 260,520 0,760" fill="url(#energy1)" />
+  </g>
+
+  <!-- 右下角晶体 -->
+  <g opacity="0.85">
+    <polygon points="1480,760 1920,620 1920,900" fill="url(#energy1)" />
+    <polygon points="1480,760 1700,1080 1920,900" fill="url(#energy2)" />
+    <polygon points="1280,920 1480,760 1700,1080" fill="url(#energy1)" />
+  </g>
+
+  <!-- 科技网格 / 连接线 -->
+  <g stroke="#ffffff" stroke-opacity="0.1" stroke-width="1">
+    <line x1="120" y1="200" x2="360" y2="380" />
+    <line x1="360" y1="380" x2="260" y2="520" />
+    <line x1="260" y1="520" x2="420" y2="640" />
+
+    <line x1="1480" y1="760" x2="1680" y2="980" />
+    <line x1="1280" y1="920" x2="1480" y2="760" />
+  </g>
+
+  <!-- 节点 -->
+  <g>
+    <circle cx="120" cy="200" r="3" fill="#ffffff" />
+    <circle cx="360" cy="380" r="3" fill="#ffffff" />
+    <circle cx="260" cy="520" r="3" fill="#ffffff" />
+
+    <circle cx="1480" cy="760" r="3" fill="#ffffff" />
+    <circle cx="1680" cy="980" r="3" fill="#ffffff" />
+  </g>
+
+  <!-- 节点光晕 -->
+  <g opacity="0.6">
+    <circle cx="360" cy="380" r="18" fill="url(#nodeGlow)" />
+    <circle cx="1480" cy="760" r="18" fill="url(#nodeGlow)" />
+  </g>
+</svg>

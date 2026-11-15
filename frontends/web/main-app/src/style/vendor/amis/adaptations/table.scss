@@ -1,0 +1,14 @@
+:root {
+  /* ======================================================
+   * Table
+   * ====================================================== */
+  --table-font-size: 14px ;
+
+  --table-header-color: var(--color-text-secondary) ;
+  --table-header-border-color: var(--color-border) ;
+
+  --table-row-hover-bg: var(--color-bg-hover) ;
+
+  --table-border-color: var(--color-border) ;
+  --table-selected-row-bg: var(--color-primary-bg) ;
+}

@@ -1,0 +1,46 @@
+/**
+ * Transition Effects
+ * 
+ * 过渡动画效果集合
+ * 
+ * 用途：
+ * - 定义标准的过渡时长和缓动函数
+ * - 提供常用的过渡效果组合
+ * - 统一交互动画体验
+ * 
+ * 使用方式：
+ * transition: var(--transition-fast);
+ * transition: var(--transition-color);
+ * 
+ * 注意：
+ * - 使用 CSS 变量定义，支持主题定制
+ * - 遵循 Material Design 动效规范
+ */
+
+:root {
+  // 基础过渡时长
+  --transition-duration-fast: var(--motion-duration-fast, 150ms);
+  --transition-duration-normal: var(--motion-duration-normal, 250ms);
+  --transition-duration-slow: var(--motion-duration-slow, 400ms);
+
+  // 基础缓动函数
+  --transition-easing-standard: var(--motion-easing-standard, cubic-bezier(0.4, 0, 0.2, 1));
+  --transition-easing-decelerate: var(--motion-easing-decelerate, cubic-bezier(0, 0, 0.2, 1));
+  --transition-easing-accelerate: var(--motion-easing-accelerate, cubic-bezier(0.4, 0, 1, 1));
+
+  // 常用过渡效果组合
+  --transition-fast: all var(--transition-duration-fast) var(--transition-easing-standard);
+  --transition-normal: all var(--transition-duration-normal) var(--transition-easing-standard);
+  --transition-slow: all var(--transition-duration-slow) var(--transition-easing-standard);
+
+  // 特定属性过渡
+  --transition-color: color var(--transition-duration-fast) var(--transition-easing-standard),
+                      background-color var(--transition-duration-fast) var(--transition-easing-standard),
+                      border-color var(--transition-duration-fast) var(--transition-easing-standard);
+  
+  --transition-transform: transform var(--transition-duration-normal) var(--transition-easing-standard);
+  
+  --transition-opacity: opacity var(--transition-duration-fast) var(--transition-easing-standard);
+  
+  --transition-shadow: box-shadow var(--transition-duration-fast) var(--transition-easing-standard);
+}

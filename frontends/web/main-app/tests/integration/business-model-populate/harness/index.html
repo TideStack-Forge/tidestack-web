@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Business Model Populate Main App Harness</title>
+  </head>
+  <body
+    style="
+      margin: 0;
+      min-height: 100vh;
+      background: #f3f4f6;
+      color: #1f2328;
+      font-family:
+        'SFMono-Regular',
+        'SFMono-Regular',
+        Consolas,
+        'Liberation Mono',
+        Menlo,
+        monospace;
+    ">
+    <div
+      id="business-model-populate-playwright-harness-root"
+      data-testid="business-model-populate-harness-root"
+      style="display: grid; grid-template-columns: minmax(0, 1fr) 420px; min-height: 100vh">
+      <main style="min-width: 0; padding: 20px 0 20px 20px">
+        <div
+          id="business-model-populate-playwright-status"
+          data-testid="business-model-populate-harness-status"
+          style="margin-bottom: 12px; color: #57606a; font-size: 13px">
+          Booting business model populate harness...
+        </div>
+        <div
+          id="business-model-populate-editor-root"
+          style="
+            min-height: calc(100vh - 64px);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 12px 40px rgba(15, 23, 42, 0.08);
+          "></div>
+      </main>
+      <aside
+        style="
+          border-left: 1px solid #d0d7de;
+          background: linear-gradient(180deg, #111827 0%, #1f2937 100%);
+          color: #e5e7eb;
+          padding: 24px;
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+        ">
+        <div>
+          <div style="font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase">
+            Live Snapshot
+          </div>
+          <h2 style="margin: 10px 0 0; font-size: 22px">当前表单值</h2>
+        </div>
+        <div style="color: #9ca3af; font-size: 13px; line-height: 1.6">
+          这里会实时显示 smoke 过程中 `where` 和 `populate` 序列化后的值，便于截图核对。
+        </div>
+        <pre
+          id="business-model-populate-live-data"
+          data-testid="business-model-populate-live-data"
+          style="
+            margin: 0;
+            flex: 1;
+            overflow: auto;
+            padding: 16px;
+            border-radius: 12px;
+            background: rgba(15, 23, 42, 0.72);
+            border: 1px solid rgba(148, 163, 184, 0.25);
+            font-size: 12px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-break: break-word;
+          ">
+Preparing live snapshot...
+        </pre>
+      </aside>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,14 @@
+// 底部布局样式
+.app-footer {
+  flex: 0 0 auto;
+  height: var(--layout-footer-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 var(--space-lg);
+  width: 100%;
+  max-width: 100%;
+  align-self: stretch;
+  background-color: var(--color-bg-elevated);
+  position: static;
+}

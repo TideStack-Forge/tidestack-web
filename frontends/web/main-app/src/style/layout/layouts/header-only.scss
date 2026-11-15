@@ -1,0 +1,25 @@
+.app-layout.header-only {
+  .app-sidebar {
+    display: none;
+  }
+
+  .app-body {
+    flex: 1;
+    display: flex;
+    min-height: 0;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .app-content {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+}

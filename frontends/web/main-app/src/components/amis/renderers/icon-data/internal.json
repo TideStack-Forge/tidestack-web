@@ -1,0 +1,798 @@
+{
+  "name": "内置",
+  "type": "internal",
+  "icons": {
+    "alert-danger": {
+      "search": {
+        "terms": []
+      },
+      "label": "Alert Danger",
+      "categories": [],
+      "value": "alert-danger"
+    },
+    "alert-info": {
+      "search": {
+        "terms": []
+      },
+      "label": "Alert Info",
+      "categories": [],
+      "value": "alert-info"
+    },
+    "alert-success": {
+      "search": {
+        "terms": []
+      },
+      "label": "Alert Success",
+      "categories": [],
+      "value": "alert-success"
+    },
+    "alert-warning": {
+      "search": {
+        "terms": []
+      },
+      "label": "Alert Warning",
+      "categories": [],
+      "value": "alert-warning"
+    },
+    "arrow-double-left": {
+      "search": {
+        "terms": []
+      },
+      "label": "Arrow Double Left",
+      "categories": [],
+      "value": "arrow-double-left"
+    },
+    "arrow-double-right": {
+      "search": {
+        "terms": []
+      },
+      "label": "Arrow Double Right",
+      "categories": [],
+      "value": "arrow-double-right"
+    },
+    "back": {
+      "search": {
+        "terms": []
+      },
+      "label": "Back",
+      "categories": [],
+      "value": "back"
+    },
+    "calendar": {
+      "search": {
+        "terms": []
+      },
+      "label": "Calendar",
+      "categories": [],
+      "value": "calendar"
+    },
+    "caret": {
+      "search": {
+        "terms": []
+      },
+      "label": "Caret",
+      "categories": [],
+      "value": "caret"
+    },
+    "check": {
+      "search": {
+        "terms": []
+      },
+      "label": "Check",
+      "categories": [],
+      "value": "check"
+    },
+    "clock": {
+      "search": {
+        "terms": []
+      },
+      "label": "Clock",
+      "categories": [],
+      "value": "clock"
+    },
+    "clock-small": {
+      "search": {
+        "terms": []
+      },
+      "label": "Clock Small",
+      "categories": [],
+      "value": "clock-small"
+    },
+    "close": {
+      "search": {
+        "terms": []
+      },
+      "label": "Close",
+      "categories": [],
+      "value": "close"
+    },
+    "cloud-upload": {
+      "search": {
+        "terms": []
+      },
+      "label": "Cloud Upload",
+      "categories": [],
+      "value": "cloud-upload"
+    },
+    "column-filter": {
+      "search": {
+        "terms": []
+      },
+      "label": "Column Filter",
+      "categories": [],
+      "value": "column-filter"
+    },
+    "columns": {
+      "search": {
+        "terms": []
+      },
+      "label": "Columns",
+      "categories": [],
+      "value": "columns"
+    },
+    "compress-alt": {
+      "search": {
+        "terms": []
+      },
+      "label": "Compress Alt",
+      "categories": [],
+      "value": "compress-alt"
+    },
+    "copy": {
+      "search": {
+        "terms": []
+      },
+      "label": "Copy",
+      "categories": [],
+      "value": "copy"
+    },
+    "date": {
+      "search": {
+        "terms": []
+      },
+      "label": "Date",
+      "categories": [],
+      "value": "date"
+    },
+    "department": {
+      "search": {
+        "terms": []
+      },
+      "label": "Department",
+      "categories": [],
+      "value": "department"
+    },
+    "desk-empty": {
+      "search": {
+        "terms": []
+      },
+      "label": "Desk empty",
+      "categories": [],
+      "value": "desk-empty"
+    },
+    "dot": {
+      "search": {
+        "terms": []
+      },
+      "label": "Dot",
+      "categories": [],
+      "value": "dot"
+    },
+    "down-arrow-bold": {
+      "search": {
+        "terms": []
+      },
+      "label": "Down Arrow Bold",
+      "categories": [],
+      "value": "down-arrow-bold"
+    },
+    "down": {
+      "search": {
+        "terms": []
+      },
+      "label": "Down",
+      "categories": [],
+      "value": "search"
+    },
+    "download": {
+      "search": {
+        "terms": []
+      },
+      "label": "Download",
+      "categories": [],
+      "value": "download"
+    },
+    "drag-bar": {
+      "search": {
+        "terms": []
+      },
+      "label": "Drag Bar",
+      "categories": [],
+      "value": "drag-bar"
+    },
+    "drag": {
+      "search": {
+        "terms": []
+      },
+      "label": "Drag",
+      "categories": [],
+      "value": "drag"
+    },
+    "edit": {
+      "search": {
+        "terms": []
+      },
+      "label": "Edit",
+      "categories": [],
+      "value": "edit"
+    },
+    "ellipsis-v": {
+      "search": {
+        "terms": []
+      },
+      "label": "Ellipsis V",
+      "categories": [],
+      "value": "ellipsis-v"
+    },
+    "enter": {
+      "search": {
+        "terms": []
+      },
+      "label": "Enter",
+      "categories": [],
+      "value": "enter"
+    },
+    "exchange": {
+      "search": {
+        "terms": []
+      },
+      "label": "Exchange",
+      "categories": [],
+      "value": "exchange"
+    },
+    "expand-alt": {
+      "search": {
+        "terms": []
+      },
+      "label": "Expand Alt",
+      "categories": [],
+      "value": "expand-alt"
+    },
+    "fail": {
+      "search": {
+        "terms": []
+      },
+      "label": "Fail",
+      "categories": [],
+      "value": "fail"
+    },
+    "file": {
+      "search": {
+        "terms": []
+      },
+      "label": "File",
+      "categories": [],
+      "value": "file"
+    },
+    "filter": {
+      "search": {
+        "terms": []
+      },
+      "label": "Filter",
+      "categories": [],
+      "value": "filter"
+    },
+    "folder": {
+      "search": {
+        "terms": []
+      },
+      "label": "Folder",
+      "categories": [],
+      "value": "folder"
+    },
+    "fullscreen": {
+      "search": {
+        "terms": []
+      },
+      "label": "Fullscreen",
+      "categories": [],
+      "value": "fullscreen"
+    },
+    "function": {
+      "search": {
+        "terms": []
+      },
+      "label": "Function",
+      "categories": [],
+      "value": "function"
+    },
+    "home": {
+      "search": {
+        "terms": []
+      },
+      "label": "Home",
+      "categories": [],
+      "value": "home"
+    },
+    "if": {
+      "search": {
+        "terms": []
+      },
+      "label": "If",
+      "categories": [],
+      "value": "if"
+    },
+    "image": {
+      "search": {
+        "terms": []
+      },
+      "label": "Image",
+      "categories": [],
+      "value": "image"
+    },
+    "info-circle": {
+      "search": {
+        "terms": []
+      },
+      "label": "Info Circle",
+      "categories": [],
+      "value": "info-circle"
+    },
+    "info": {
+      "search": {
+        "terms": []
+      },
+      "label": "Info",
+      "categories": [],
+      "value": "info"
+    },
+    "input-clear": {
+      "search": {
+        "terms": []
+      },
+      "label": "Input Clear",
+      "categories": [],
+      "value": "input-clear"
+    },
+    "invisible": {
+      "search": {
+        "terms": []
+      },
+      "label": "Invisible",
+      "categories": [],
+      "value": "invisible"
+    },
+    "left-arrow": {
+      "search": {
+        "terms": []
+      },
+      "label": "Left Arrow",
+      "categories": [],
+      "value": "left-arrow"
+    },
+    "loading-outline": {
+      "search": {
+        "terms": []
+      },
+      "label": "Loading Outline",
+      "categories": [],
+      "value": "loading-outline"
+    },
+    "location": {
+      "search": {
+        "terms": []
+      },
+      "label": "Location",
+      "categories": [],
+      "value": "location"
+    },
+    "menu": {
+      "search": {
+        "terms": []
+      },
+      "label": "Menu",
+      "categories": [],
+      "value": "menu"
+    },
+    "minus": {
+      "search": {
+        "terms": []
+      },
+      "label": "Minus",
+      "categories": [],
+      "value": "minus"
+    },
+    "move": {
+      "search": {
+        "terms": []
+      },
+      "label": "Move",
+      "categories": [],
+      "value": "move"
+    },
+    "mute": {
+      "search": {
+        "terms": []
+      },
+      "label": "Mute",
+      "categories": [],
+      "value": "mute"
+    },
+    "new-edit": {
+      "search": {
+        "terms": []
+      },
+      "label": "New Edit",
+      "categories": [],
+      "value": "new-edit"
+    },
+    "pause": {
+      "search": {
+        "terms": []
+      },
+      "label": "Pause",
+      "categories": [],
+      "value": "pause"
+    },
+    "pencil": {
+      "search": {
+        "terms": []
+      },
+      "label": "Pencil",
+      "categories": [],
+      "value": "pencil"
+    },
+    "play": {
+      "search": {
+        "terms": []
+      },
+      "label": "Play",
+      "categories": [],
+      "value": "play"
+    },
+    "plus-cicle": {
+      "search": {
+        "terms": []
+      },
+      "label": "Plus Ciccle",
+      "categories": [],
+      "value": "plus-cicle"
+    },
+    "plus-fine": {
+      "search": {
+        "terms": []
+      },
+      "label": "Plus Fine",
+      "categories": [],
+      "value": "plus-fine"
+    },
+    "plus": {
+      "search": {
+        "terms": []
+      },
+      "label": "Plus",
+      "categories": [],
+      "value": "plus"
+    },
+    "post": {
+      "search": {
+        "terms": []
+      },
+      "label": "Post",
+      "categories": [],
+      "value": "post"
+    },
+    "question-mark": {
+      "search": {
+        "terms": []
+      },
+      "label": "Question Mark",
+      "categories": [],
+      "value": "question-mark"
+    },
+    "question": {
+      "search": {
+        "terms": []
+      },
+      "label": "Question",
+      "categories": [],
+      "value": "question"
+    },
+    "redo": {
+      "search": {
+        "terms": []
+      },
+      "label": "Redo",
+      "categories": [],
+      "value": "redo"
+    },
+    "refresh": {
+      "search": {
+        "terms": []
+      },
+      "label": "Refresh",
+      "categories": [],
+      "value": "refresh"
+    },
+    "reload": {
+      "search": {
+        "terms": []
+      },
+      "label": "Reload",
+      "categories": [],
+      "value": "reload"
+    },
+    "remove": {
+      "search": {
+        "terms": []
+      },
+      "label": "Remove",
+      "categories": [],
+      "value": "remove"
+    },
+    "retry": {
+      "search": {
+        "terms": []
+      },
+      "label": "Retry",
+      "categories": [],
+      "value": "retry"
+    },
+    "right-arrow-bold": {
+      "search": {
+        "terms": []
+      },
+      "label": "Right Arrow Bold",
+      "categories": [],
+      "value": "right-arrow-bold"
+    },
+    "right-arrow": {
+      "search": {
+        "terms": []
+      },
+      "label": "Right Arrow",
+      "categories": [],
+      "value": "right-arrow"
+    },
+    "right-double-arrow": {
+      "search": {
+        "terms": []
+      },
+      "label": "Right Double Arrow",
+      "categories": [],
+      "value": "right-double-arrow"
+    },
+    "role": {
+      "search": {
+        "terms": []
+      },
+      "label": "Role",
+      "categories": [],
+      "value": "role"
+    },
+    "rotate-left": {
+      "search": {
+        "terms": []
+      },
+      "label": "Rotate Left",
+      "categories": [],
+      "value": "rotate-left"
+    },
+    "rotate-right": {
+      "search": {
+        "terms": []
+      },
+      "label": "Rotate Right",
+      "categories": [],
+      "value": "rotate-right"
+    },
+    "scale-origin": {
+      "search": {
+        "terms": []
+      },
+      "label": "Scale Origin",
+      "categories": [],
+      "value": "scale-origin"
+    },
+    "schedule": {
+      "search": {
+        "terms": []
+      },
+      "label": "Schedule",
+      "categories": [],
+      "value": "schedule"
+    },
+    "search": {
+      "search": {
+        "terms": []
+      },
+      "label": "Search",
+      "categories": [],
+      "value": "search"
+    },
+    "setting": {
+      "search": {
+        "terms": []
+      },
+      "label": "Setting",
+      "categories": [],
+      "value": "setting"
+    },
+    "slider-handle-icon": {
+      "search": {
+        "terms": []
+      },
+      "label": "Slider Handle Icon",
+      "categories": [],
+      "value": "slider-handle-icon"
+    },
+    "sort-asc": {
+      "search": {
+        "terms": []
+      },
+      "label": "Sort Asc",
+      "categories": [],
+      "value": "sort-asc"
+    },
+    "sort-default": {
+      "search": {
+        "terms": []
+      },
+      "label": "Sort Default",
+      "categories": [],
+      "value": "sort-default"
+    },
+    "sort-desc": {
+      "search": {
+        "terms": []
+      },
+      "label": "Sort Desc",
+      "categories": [],
+      "value": "sort-desc"
+    },
+    "star": {
+      "search": {
+        "terms": []
+      },
+      "label": "Star",
+      "categories": [],
+      "value": "star"
+    },
+    "status-close": {
+      "search": {
+        "terms": []
+      },
+      "label": "Status Close",
+      "categories": [],
+      "value": "status-close"
+    },
+    "steps-finsh": {
+      "search": {
+        "terms": []
+      },
+      "label": "Steps Finsh",
+      "categories": [],
+      "value": "steps-finsh"
+    },
+    "sub-plus": {
+      "search": {
+        "terms": []
+      },
+      "label": "Sub Plus",
+      "categories": [],
+      "value": "sub-plus"
+    },
+    "success": {
+      "search": {
+        "terms": []
+      },
+      "label": "Success",
+      "categories": [],
+      "value": "success"
+    },
+    "transparent": {
+      "search": {
+        "terms": []
+      },
+      "label": "Transparent",
+      "categories": [],
+      "value": "transparent"
+    },
+    "trash": {
+      "search": {
+        "terms": []
+      },
+      "label": "Trash",
+      "categories": [],
+      "value": "trash"
+    },
+    "tree-down": {
+      "search": {
+        "terms": []
+      },
+      "label": "Tree Down",
+      "categories": [],
+      "value": "tree-down"
+    },
+    "undo-normal": {
+      "search": {
+        "terms": []
+      },
+      "label": "Undo Normal",
+      "categories": [],
+      "value": "undo-normal"
+    },
+    "undo": {
+      "search": {
+        "terms": []
+      },
+      "label": "Undo",
+      "categories": [],
+      "value": "undo"
+    },
+    "user-remove": {
+      "search": {
+        "terms": []
+      },
+      "label": "User Remove",
+      "categories": [],
+      "value": "user-remove"
+    },
+    "view": {
+      "search": {
+        "terms": []
+      },
+      "label": "View",
+      "categories": [],
+      "value": "view"
+    },
+    "volume": {
+      "search": {
+        "terms": []
+      },
+      "label": "Volume",
+      "categories": [],
+      "value": "volume"
+    },
+    "warning-mark": {
+      "search": {
+        "terms": []
+      },
+      "label": "Warning Mark",
+      "categories": [],
+      "value": "warning-mark"
+    },
+    "warning": {
+      "search": {
+        "terms": []
+      },
+      "label": "Warning",
+      "categories": [],
+      "value": "warning"
+    },
+    "window-restore": {
+      "search": {
+        "terms": []
+      },
+      "label": "Window Restore",
+      "categories": [],
+      "value": "window-restore"
+    },
+    "zoom-in": {
+      "search": {
+        "terms": []
+      },
+      "label": "Zoom In",
+      "categories": [],
+      "value": "zoom-in"
+    },
+    "zoom-out": {
+      "search": {
+        "terms": []
+      },
+      "label": "Zoom Out",
+      "categories": [],
+      "value": "zoom-out"
+    }
+  }
+}

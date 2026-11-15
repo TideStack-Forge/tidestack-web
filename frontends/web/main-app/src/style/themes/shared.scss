@@ -1,0 +1,165 @@
+// ============================================================
+// 主题共享变量 (Theme Shared Variables)
+// ============================================================
+// 包含所有主题通用的、不依赖颜色的变量
+
+@use "sass:map";
+@use "sass:color";
+@use "../tokens" as tokens;
+@use "../layout/variables" as layout;
+@use "../contract/primitives" as primitives;
+
+// 控件尺寸（所有主题共享）
+$control-height-sm: tokens.$space-unit * 6;
+$control-height-md: tokens.$space-unit * 8;
+$control-height-lg: tokens.$space-unit * 10;
+$control-height-xl: tokens.$space-unit * 15;
+
+@mixin shared-theme-vars {
+  // ========== 基础变量（Primitives）==========
+  @include primitives.export-primitives;
+  
+  // 密度 scale 基准值
+  --scale-control-height-sm: #{$control-height-sm};
+  --scale-control-height-md: #{$control-height-md};
+  --scale-control-height-lg: #{$control-height-lg};
+  
+  --scale-space-xs: #{tokens.$space-unit};
+  --scale-space-sm: #{tokens.$space-unit * 2};
+  --scale-space-md: #{tokens.$space-unit * 3};
+  --scale-space-lg: #{tokens.$space-unit * 4};
+  --scale-space-xl: #{tokens.$space-unit * 6};
+  --scale-space-xxl: #{tokens.$space-unit * 8};
+  --scale-space-xxxl: #{tokens.$space-unit * 10};
+  
+  --scale-font-size-xs: #{tokens.$font-size-base - 2px};
+  --scale-font-size-sm: #{tokens.$font-size-base - 1px};
+  --scale-font-size-md: #{tokens.$font-size-base};
+  --scale-font-size-lg: #{tokens.$font-size-base + 2px};
+  --scale-font-size-xl: #{tokens.$font-size-base + 4px};
+  --scale-font-size-xxl: #{tokens.$font-size-base + 6px};
+  --scale-font-size-xxxl: #{tokens.$font-size-base + 10px};
+  
+  --scale-radius-sm: #{tokens.$radius-base};
+  --scale-radius-md: #{tokens.$radius-base * 2};
+  --scale-radius-lg: #{tokens.$radius-base * 4};
+  --scale-radius-xl: #{tokens.$radius-base * 6};
+  --scale-radius-pill: 999px;
+  
+  // 布局变量（非颜色）
+  --layout-sidebar-width: #{layout.$layout-sidebar-width};
+  --layout-sidebar-width-open: #{layout.$layout-sidebar-width-open};
+  --layout-sidebar-secondary-width: #{layout.$layout-sidebar-secondary-width};
+  --layout-header-height: #{layout.$layout-header-height};
+  --layout-footer-height: #{layout.$layout-footer-height};
+  --layout-container-max-width: 1200px;
+  --layout-container-padding-x: #{tokens.$space-unit * 6};
+  --layout-shell-gap: #{tokens.$space-unit * 2};
+  --layout-shell-radius: #{tokens.$radius-base * 5};
+  
+  // Sidebar（非颜色）
+  --sidebar-width: #{layout.$layout-sidebar-width};
+  --sidebar-width-open: #{layout.$layout-sidebar-width-open};
+  --sidebar-secondary-width: #{layout.$layout-sidebar-secondary-width};
+  --sidebar-content-inset-x: #{tokens.$space-unit * 1.5};
+  --sidebar-content-inset-y: #{tokens.$space-unit * 3};
+  --sidebar-scrollbar-gutter: #{tokens.$space-unit * 2.5};
+  
+  // Topbar（非颜色）
+  --topbar-height: 60px;
+  --topbar-margin: 0 #{tokens.$space-unit * 2};
+  
+  // Component（非颜色）
+  --component-page-padding-x: #{tokens.$space-unit * 6};
+  --component-page-padding-y: #{tokens.$space-unit * 5};
+  --component-header-height: #{$control-height-xl};
+  --component-tab-height: #{$control-height-sm};
+  --component-card-padding: #{tokens.$space-unit * 4};
+  
+  // Button（非颜色）
+  --button-radius: #{tokens.$radius-base * 2};
+  --button-loading-overlay: rgba(255, 255, 255, 0.35);
+  
+  // Input（非颜色）
+  --input-clear-color: #{color.mix(white, tokens.$color-text-main, 60%)};
+  --input-clear-color-hover: #{color.mix(white, tokens.$color-text-main, 40%)};
+  --input-outline: rgba(24, 144, 255, 0.1);
+  
+  // Form（非颜色）
+  --form-label-padding-right: #{tokens.$space-unit * 3};
+  --form-label-margin-bottom: #{tokens.$space-unit * 2};
+  --form-label-font-weight: 500;
+  --form-label-font-size: 14px;
+  --form-item-margin-bottom: #{tokens.$space-unit * 4};
+  --form-error-font-size: 12px;
+  --form-error-line-height: 1.5;
+  --form-error-padding-top: #{tokens.$space-unit * 1.5};
+  --form-required-margin-right: #{tokens.$space-unit};
+  
+  // Tabs（非颜色）
+  --tabs-height: 38px;
+  --tabs-padding-x: #{tokens.$space-unit * 2};
+  --tabs-padding-t: #{tokens.$space-unit * 2};
+  --tabs-item-height: 38px;
+  --tabs-item-radius-tl: #{tokens.$radius-base * 3};
+  --tabs-item-radius-tr: #{tokens.$radius-base * 3};
+  --tabs-item-radius-br: 0px;
+  --tabs-item-radius-bl: 0px;
+
+  // Modal（非颜色）
+  --modal-border-radius: #{tokens.$radius-base * 3};
+  --modal-header-padding-y: #{tokens.$space-unit * 4};
+  --modal-title-font-size: var(--font-size-lg);
+  --modal-title-font-weight: 600;
+  --modal-title-line-height: #{tokens.$space-unit * 6};
+  
+  // Menu（非颜色）
+  --menu-padding: #{tokens.$space-unit * 2} 0 #{tokens.$space-unit * 3};
+  --menu-item-height: 42px;
+  --menu-item-gap: #{tokens.$space-unit * 2};
+  --menu-item-padding-left: #{tokens.$space-unit * 3.5};
+  --menu-item-radius: #{tokens.$radius-base * 2.5};
+  --menu-collapsed-item-radius: #{tokens.$radius-base * 3};
+  --menu-content-gap: #{tokens.$space-unit * 2.5};
+  --menu-submenu-content-gap: #{tokens.$space-unit * 3};
+  --menu-indent-step: #{tokens.$space-unit * 4};
+  --menu-submenu-item-height: 38px;
+  --menu-submenu-item-padding-left: calc(var(--menu-item-padding-left) + var(--menu-indent-step));
+  --menu-submenu-item-margin: #{tokens.$space-unit} 0 0;
+  --menu-submenu-item-radius: #{tokens.$radius-base * 2.5};
+  --menu-icon-size: 16px;
+  --menu-arrow-size: 16px;
+  --menu-arrow-offset-inline: #{tokens.$space-unit * 3};
+  --menu-parent-padding-inline-end: calc((var(--menu-arrow-offset-inline) * 2) + var(--menu-arrow-size));
+  --menu-submenu-icon-size: 15px;
+  --menu-submenu-padding: 0 0 #{tokens.$space-unit * 2};
+
+  // Scrollbar（非颜色）
+  --scrollbar-track-size: 4px;
+  --scrollbar-rail-offset-inline-end: #{tokens.$space-unit};
+  --scrollbar-rail-offset-block-end: #{tokens.$space-unit};
+  --scrollbar-rail-inset-block: #{tokens.$space-unit * 1.5};
+  --scrollbar-rail-inset-inline: #{tokens.$space-unit * 1.5};
+  --scrollbar-thumb-radius: 999px;
+  --scrollbar-transition: opacity var(--motion-duration-fast) ease,
+    background-color var(--motion-duration-fast) ease;
+  
+  // Widget（非颜色）
+  --widget-header-height: 40px;
+  --widget-footer-height: 30px;
+  
+  // Transition（非颜色）
+  --transition-fast: all var(--motion-duration-fast) var(--motion-easing-standard);
+  --transition-normal: all var(--motion-duration-normal) var(--motion-easing-standard);
+  --transition-slow: all var(--motion-duration-slow) var(--motion-easing-standard);
+  --transition-duration-fast: var(--motion-duration-fast);
+  --transition-duration-normal: var(--motion-duration-normal);
+  --transition-duration-slow: var(--motion-duration-slow);
+  --transition-easing-standard: var(--motion-easing-standard);
+  --transition-easing-decelerate: var(--motion-easing-decelerate);
+  --transition-easing-accelerate: var(--motion-easing-accelerate);
+  --transition-color: color var(--motion-duration-fast) var(--motion-easing-standard), background-color var(--motion-duration-fast) var(--motion-easing-standard), border-color var(--motion-duration-fast) var(--motion-easing-standard);
+  --transition-opacity: opacity var(--motion-duration-fast) var(--motion-easing-standard);
+  --transition-shadow: box-shadow var(--motion-duration-fast) var(--motion-easing-standard);
+  --transition-transform: transform var(--motion-duration-normal) var(--motion-easing-standard);
+}

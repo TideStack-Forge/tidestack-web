@@ -1,0 +1,46 @@
+// T型布局：顶部头部 + 左侧导航
+.app-layout.header-sidebar {
+  .app-header {
+    min-height: var(--layout-header-height);
+    z-index: var(--z-index-base);
+    background: transparent;
+  }
+
+  .app-body {
+    display: flex;
+    min-height: 0;
+    min-width: 0;
+    width: 100%;
+    height: calc(100vh - var(--layout-header-height));
+    gap: var(--layout-shell-gap);
+    padding: var(--layout-shell-gap);
+
+    .app-sidebar {
+      flex: 0 0 var(--layout-sidebar-width);
+      width: var(--layout-sidebar-width);
+      height: 100%;
+      margin-bottom: 0;
+      background: transparent;
+      border-right: 0;
+      transition: flex-basis 0.3s ease, width 0.3s ease;
+    }
+
+    .app-content {
+      flex: 1 1 auto;
+      min-width: 0;
+      min-height: 0;
+      overflow: hidden;
+      border-radius: var(--layout-shell-radius);
+      background: var(--layout-shell-surface);
+      border: 1px solid var(--layout-shell-border);
+      box-shadow: var(--layout-shell-shadow);
+    }
+  }
+}
+
+.app-layout.header-sidebar:has(.app-sidebar.is-open) {
+  .app-sidebar {
+    flex: 0 0 var(--layout-sidebar-width-open);
+    width: var(--layout-sidebar-width-open);
+  }
+}

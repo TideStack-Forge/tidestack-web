@@ -1,0 +1,6 @@
+.ouroboros-organization-picker.is-error {
+  > .cxd-TreeSelect {
+    border-color: var(--Form-input-onError-borderColor);
+    background: var(--Form-input-onError-bg);
+  }
+}
