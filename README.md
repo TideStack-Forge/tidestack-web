@@ -1,4 +1,4 @@
-# tidestack-web-base
+# tidestack-web
 
 TideStack 前端基座：React／qiankun 主应用、Nginx 代理与独立容器运行资源。
 
@@ -17,7 +17,7 @@ npm test
 构建输出位于 `frontends/web/main-app/dist`。基座按后端 API 合同运行，使用 `BACKEND_URL` 配置代理目标；容器构建入口：
 
 ```bash
-docker build -t tidestack-web-base:local frontends/web/main-app
+docker build -t tidestack-web:local frontends/web/main-app
 ```
 
 生产部署前设置真实后端地址。微前端静态资源可按现有约定挂载，部署变量沿用总仓机制。
