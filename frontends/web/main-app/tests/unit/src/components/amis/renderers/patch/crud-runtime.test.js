@@ -66,7 +66,7 @@ function loadCrudRendererClass() {
   clearMirroredSrcModuleCache(__filename, '.')
 
   const WrappedRenderer = require(
-    path.join(process.cwd(), 'src/components/amis/renderers/patch/CRUD.tsx')
+    path.join(process.cwd(), '../ouroboros-amis-runtime/src/renderers/patch/CRUD.tsx')
   ).default
 
   return WrappedRenderer.ComposedComponent

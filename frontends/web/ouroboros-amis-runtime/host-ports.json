@@ -1,0 +1,20 @@
+[
+  "common/eventBus",
+  "common/i18n",
+  "common/i18n/amis",
+  "common/menus",
+  "common/menus/registry",
+  "common/micro/commonProps",
+  "common/micro/entryGuard",
+  "common/micro/utils",
+  "common/modal",
+  "common/tabs",
+  "router/routerFacade",
+  "router/utils",
+  "store/storeFacade",
+  "utils/Deferred",
+  "utils/Stomp",
+  "utils/http",
+  "utils/statisticsStudioDirtyGuard",
+  "utils/url"
+]

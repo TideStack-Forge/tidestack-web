@@ -43,7 +43,6 @@ const getters = {
   activeTabId: (state) => asString(state.tabs.activeTabId),
   keepAliveList: (state) => asArray(state.tabs.tabsList),
   appLoading: (state) => state.tabs.appLoading,
-  preventTabOperation: (state) => Boolean(state.tabs.preventTabOperation),
   loadedMicroPages: (state) => state.tabs.loadedMicroPages,
   mode: (state) => state.app.mode,
   scrollBarScrollTopMap: (state) => asObject(state.tabs.scrollBarScrollTopMap),

@@ -1,6 +1,15 @@
 const { test, expect } = require('@playwright/test')
 
 const endpoint = '/api/dev/example/code-intelligence/context'
+const responseCollectors = new WeakMap()
+
+test.afterEach(async ({ page }) => {
+  const collector = responseCollectors.get(page)
+  if (!collector) return
+  page.off('response', collector.listener)
+  await Promise.all(collector.pending)
+  expect(collector.errors).toEqual([])
+})
 
 function flow() {
   return {
@@ -19,14 +28,21 @@ function flow() {
   }
 }
 
-async function mount(page, language = 'groovy') {
+async function mount(page, language = 'groovy', withProducer = false, withForm = false) {
   const exchanges = [], errors = [], consoleErrors = []
   page.on('console', message => { if (message.type() === 'error') consoleErrors.push(message.text()) })
   page.on('pageerror', error => errors.push(error.message))
-  page.on('response', async response => {
+  const pending = new Set()
+  const listener = response => {
     if (!response.url().includes('/code-intelligence/')) return
-    exchanges.push({ url: response.url(), status: response.status(), request: response.request().postData(), response: await response.json() })
-  })
+    const reading = response.json().then(body => {
+      exchanges.push({ url: response.url(), status: response.status(), request: response.request().postData(), response: body })
+    }).catch(error => errors.push(`Evidence response ${response.url()}: ${error.message}`))
+      .finally(() => pending.delete(reading))
+    pending.add(reading)
+  }
+  page.on('response', listener)
+  responseCollectors.set(page, { listener, pending, errors })
   await page.addInitScript(language => {
     window.__groovyEditors = {}
     window.__groovyReady = false
@@ -40,19 +56,47 @@ async function mount(page, language = 'groovy') {
       },
     }
   }, language)
+  const draft = flow()
+  if (withProducer) {
+    draft.nodes.splice(1, 0, { name: 'producer', type: 'script', language: 'groovy', script: 'return [customers: probe.CustomerApi.load()]' })
+    draft.connections[0].targetNode = 'producer'
+    draft.connections.push({ sourceNode: 'producer', sourceOutputPort: 0, targetNode: 'mapping', targetInputPort: 0 })
+  }
   await page.route('**/behavior-editor-fixture', route => route.fulfill({ json: {
-    data: { appName: 'example', __FLOW_MODEL: { ...flow(), nodes: flow().nodes.map(node => node.name === 'script' ? { ...node, language } : node) }, __CURRENT_NODE_NAME: 'script', code: '' },
+    ...(withForm ? { api: 'post:/editor-validation-submit', actions: [{ type: 'submit', label: '保存代码' }] } : {}),
+    data: { appName: 'example', __FLOW_MODEL: { ...draft, nodes: draft.nodes.map(node => node.name === 'script' ? { ...node, language } : node) }, __CURRENT_NODE_NAME: 'script', code: '' },
     body: [
-      { type: 'tpl', tpl: `<h2>${language === 'groovy' ? 'Groovy' : '后端 JavaScript / GraalJS'} 编辑器 · 完整链路验收</h2><p>JSON Schema 校验 → 映射 → 脚本</p><p>语义引擎由开发平台托管；助手经 RabbitMQ 提供实际应用环境。后端 JS 使用独立的 ECMAScript 类型环境。</p>` },
-      { type: 'json-data-editor', name: '__FLOW_MODEL.nodes.1.mapping', label: '上游映射（修改后更新下游上下文）' },
+      { type: 'tpl', tpl: `<h2>${language === 'groovy' ? 'Groovy' : '后端 JavaScript / GraalJS'} 编辑器 · 完整链路验收</h2><p>JSON Schema 校验 → ${withProducer ? 'Groovy 输出 → ' : ''}映射 → 脚本</p><p>语义引擎由开发平台托管；助手经 RabbitMQ 提供实际应用环境。后端 JS 使用独立的 ECMAScript 类型环境。</p>` },
+      { type: 'json-data-editor', name: `__FLOW_MODEL.nodes.${draft.nodes.findIndex(node => node.name === 'mapping')}.mapping`, label: '上游映射（修改后更新下游上下文）' },
       { type: 'script-editor', name: 'code', label: `${language} 脚本`, language, codeSite: 'logicflow.script', codePointer: '/script', intelligenceApi: endpoint,
         options: { fontSize: 18, minimap: { enabled: false }, 'semanticHighlighting.enabled': true } },
     ],
   } }))
   await page.goto('/business-behavior-catalog-playwright-harness.html?editor=1')
-  await page.waitForFunction(() => window.__groovyReady, undefined, { timeout: 60_000 })
+  await page.waitForFunction(() => window.__groovyReady, undefined, { timeout: 120_000 })
   return { exchanges, errors, consoleErrors, timings: [] }
 }
+
+test('Groovy AMIS form blocks current syntax errors and submits corrected code through the container LSP', async ({ page }, testInfo) => {
+  const submissions = []
+  await page.route('**/editor-validation-submit', async route => {
+    submissions.push(route.request().postDataJSON())
+    await route.fulfill({ json: { status: 0, data: {} } })
+  })
+  const state = await mount(page, 'groovy', false, true)
+  await enter(page, 'String text = "hello"\ntext.substring(0')
+  await page.getByRole('button', { name: '保存代码' }).click()
+  await expect(page.locator('.cxd-Form-feedback')).toContainText('第 2 行')
+  expect(submissions).toHaveLength(0)
+  await evidence(page, testInfo, 'form-error-blocks-submit', state)
+  const corrected = 'String text = "hello"\ntext.substring(0)'
+  await enter(page, corrected)
+  await page.getByRole('button', { name: '保存代码' }).click()
+  await expect.poll(() => submissions.length).toBe(1)
+  expect(submissions[0].code).toBe(corrected)
+  await testInfo.attach('form-submissions', { body: JSON.stringify(submissions, null, 2), contentType: 'application/json' })
+  await evidence(page, testInfo, 'form-corrected-code-submitted', state)
+})
 
 async function enter(page, text) {
   await page.evaluate(() => {
@@ -73,8 +117,11 @@ async function suggest(page, text, expected, state) {
   const started = Date.now()
   await page.keyboard.press('Control+Space')
   const widget = page.locator('.suggest-widget.visible')
+  await page.waitForFunction(expected => [...document.querySelectorAll('.suggest-widget.visible')]
+    .some(element => element.textContent.includes(expected)), expected, { polling: 'raf' })
+  const visibleMs = Date.now() - started
   await expect(widget).toContainText(expected)
-  state.timings.push({ text, visibleMs: Date.now() - started })
+  state.timings.push({ text, visibleMs })
   return widget
 }
 
@@ -240,4 +287,19 @@ test('backend JavaScript uses actual Graal globals and excludes browser types wh
   expect(frontend).toContain('querySelector')
   checks.push({ frontendDocumentQuerySelector: true })
   await testInfo.attach('javascript-runtime-boundaries', { body: JSON.stringify(checks, null, 2), contentType: 'application/json' })
+})
+
+// GLS-C-OUTPUT-EDITOR: actual worker output feeds the ordinary context endpoint and Monaco.
+test('Groovy upstream semantic output reaches downstream Monaco through mapping', async ({ page }, testInfo) => {
+  const state = await mount(page, 'groovy', true)
+  const widget = await suggest(page, '$0.customers[0].', 'address', state)
+  await expect(widget).toContainText('name')
+  const contexts = state.exchanges.filter(exchange => exchange.url.endsWith('/context'))
+  const snapshot = await page.request.post(endpoint, { data: JSON.parse(contexts.at(-1).request) })
+  const context = await snapshot.json()
+  expect(context.code).toBe(0)
+  expect(JSON.stringify(context.data)).toContain('probe.Customer')
+  await testInfo.attach('inferred-output-context', { body: JSON.stringify(context, null, 2), contentType: 'application/json' })
+  await evidence(page, testInfo, '15-semantic-output-through-mapping', state)
+  await page.waitForTimeout(1500)
 })

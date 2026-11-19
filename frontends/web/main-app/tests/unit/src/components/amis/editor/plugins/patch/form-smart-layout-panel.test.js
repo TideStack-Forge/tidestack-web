@@ -45,7 +45,7 @@ function createPanelBody() {
 function loadPanelModule() {
   const filePath = path.join(
     mainAppRoot,
-    'src/components/amis/editor/plugins/patch/formSmartLayoutPanel.ts'
+    '../ouroboros-amis-runtime/src/editor/plugins/patch/formSmartLayoutPanel.ts'
   )
   const source = fs.readFileSync(filePath, 'utf8')
   const transpiled = ts.transpileModule(source, {
@@ -75,7 +75,7 @@ function loadPanelModule() {
 function loadFormPluginModule(panelModule) {
   const filePath = path.join(
     mainAppRoot,
-    'src/components/amis/editor/plugins/patch/Form.ts'
+    '../ouroboros-amis-runtime/src/editor/plugins/patch/Form.ts'
   )
   const source = fs.readFileSync(filePath, 'utf8')
   const transpiled = ts.transpileModule(source, {
@@ -88,14 +88,24 @@ function loadFormPluginModule(panelModule) {
 
   let registeredPlugin = null
 
-  class MockFormPlugin {}
+  class MockFormPlugin {
+    patchSchema(schema) {
+      return {
+        ...schema,
+        actions: schema.actions || [],
+        feat: schema.initApi ? (schema.api ? 'Edit' : 'View') : schema.feat || 'Insert',
+      }
+    }
+  }
 
   const module = { exports: {} }
-  const localRequire = Module.createRequire(filePath)
+  const sourceRequire = Module.createRequire(filePath)
+  const localRequire = (request) => request.startsWith('.') ? sourceRequire(request) : require(request)
   const mockedRequire = (request) => {
     if (request === 'amis-editor') {
       return {
         FormPlugin: MockFormPlugin,
+        unRegisterEditorPlugin: () => {},
         registerEditorPlugin: (pluginClass) => {
           registeredPlugin = pluginClass
         },
@@ -104,6 +114,7 @@ function loadFormPluginModule(panelModule) {
 
     if (request === 'amis-editor-core') {
       return {
+        defaultValue: fallback => value => value == null ? fallback : value,
         getSchemaTpl: (type, config) => ({
           type,
           ...config,
@@ -138,6 +149,7 @@ function loadFormPluginModule(panelModule) {
   return {
     registeredPlugin,
     OuroborosFormPlugin: module.exports.OuroborosFormPlugin,
+    OuroborosBaseFormPlugin: module.exports.OuroborosBaseFormPlugin,
   }
 }
 
@@ -238,4 +250,55 @@ test('OuroborosFormPlugin skips CRUD filter contexts and foreign plugin events',
   })
 
   assert.equal(setDataCalls.length, 0)
+})
+
+test('OuroborosFormPlugin does not persist an inferred AMIS form-purpose marker', () => {
+  const panelModule = loadPanelModule()
+  const { OuroborosFormPlugin } = loadFormPluginModule(panelModule)
+  const plugin = new OuroborosFormPlugin()
+
+  assert.deepEqual(
+    plugin.patchSchema({ type: 'form' }, {}, {}),
+    { type: 'form' }
+  )
+  assert.deepEqual(
+    plugin.patchSchema({ type: 'form', feat: 'View' }, {}, {}),
+    { type: 'form', feat: 'View' }
+  )
+  for (const actions of [[], [{type: 'button', label: 'Custom action', actionType: 'dialog'}]]) {
+    const authoredActions = {type: 'form', actions}
+    assert.deepEqual(plugin.patchSchema(authoredActions, {}, {}), authoredActions)
+  }
+  const authoredForm = { type: 'form', feat: 'View', api: '/save', initApi: '/load' }
+  assert.deepEqual(
+    plugin.patchSchema(authoredForm, {}, {}),
+    authoredForm
+  )
+})
+
+
+test('form panel displays defaults without initializing fields and retains authored selections', () => {
+  const { OuroborosBaseFormPlugin } = loadFormPluginModule(loadPanelModule())
+  const plugin = new OuroborosBaseFormPlugin()
+  const onChange = () => 'author edit'
+  const suppliedPipe = value => value || 'api'
+  const panel = [{type: 'group', body: [
+    {type: 'select', name: 'dsType', value: 'api', pipeIn: suppliedPipe, onChange},
+    {type: 'select', name: 'labelAlign', selectFirst: true, options: [{value: 'left'}, {value: 'right'}]},
+    {type: 'input-text', name: 'title'},
+  ]}]
+  let rendered
+  plugin.afterBuildPanelBody({context: {plugin, data: panel}, setData: value => { rendered = value }})
+  const [source, align, title] = rendered[0].body
+  assert.equal(Object.hasOwn(source, 'value'), false)
+  assert.equal(source.selectFirst, false)
+  assert.equal(source.pipeIn(undefined), 'api')
+  assert.equal(source.pipeIn('custom'), 'custom')
+  assert.equal(source.onChange(), 'author edit')
+  assert.equal(align.selectFirst, false)
+  assert.equal(align.pipeIn(undefined), 'left')
+  assert.equal(align.pipeIn('right'), 'right')
+  assert.equal(title, panel[0].body[2])
+  assert.equal(panel[0].body[0].value, 'api')
+  assert.equal(panel[0].body[1].selectFirst, true)
 })

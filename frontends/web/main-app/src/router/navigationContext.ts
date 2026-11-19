@@ -10,7 +10,6 @@ export type NavigationContext = Pick<
   | 'toQueryRedirect'
   | 'postLoginFallbackPath'
   | 'whiteList'
-  | 'preventTabOperation'
   | 'routeName'
   | 'activeTabId'
   | 'tabsList'
@@ -23,7 +22,6 @@ export type NavigationContextRuntimeState = Pick<
   | 'isLogin'
   | 'postLoginFallbackPath'
   | 'whiteList'
-  | 'preventTabOperation'
   | 'activeTabId'
   | 'tabsList'
 >
@@ -35,7 +33,6 @@ export function createNavigationContext(
     hasInitializationError,
     postLoginFallbackPath,
     whiteList,
-    preventTabOperation,
     activeTabId,
     tabsList,
   }: NavigationContextRuntimeState
@@ -51,7 +48,6 @@ export function createNavigationContext(
         : undefined,
     postLoginFallbackPath,
     whiteList,
-    preventTabOperation,
     routeName: to.name || '',
     activeTabId,
     tabsList,

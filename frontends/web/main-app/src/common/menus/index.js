@@ -4,7 +4,6 @@ import { isExternal } from '@/utils/url'
 import { replaceLocation } from '@/router/routerFacade'
 import { getRouteInfo } from '@/router/utils'
 import { resolvePostLoginFallbackPath } from '@/common/menus/post-login'
-import { performPostLoginNavigation } from '@/common/menus/post-login-navigation'
 function getCanJumpMenu(menu) {
   if (!menu) return
   const url = menu.url || menu.path || menu.fullPath
@@ -92,7 +91,7 @@ function readFixedTabPreference(menu) {
   return undefined
 }
 
-async function openMenuItem(menu) {
+async function openMenuItem(menu, tabOptions = {}) {
   if (typeof menu === 'string') {
     menu = store.getters['user/menuGetter'](menu)
   }
@@ -121,15 +120,15 @@ async function openMenuItem(menu) {
       window.open(url)
       break
     case 'fullScreen':
-      openFullScreen(url)
-      break
+      return tabOptions.syncLocation === false ? true : openFullScreen(url)
     default:
-      tabs.openOrSwitchTab(url, {
+      return (await tabs.openOrSwitchTab(url, {
+        ...tabOptions,
         title,
         breadcrumbs: getCurrentBreadcrumbs(finalMenu),
         defaultIcon: finalMenu.icon || '',
         ...(fixedTabPreference === undefined ? {} : { isFixed: fixedTabPreference }),
-      })
+      })) !== false
   }
   return true
 }
@@ -140,11 +139,11 @@ function getFullScreenUrl(url) {
   if (searchParams.get('isfullscreen') !== 'true') {
     searchParams.set('isfullscreen', 'true')
   }
-  return newUrl.pathname + newUrl.search
+  return newUrl.pathname + newUrl.search + newUrl.hash
 }
 
 function openFullScreen(url) {
-  replaceLocation(getFullScreenUrl(url))
+  return replaceLocation(getFullScreenUrl(url))
 }
 
 function openFirstMenuItem() {
@@ -161,44 +160,42 @@ function findFirstMenu(menus) {
   return findFirstMenu(menu.children)
 }
 
-async function openMenuAfterLogin() {
+function readPostLoginTarget() {
   const menu = store.getters['user/menu']
-  // 获取homePage
+  const menuTarget = (targetMenu) => {
+    const url = targetMenu.url || targetMenu.path || targetMenu.fullPath
+    const path = isExternal(url) || targetMenu.showMode === 'newWindow'
+      ? resolvePostLoginFallbackPath(menu)
+      : targetMenu.showMode === 'fullScreen' ? getFullScreenUrl(url) : url
+    return { menu: targetMenu, path }
+  }
   const homePage = store.getters['app/homePage']
   if (homePage) {
-    const routeInfo = getRouteInfo(homePage)
-    const result = await performPostLoginNavigation({
-      preferredPath: homePage,
-      preferredMenuPath: store.getters['user/menuGetter'](homePage) ? homePage : null,
-      preferredRoutePath: routeInfo && routeInfo.name !== 'notFound' ? routeInfo.path : null,
-      menu,
-      onMenuTarget: (targetPath) => openMenuItem(targetPath),
-      onRouteTarget: (targetPath) => tabs.openOrSwitchTab(targetPath),
-    })
-
-    if (result.handled) {
-      return
-    }
+    const homeMenu = store.getters['user/menuGetter'](homePage)
+    const targetMenu = homeMenu && getCanJumpMenu(homeMenu)
+    if (targetMenu) return menuTarget(targetMenu)
+    const route = getRouteInfo(homePage)
+    if (route && route.name !== 'notFound') return { path: homePage, route: true }
   }
+  const first = findFirstMenu(menu && menu.globalMenu)
+  const targetMenu = first && getCanJumpMenu(first)
+  if (targetMenu) return menuTarget(targetMenu)
+  return { path: resolvePostLoginFallbackPath(menu) }
+}
 
-  // 取第一个菜单项
-  const firstMenu = findFirstMenu(menu && menu.globalMenu)
-  const url = firstMenu && (firstMenu.url || firstMenu.path || firstMenu.fullPath)
-  if (url) {
-    const result = await openMenuItem(firstMenu)
-    if (result) {
-      return
-    }
-  }
-
-  replaceLocation(resolvePostLoginFallbackPath(menu))
+async function openMenuAfterLogin(tabOptions = {}) {
+  const target = readPostLoginTarget()
+  if (target.menu) return openMenuItem(target.menu, tabOptions)
+  if (target.route) return tabs.openOrSwitchTab(target.path, tabOptions)
+  if (tabOptions.syncLocation !== false) return replaceLocation(target.path)
+  return true
 }
 // 跳转
 function doJump() {
   const url = new URL(window.location.href)
   const redirect = url.searchParams.get('redirect')
   if (!redirect) return openMenuAfterLogin()
-  window.history.replaceState({}, '', redirect)
+  return replaceLocation(redirect)
 }
 
-export { openMenuItem, openFirstMenuItem, openMenuAfterLogin, doJump }
+export { openMenuItem, openFirstMenuItem, openMenuAfterLogin, readPostLoginTarget, doJump }

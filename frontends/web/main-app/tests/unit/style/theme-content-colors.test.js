@@ -7,7 +7,7 @@ const rootDir = path.resolve(__dirname, '../../..')
 
 function compileThemeVars(theme) {
   const result = sass.compileString(
-    `@use "src/style/themes/${theme}" as theme; .${theme} { @include theme.${theme}-theme-vars; }`,
+    `@use "../ouroboros-amis-runtime/src/style/themes/${theme}" as theme; .${theme} { @include theme.${theme}-theme-vars; }`,
     { loadPaths: [rootDir] }
   )
   const vars = new Map()

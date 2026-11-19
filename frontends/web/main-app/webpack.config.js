@@ -1,5 +1,9 @@
 const path = require('path')
 const fs = require('fs')
+const { createHostBindings } = require('../ouroboros-amis-runtime/host-bindings.cjs')
+const amisHostBindings = createHostBindings(Object.fromEntries(
+  require('../ouroboros-amis-runtime/host-ports.json').map((port) => [port, path.resolve(__dirname, 'src', port)])
+))
 const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
@@ -13,7 +17,7 @@ const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const { createRuntimeOptions, resolve } = require('./webpack.runtime')
 
 const ICON_PICKER_DATA_RESOURCE_PATTERN =
-  /[\\/]src[\\/]components[\\/]amis[\\/]renderers[\\/]icon-data[\\/]/
+  /[\\/]ouroboros-amis-runtime[\\/]src[\\/]renderers[\\/]icon-data[\\/]/
 
 function resolveSharedPackagePath(packageName) {
   const localPath = path.join(__dirname, 'node_modules', packageName)
@@ -239,6 +243,8 @@ module.exports = (_env = {}, argv = {}) => {
     stats: 'errors-warnings',
     resolve: {
       alias: {
+        ...amisHostBindings,
+        'ouroboros-amis-runtime': path.resolve(__dirname, '../ouroboros-amis-runtime/src'),
         '@': resolve('src'),
         'amis-core': resolveSharedPackagePath('amis-core'),
         'entities/lib/maps/entities.json': resolve('src/compat/markdownItEntities.js'),
@@ -358,14 +364,14 @@ module.exports = (_env = {}, argv = {}) => {
         cacheGroups: {
           iconPickerFontAwesome: {
             name: 'icon-picker-fontawesome-6',
-            test: /[\\/]src[\\/]components[\\/]amis[\\/]renderers[\\/]icon-data[\\/]FontAwesome 6\.x\.json$/,
+            test: /[\\/]ouroboros-amis-runtime[\\/]src[\\/]renderers[\\/]icon-data[\\/]FontAwesome 6\.x\.json$/,
             chunks: 'async',
             priority: 1000,
             enforce: true,
           },
           iconPickerInternal: {
             name: 'icon-picker-internal',
-            test: /[\\/]src[\\/]components[\\/]amis[\\/]renderers[\\/]icon-data[\\/]internal\.json$/,
+            test: /[\\/]ouroboros-amis-runtime[\\/]src[\\/]renderers[\\/]icon-data[\\/]internal\.json$/,
             chunks: 'async',
             priority: 1000,
             enforce: true,

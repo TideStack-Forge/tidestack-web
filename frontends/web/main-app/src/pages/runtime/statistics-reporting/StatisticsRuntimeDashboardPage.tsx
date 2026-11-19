@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import AmisComponent from '@/components/amis/AmisComponent'
 import { readCurrentRoute } from '@/router/routerFacade'
-import { buildReportVisualizationSchema } from '@/components/amis/renderers/report-view-runtime'
+import { buildReportVisualizationSchema } from 'ouroboros-amis-runtime/renderers/report-view-runtime'
 
 const LOADING_SCHEMA = {
   type: 'page',

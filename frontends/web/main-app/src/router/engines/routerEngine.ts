@@ -1,9 +1,4 @@
-import AppLayoutOutlet from '../../layouts/AppLayoutOutlet'
 import { i18nManager } from '../../common/i18n'
-import { readNavigationContext } from '../navigationContextRuntime'
-import { executeNavigationDecision } from '../navigationExecutionRuntime'
-import { installNavigationOrchestration } from '../navigationOrchestration'
-import { readRouterTopology } from '../routerTopologyRuntime'
 import { readGetters } from '../../store/storeFacade'
 
 type RouteChangeListener = (route: any, from?: any) => void
@@ -37,6 +32,17 @@ const routeChangeListeners = new Set<RouteChangeListener>()
 const beforeEachHooks: NavigationGuard[] = []
 const afterEachHooks: AfterEachGuard[] = []
 
+let configuration: { readTopology: () => any[]; install: (router: any, updateTitle: (route: any) => void) => void } | null = null
+let navigationSequence = 0
+export function configureRouter(configurationInput: NonNullable<typeof configuration>) {
+  if (configuration) return
+  configuration = configurationInput
+}
+function readTopology() {
+  if (!configuration) throw new Error('Router must be configured by host bootstrap before use')
+  return configuration.readTopology()
+}
+
 let routeMatcher: RouteMatcher | null = null
 let currentRoute: any = null
 let popStateBound = false
@@ -48,7 +54,7 @@ function createInitialRoute(): any {
 
 function ensureRouteMatcher() {
   if (!routeMatcher) {
-    routeMatcher = buildMatcher(readRouterTopology(AppLayoutOutlet))
+    routeMatcher = buildMatcher(readTopology())
   }
 
   return routeMatcher
@@ -318,7 +324,7 @@ function notifyRouteChangeListeners(route: any, from?: any) {
   })
 }
 
-function runGuard(guard: NavigationGuard, to: any, from: any) {
+function runGuard(guard: NavigationGuard, to: any, from: any, commits: Array<(isCurrent: () => boolean) => Promise<unknown>>, tabIntent = false) {
   return new Promise<any>((resolve, reject) => {
     let settled = false
 
@@ -327,6 +333,8 @@ function runGuard(guard: NavigationGuard, to: any, from: any) {
       resolve(value)
     }
 
+    next.tabIntent = tabIntent
+    next.onCommit = (action: (isCurrent: () => boolean) => Promise<unknown>) => commits.push(action)
     Promise.resolve(guard(to, from, next))
       .then((result) => {
         if (!settled) {
@@ -337,9 +345,9 @@ function runGuard(guard: NavigationGuard, to: any, from: any) {
   })
 }
 
-async function runBeforeEachHooks(to: any, from: any) {
+async function runBeforeEachHooks(to: any, from: any, commits: Array<(isCurrent: () => boolean) => Promise<unknown>>, tabIntent = false) {
   for (const guard of beforeEachHooks) {
-    const result = await runGuard(guard, to, from)
+    const result = await runGuard(guard, to, from, commits, tabIntent)
     if (result === false || result) {
       return result
     }
@@ -364,23 +372,39 @@ function commitCurrentRoute(nextRoute: any, options: { replace?: boolean; skipHi
   return nextRoute
 }
 
-async function performNavigation(location: any, options: { replace?: boolean; skipHistory?: boolean } = {}) {
+async function performNavigation(location: any, options: { replace?: boolean; skipHistory?: boolean; tabIntent?: boolean; project?: (isCurrent: () => boolean) => Promise<unknown> } = {}): Promise<{ accepted: boolean; route: any }> {
+  const sequence = ++navigationSequence
+  const commits: Array<(isCurrent: () => boolean) => Promise<unknown>> = []
   const previousRoute = ensureCurrentRoute()
   const targetRoute = resolveLocation(location).resolved
-  const guardResult = await runBeforeEachHooks(targetRoute, previousRoute)
+  const rejectNavigation = () => {
+    if (sequence === navigationSequence && options.skipHistory && typeof window !== 'undefined') {
+      window.history.replaceState({}, '', previousRoute.fullPath)
+    }
+    return { accepted: false, route: ensureCurrentRoute() }
+  }
+  const guardResult = await runBeforeEachHooks(targetRoute, previousRoute, commits, options.tabIntent)
 
-  if (guardResult === false) {
-    return previousRoute
+  if (guardResult === false || sequence !== navigationSequence) {
+    return rejectNavigation()
   }
 
   if (guardResult && guardResult !== true) {
     const redirectOptions = typeof guardResult === 'object' ? guardResult : { path: guardResult }
-    return performNavigation(redirectOptions, {
+    const redirected = await performNavigation(redirectOptions, {
       replace: Boolean(redirectOptions.replace),
     })
+    return { ...redirected, accepted: false }
   }
 
-  return commitCurrentRoute(targetRoute, options)
+  // Guards have all accepted. Commit tab projections before notifying route consumers.
+  if (options.project) commits.push(options.project)
+  for (const commit of commits) {
+    if (sequence !== navigationSequence) return rejectNavigation()
+    if (await commit(() => sequence === navigationSequence) === false) return rejectNavigation()
+  }
+  if (sequence !== navigationSequence) return rejectNavigation()
+  return { accepted: true, route: commitCurrentRoute(targetRoute, options) }
 }
 
 function updateDocumentTitle(route: any) {
@@ -438,12 +462,8 @@ function bootstrapInitialNavigation() {
 
 function initializeRouter() {
   if (beforeEachHooks.length === 0) {
-    installNavigationOrchestration(
-      routerRuntime,
-      updateDocumentTitle,
-      readNavigationContext,
-      executeNavigationDecision
-    )
+    if (!configuration) throw new Error('Router must be configured by host bootstrap before use')
+    configuration.install(routerRuntime, updateDocumentTitle)
   }
 
   if (afterEachHooks.length === 0) {
@@ -485,7 +505,7 @@ const routerRuntime = {
   push(location: any) {
     try {
       initializeRouter()
-      return performNavigation(location, { replace: false })
+      return performNavigation(location, { replace: false }).then(result => result.route)
     } catch (error) {
       return Promise.reject(error)
     }
@@ -493,7 +513,7 @@ const routerRuntime = {
   replace(location: any) {
     try {
       initializeRouter()
-      return performNavigation(location, { replace: true })
+      return performNavigation(location, { replace: true }).then(result => result.route)
     } catch (error) {
       return Promise.reject(error)
     }
@@ -508,7 +528,7 @@ export function getRouter() {
 export function refreshRouter() {
   initialNavigationBootstrapped = true
   initializeRouter()
-  routeMatcher = buildMatcher(readRouterTopology(AppLayoutOutlet))
+  routeMatcher = buildMatcher(readTopology())
 
   if (typeof window === 'undefined') {
     currentRoute = resolveRouteMatch(readLocationInput(readBrowserLocation()))
@@ -540,3 +560,10 @@ export function replaceLocation(location: any) {
 }
 
 export { resolveLocation }
+
+/** Tab commands use this router-owned commit and never share a global reentry flag. */
+export async function commitTabNavigation(fullPath: string, project?: (isCurrent: () => boolean) => Promise<unknown>): Promise<boolean> {
+  initializeRouter()
+  const result = await performNavigation(fullPath, { replace: true, tabIntent: true, project })
+  return result.accepted
+}

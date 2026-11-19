@@ -142,10 +142,10 @@ class MyPlugin extends BasePlugin {
 
 ### 3.2 扩展示例（当前未实现额外面板）
 
-当前 `src/components/amis/editor/plugins/patch/InputFile.ts` 仅注册继承 `FileControlPlugin` 的 `OuroborosFileControlPlugin`。以下第二个插件及提示项是扩展示例，不能作为当前界面已有能力。
+当前 `frontends/web/ouroboros-amis-runtime/src/editor/plugins/patch/InputFile.ts` 仅注册继承 `FileControlPlugin` 的 `OuroborosFileControlPlugin`。以下第二个插件及提示项是扩展示例，不能作为当前界面已有能力。
 
 ```typescript
-// src/components/amis/editor/plugins/patch/InputFile.ts
+// frontends/web/ouroboros-amis-runtime/src/editor/plugins/patch/InputFile.ts
 import {
   FileControlPlugin,
   registerEditorPlugin,
@@ -359,15 +359,15 @@ panels.push({
 
 ## 八、当前 main-app 的 Table 分工现状
 
-`main-app` 里和 Table 相关的 AMIS 接缝现在分成两层：
+Web 与 IDE 共用的 Table 实现在 `ouroboros-amis-runtime`，分为两层：
 
 1. **运行时真相在 renderer patch**
-   - 路径：`src/components/amis/renderers/patch/Table.tsx`
-   - 配套样式：`src/components/amis/renderers/patch/Table.scss`
+   - 路径：`frontends/web/ouroboros-amis-runtime/src/renderers/patch/Table.tsx`
+   - 配套样式：`frontends/web/ouroboros-amis-runtime/src/renderers/patch/Table.scss`
    - 职责：统一承载 `OuroborosTable` 的 affixHeader 对齐修复、列配置持久化、表头搜索/筛选/排序、grouped export，以及 `EnhancedColumnToggler` 这套列设置弹层。
 
 2. **编辑器侧处理 rendererName 与编辑器节点识别**
-   - 路径：`src/components/amis/editor/plugins/patch/Table.ts`
+   - 路径：`frontends/web/ouroboros-amis-runtime/src/editor/plugins/patch/Table.ts`
    - 职责：把 AMIS editor 的 `rendererName` 指向 `OuroborosTable`，并通过 `getRendererInfo` 识别普通 Table 及 CRUD 内嵌表格的编辑器节点。
    - 边界：列配置持久化与 grouped export 留在 runtime patch；CRUD 嵌套节点的编辑器识别由 Table plugin 的 `getRendererInfo` 处理。
 
@@ -375,17 +375,17 @@ panels.push({
 
 ## 九、当前 main-app 的 CRUD 分工现状
 
-`main-app` 里和 CRUD 相关的 AMIS 接缝现在也分成两层：
+Web 与 IDE 共用的 CRUD 实现在 `ouroboros-amis-runtime`，分为两层：
 
 1. **运行时真相在 renderer patch**
-   - 路径：`src/components/amis/renderers/patch/CRUD.tsx`
-   - 配套样式：`src/components/amis/renderers/patch/CRUD.scss`
-   - 配套布局 helper：`src/components/amis/renderers/patch/crudFilterGridLayout.ts`
+   - 路径：`frontends/web/ouroboros-amis-runtime/src/renderers/patch/CRUD.tsx`
+   - 配套样式：`frontends/web/ouroboros-amis-runtime/src/renderers/patch/CRUD.scss`
+   - 配套布局 helper：`frontends/web/ouroboros-amis-runtime/src/renderers/patch/crudFilterGridLayout.ts`
    - 职责：统一承载 `OuroborosCRUD` 的 headerToolbar/filter 编排，包括 `columns-toggler` 自动注入、相邻 `导出当前页 / 导出全部` `export-excel` 收口、`filter.actions -> button-toolbar` 归一、默认 `搜索 / 重置` 补齐、`handleFilterReset()` 的 query 清理语义，以及 CRUD filter 专用 smartLayout 链路。
    - 结构约束：最终下沉给底层 Form renderer 的 schema 始终显式 `smartLayout: false`；浅底筛选区和 toolbar 对齐则通过 `CRUD.scss` 绑定 `.cxd-Crud-filter--flat`、`.ouroboros-crud-filter-toolbar` 与 `crudFilterGridLayout.ts` 产出的布局类名共同生效。
 
 2. **编辑器侧处理 rendererName 与选中行为的面板缺省值**
-   - 路径：`src/components/amis/editor/plugins/patch/CRUD.ts`
+   - 路径：`frontends/web/ouroboros-amis-runtime/src/editor/plugins/patch/CRUD.ts`
    - 职责：把 CRUD 节点接到 `rendererName = 'OuroborosCRUD'`，并在 `afterBuildPanelBody` 调整 `checkOnItemClick` 面板的可见性与输入输出缺省值，结合批量动作、pickerMode、selectable 决定是否保留显式值。
    - 边界：editor plugin 不复制 toolbar/filter 归一化、导出收口或筛选区样式语义；这些都只在 runtime patch 主路径里维护。
 
@@ -393,17 +393,17 @@ panels.push({
 
 ## 十、当前 main-app 的 Form 分工现状
 
-`main-app` 里和普通 Form 相关的 AMIS 接缝现在也分成两层：
+Web 与 IDE 共用的普通 Form 实现在 `ouroboros-amis-runtime`，分为两层：
 
 1. **运行时真相在 renderer patch**
-   - 路径：`src/components/amis/renderers/patch/Form.tsx`
-   - 配套 helper：`src/components/amis/renderers/patch/formSmartLayout.ts`
+   - 路径：`frontends/web/ouroboros-amis-runtime/src/renderers/patch/Form.tsx`
+   - 配套 helper：`frontends/web/ouroboros-amis-runtime/src/renderers/patch/formSmartLayout.ts`
    - 职责：统一承载 `OuroborosForm` 的 `renderBody()` 主路径，在调用 `FormRendererBase` 前先做普通 Form 的 smartLayout 归一化。
    - 结构约束：根 schema 显式 `smartLayout: true`，或系统配置 `ui.form.smartLayout.enabled=true` 且 schema 未显式关闭时，才进入 `mode + columnCount` 推导；`ui.form.smartLayout.labelStyle` 控制 `mode: 'normal' | 'horizontal'`，`ui.form.smartLayout.smallItemLimit` 与 `ui.form.smartLayout.columnCount.small/large` 控制字段数阈值和列数；显式 `smartLayout: false` / `columnCount` 继续优先；`group` / `flex` / 普通 fieldset 保持旁路；CRUD filter 最终下沉给底层 Form 的 schema 仍由 `OuroborosCRUD` 写死 `smartLayout: false`，不复用普通 Form 的默认语义。
 
 2. **编辑器侧只保留 rendererName + 布局面板注入接缝**
-   - 路径：`src/components/amis/editor/plugins/patch/Form.ts`
-   - 配套 helper：`src/components/amis/editor/plugins/patch/formSmartLayoutPanel.ts`
+   - 路径：`frontends/web/ouroboros-amis-runtime/src/editor/plugins/patch/Form.ts`
+   - 配套 helper：`frontends/web/ouroboros-amis-runtime/src/editor/plugins/patch/formSmartLayoutPanel.ts`
    - 职责：把 AMIS editor 的 Form 节点正式接到 `rendererName = 'OuroborosForm'`，并在普通 Form 场景的“外观 -> 布局”区域注入 `smartLayout` 开关。
    - 边界：开关默认显示为关闭；开启后只写 `smartLayout: true`，关闭时回到未设置；CRUD filter context 继续旁路，不在面板里显示这项控制。
 

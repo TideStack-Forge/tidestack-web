@@ -10,6 +10,7 @@
 ## 项目结构
 
 - main-app 主应用
+- [ouroboros-amis-runtime](ouroboros-amis-runtime/README.md) Web/IDE 共用的 Amis 行为、样式与显式宿主能力合同
 - ouroboros-debug-console-topbar 开发平台顶部调试工具栏，使用微前端的方式注册到开发平台的前端中
 - ouroboros-logicflow-editor 逻辑流设计器，使用微前端的方式注册到主应用中
 - ouroboros-sdk 微前端SDK

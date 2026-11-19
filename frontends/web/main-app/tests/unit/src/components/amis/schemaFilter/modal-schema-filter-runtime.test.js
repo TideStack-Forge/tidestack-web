@@ -19,11 +19,15 @@ vi.mock('amis', () => ({
   dataMapping,
 }))
 
-vi.mock('@/router/utils', () => ({
+vi.mock('amis-core', () => ({
+  str2function: (source, ...argNames) => new Function(...argNames, source),
+}))
+
+vi.mock('#ouroboros-host/router/utils', () => ({
   getRouteInfo,
 }))
 
-await import('../../../../../../src/components/amis/schemaFilter/modalSchemaFilter.ts')
+await import('../../../../../../../ouroboros-amis-runtime/src/schemaFilter/modalSchemaFilter.ts')
 
 beforeEach(() => {
   addSchemaFilter.mockClear()

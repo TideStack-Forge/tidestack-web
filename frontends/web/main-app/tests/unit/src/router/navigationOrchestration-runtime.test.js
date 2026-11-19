@@ -69,7 +69,6 @@ import { createNavigationGuard } from '../../../../src/router/navigationOrchestr
 
 function createRuntimeExecutor() {
   return createNavigationExecutor({
-    clearPreventTabOperation: () => store.dispatch('tabs/clearPreventTabOperation'),
     openNotFoundPage: (to) => tabs.openNotFoundPage(to),
     openOrSwitchTab: (fullPath, options) => tabs.openOrSwitchTab(fullPath, options),
     openRootMenu: () => openMenuAfterLogin(),
@@ -101,7 +100,6 @@ beforeEach(() => {
     'user/isLogin': false,
     'app/whiteList': ['/login'],
     'user/menu': { globalMenu: [] },
-    preventTabOperation: false,
     activeTabId: '',
     tabsList: [],
   })
@@ -248,7 +246,6 @@ test('guard-driven tab execution disables location sync while allowing navigatio
     toQueryRedirect: undefined,
     postLoginFallbackPath: '/welcome',
     whiteList: [],
-    preventTabOperation: false,
     routeName: 'app-list',
     activeTabId: '',
     tabsList: [],
@@ -270,6 +267,7 @@ test('guard-driven tab execution disables location sync while allowing navigatio
   expect(tabs.openOrSwitchTab).toHaveBeenCalledWith('/dev/app-list?tab=todo', {
     title: '应用列表',
     syncLocation: false,
+    isCurrent: expect.any(Function),
   })
   expect(next).toHaveBeenCalledWith()
 })

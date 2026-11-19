@@ -18,7 +18,7 @@ const Module = require('node:module')
 const originalLoad = Module._load
 const i18nMessages = {}
 Module._load = function loadHostDependency(request, parent, isMain) {
-  if (request === '@/common/i18n') {
+  if (request === '#ouroboros-host/common/i18n') {
     return {
       i18nService: {
         getManager: () => ({
@@ -202,7 +202,7 @@ function loadEnhancedTableStore() {
   try {
     delete globalThis.__OUROBOROS_TABLE_STORE_PATCHED__
     clearMirroredSrcModuleCache(__filename, '.')
-    require(path.join(process.cwd(), 'src/components/amis/renderers/patch/Table.tsx'))
+    require(path.join(process.cwd(), '../ouroboros-amis-runtime/src/renderers/patch/Table.tsx'))
   } finally {
     amisCore.registerStore = originalRegisterStore
   }
@@ -246,7 +246,7 @@ function loadTableRendererClass() {
   clearMirroredSrcModuleCache(__filename, '.')
 
   const WrappedRenderer = require(
-    path.join(process.cwd(), 'src/components/amis/renderers/patch/Table.tsx')
+    path.join(process.cwd(), '../ouroboros-amis-runtime/src/renderers/patch/Table.tsx')
   ).default
 
   return WrappedRenderer.ComposedComponent
@@ -277,7 +277,7 @@ function loadEnhancedColumnTogglerModule() {
   return require(
     path.join(
       process.cwd(),
-      'src/components/amis/renderers/patch/EnhancedColumnToggler.tsx'
+      '../ouroboros-amis-runtime/src/renderers/patch/EnhancedColumnToggler.tsx'
     )
   )
 }
@@ -1121,7 +1121,7 @@ test('normalizeColumnStates keeps left, normal, right, and locked columns in sta
   const { normalizeColumnStates } = require(
     path.join(
       process.cwd(),
-      'src/components/amis/renderers/patch/EnhancedColumnToggler.tsx'
+      '../ouroboros-amis-runtime/src/renderers/patch/EnhancedColumnToggler.tsx'
     )
   )
 
@@ -2398,7 +2398,7 @@ test('renderHeadCell keeps search, sort, and filter affordances on the patched t
 })
 
 test('Table.scss keeps operation icon link buttons readable and targetable', () => {
-  const source = readRootFile('src/components/amis/renderers/patch/Table.scss')
+  const source = readRootFile('../ouroboros-amis-runtime/src/renderers/patch/Table.scss')
 
   assert.match(source, /--table-operation-button-gap:\s*4px/)
   assert.match(source, /--table-operation-icon-button-gap:\s*4px/)
@@ -2512,7 +2512,7 @@ test('input-table passes cooperative loading duration into nested table schema',
 
 test('performance fingerprint tracks every input-table runtime source file', () => {
   const fs = require('node:fs')
-  const inputTableDir = 'src/components/amis/renderers/patch/InputTable'
+  const inputTableDir = '../ouroboros-amis-runtime/src/renderers/patch/InputTable'
   const { collectInputTableRuntimeSourceFiles } = require(
     path.join(process.cwd(), 'scripts/write-amis-main-thread-performance-fingerprint.js')
   )
@@ -2529,7 +2529,7 @@ test('performance fingerprint tracks every input-table runtime source file', () 
 
 test('table selection notifications are deferred until after checkbox paint', () => {
   const source = readRootFile(
-    'src/components/amis/renderers/patch/Table.tsx'
+    '../ouroboros-amis-runtime/src/renderers/patch/Table.tsx'
   )
 
   assert.match(source, /function deferSelectionNotification\(/)

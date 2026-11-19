@@ -82,7 +82,7 @@ function loadMeasurementModule() {
   return require(
     path.join(
       process.cwd(),
-      'src/components/amis/renderers/patch/crudFilterLayoutMeasurement.ts'
+      '../ouroboros-amis-runtime/src/renderers/patch/crudFilterLayoutMeasurement.ts'
     )
   )
 }
@@ -93,7 +93,7 @@ function loadControllerClass() {
   return require(
     path.join(
       process.cwd(),
-      'src/components/amis/renderers/patch/crudFilterLayoutController.ts'
+      '../ouroboros-amis-runtime/src/renderers/patch/crudFilterLayoutController.ts'
     )
   ).CrudFilterLayoutController
 }

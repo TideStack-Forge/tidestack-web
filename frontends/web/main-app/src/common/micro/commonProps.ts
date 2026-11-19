@@ -14,7 +14,7 @@ import {
   registerActionPanel,
   registerValidator,
   registerEditorPlugin,
-} from '@/components/amis/editor/lazyRegister'
+} from 'ouroboros-amis-runtime/editor/lazyRegister'
 import type { LanguageOption } from '@/common/i18n/types'
 import type { AuthProviderInfo } from '@/common/auth/types'
 import { readCommonPropsRuntimeValues } from './commonPropsRuntime'
@@ -168,7 +168,8 @@ export interface CommonPropsCapabilityValues {
   userMenu: typeof userMenu
 }
 
-const defaultCapabilityValues: CommonPropsCapabilityValues = {
+function readDefaultCapabilityValues(): CommonPropsCapabilityValues {
+  return {
   Renderer,
   FormItem,
   OptionsControl,
@@ -202,6 +203,7 @@ const defaultCapabilityValues: CommonPropsCapabilityValues = {
   stomp,
   menu,
   userMenu,
+  }
 }
 
 export function createCommonProps(
@@ -209,7 +211,7 @@ export function createCommonProps(
   capabilityValues: Partial<CommonPropsCapabilityValues> = {}
 ): MicroWebCommonProps {
   const capabilities = {
-    ...defaultCapabilityValues,
+    ...readDefaultCapabilityValues(),
     ...capabilityValues,
   }
 

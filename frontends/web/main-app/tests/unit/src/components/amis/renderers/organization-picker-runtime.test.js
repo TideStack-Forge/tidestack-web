@@ -60,10 +60,11 @@ function filterTree(nodes, predicate) {
 function loadOrganizationPickerModule() {
   const filePath = path.join(
     mainAppRoot,
-    'src/components/amis/renderers/OrganizationPicker.tsx'
+    '../ouroboros-amis-runtime/src/renderers/OrganizationPicker.tsx'
   )
   const module = { exports: {} }
-  const localRequire = Module.createRequire(filePath)
+  const sourceRequire = Module.createRequire(filePath)
+  const localRequire = (request) => request.startsWith('.') ? sourceRequire(request) : require(request)
 
   const context = vm.createContext({
     module,

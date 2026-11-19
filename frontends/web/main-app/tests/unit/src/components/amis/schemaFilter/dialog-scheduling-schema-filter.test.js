@@ -13,7 +13,7 @@ vi.mock('amis', () => ({
 }))
 
 const { normalizeDialogSchedulingSchema } = await import(
-  '../../../../../../src/components/amis/schemaFilter/dialogSchedulingSchemaFilter.ts'
+  '../../../../../../../ouroboros-amis-runtime/src/schemaFilter/dialogSchedulingSchemaFilter.ts'
 )
 
 test('registers the dialog scheduling schema filter through the AMIS extension point', () => {

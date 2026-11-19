@@ -1,7 +1,7 @@
 import React from 'react'
 import { expect, test, vi } from 'vitest'
 import { renderToStaticMarkup } from 'react-dom/server'
-import { BusinessScriptActionCreate } from '@/components/amis/renderers/BusinessScriptActionCreate'
+import { BusinessScriptActionCreate } from 'ouroboros-amis-runtime/renderers/BusinessScriptActionCreate'
 
 function setup(fetcher) {
   const root = {

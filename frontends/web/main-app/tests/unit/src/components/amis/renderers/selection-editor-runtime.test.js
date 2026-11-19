@@ -10,7 +10,8 @@ const { mainAppRoot } = require('../../../../helpers/mainAppTestKit')
 
 function loadModule(filePath) {
   const module = { exports: {} }
-  const localRequire = Module.createRequire(filePath)
+  const sourceRequire = Module.createRequire(filePath)
+  const localRequire = (request) => request.startsWith('.') ? sourceRequire(request) : require(request)
   const context = vm.createContext({
     module,
     exports: module.exports,
@@ -18,7 +19,7 @@ function loadModule(filePath) {
       if (request === 'amis') {
         return { dataMapping, FormItem: () => () => undefined }
       }
-      if (request === '@/utils/Deferred') {
+      if (request === '#ouroboros-host/utils/Deferred') {
         return loadModule(path.join(mainAppRoot, 'src/utils/Deferred.ts'))
       }
       if (request.endsWith('.scss')) return undefined
@@ -39,7 +40,7 @@ function loadModule(filePath) {
 }
 
 const { default: SelectionEditor } = loadModule(
-  path.join(mainAppRoot, 'src/components/amis/renderers/SelectionEditor.tsx')
+  path.join(mainAppRoot, '../ouroboros-amis-runtime/src/renderers/SelectionEditor.tsx')
 )
 const repoRoot = path.resolve(mainAppRoot, '../../..')
 const roleSchemas = [

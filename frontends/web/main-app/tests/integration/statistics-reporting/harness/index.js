@@ -1,3 +1,4 @@
+import { installHostRouter } from '@/router/installRouter'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { store } from '@/store/storeFacade'
@@ -119,7 +120,7 @@ async function mountHarness() {
 
   appRoot.id = 'mothership-app-root'
 
-  const router = getRouter()
+  const router = (installHostRouter(), getRouter())
   const harnessApi = createHarnessDebugApi(router, debugState)
   window.__STATISTICS_REPORTING_PLAYWRIGHT_HARNESS__ = harnessApi
   window.__OUROBOROS_SCRIPT_EDITOR_DEBUG__ = {

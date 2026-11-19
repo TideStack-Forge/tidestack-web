@@ -11,23 +11,7 @@ const REF_RE = /var\((--[A-Za-z0-9][A-Za-z0-9-]*)/g
 
 const EXPECTED_PARITY_BASELINE = {
   publicDocWithoutContract: [],
-  publicContractWithoutDoc: [
-    '--layout-breakpoint-lg',
-    '--layout-breakpoint-md',
-    '--layout-breakpoint-sm',
-    '--tabbar-bg',
-    '--tabbar-height',
-    '--tabbar-item-bg',
-    '--tabbar-item-bg-active',
-    '--tabbar-item-bg-hover',
-    '--tabbar-item-border',
-    '--tabbar-item-height',
-    '--tabbar-item-text',
-    '--tabbar-item-text-active',
-    '--tabbar-padding-t',
-    '--tabbar-padding-x',
-    '--tabs-font-size',
-  ],
+  publicContractWithoutDoc: [],
   publicContractWithoutDefinition: [
     '--button-height-md',
     '--button-primary-border-active',
@@ -197,9 +181,9 @@ function toSortedDifference(left, rightSet) {
 
 function collectParityReport() {
   const cssContractDocSource = readRootFile('src/style/docs/css-variables-contract.md')
-  const primitiveContractSource = readRootFile('src/style/contract/primitives.scss')
-  const semanticContractSource = readRootFile('src/style/contract/semantic.scss')
-  const componentContractSource = readRootFile('src/style/contract/components.scss')
+  const primitiveContractSource = readRootFile('../ouroboros-amis-runtime/src/style/contract/primitives.scss')
+  const semanticContractSource = readRootFile('../ouroboros-amis-runtime/src/style/contract/semantic.scss')
+  const componentContractSource = readRootFile('../ouroboros-amis-runtime/src/style/contract/components.scss')
 
   const tier1DocSection = extractBetween(
     cssContractDocSource,
@@ -235,7 +219,10 @@ function collectParityReport() {
 
   const definedVars = new Set()
   const referencedVars = new Set()
-  for (const scssFile of walkScssFiles(path.join(mainAppRoot, 'src', 'style'))) {
+  for (const scssFile of [
+    ...walkScssFiles(path.join(mainAppRoot, 'src', 'style')),
+    ...walkScssFiles(path.resolve(mainAppRoot, '../ouroboros-amis-runtime/src/style')),
+  ]) {
     const source = fs.readFileSync(scssFile, 'utf8')
     collectDefinitions(source).forEach((name) => definedVars.add(name))
     collectReferences(source).forEach((name) => referencedVars.add(name))
@@ -314,15 +301,15 @@ test('css variable consumers with no in-repo definition stay visible to the guar
 })
 
 test('light and dark theme files avoid repeated same-name CSS variable definitions', () => {
-  const lightThemeSource = readRootFile('src/style/themes/light.scss')
-  const darkThemeSource = readRootFile('src/style/themes/dark.scss')
+  const lightThemeSource = readRootFile('../ouroboros-amis-runtime/src/style/themes/light.scss')
+  const darkThemeSource = readRootFile('../ouroboros-amis-runtime/src/style/themes/dark.scss')
 
   assert.deepStrictEqual(collectDuplicateDefinitions(lightThemeSource), [])
   assert.deepStrictEqual(collectDuplicateDefinitions(darkThemeSource), [])
 })
 
 test('theme defaults mixins avoid repeated same-name CSS variable definitions', () => {
-  const defaultsSource = readRootFile('src/style/themes/defaults.scss')
+  const defaultsSource = readRootFile('../ouroboros-amis-runtime/src/style/themes/defaults.scss')
   const lightDefaultsBody = extractMixinBody(defaultsSource, 'light-theme-default-vars')
   const darkDefaultsBody = extractMixinBody(defaultsSource, 'dark-theme-default-vars')
 
@@ -331,9 +318,9 @@ test('theme defaults mixins avoid repeated same-name CSS variable definitions', 
 })
 
 test('theme selector emission stays centralized in themes/index.scss', () => {
-  const indexSource = readRootFile('src/style/themes/index.scss')
-  const lightThemeSource = readRootFile('src/style/themes/light.scss')
-  const darkThemeSource = readRootFile('src/style/themes/dark.scss')
+  const indexSource = readRootFile('../ouroboros-amis-runtime/src/style/themes/index.scss')
+  const lightThemeSource = readRootFile('../ouroboros-amis-runtime/src/style/themes/light.scss')
+  const darkThemeSource = readRootFile('../ouroboros-amis-runtime/src/style/themes/dark.scss')
 
   assert.match(indexSource, /\[data-theme="light"\],\s*\.theme-default\s*\{/)
   assert.match(indexSource, /\[data-theme="dark"\],\s*\.theme-dark\s*\{/)
@@ -344,7 +331,7 @@ test('theme selector emission stays centralized in themes/index.scss', () => {
 })
 
 test('table adaptation keeps theme-emitted header and row backgrounds intact', () => {
-  const tableAdaptationSource = readRootFile('src/style/vendor/amis/adaptations/table.scss')
+  const tableAdaptationSource = readRootFile('../ouroboros-amis-runtime/src/style/vendor/amis/adaptations/table.scss')
   const definitions = new Set(collectDefinitions(tableAdaptationSource))
 
   assert.equal(definitions.has('--table-header-bg'), false)
@@ -354,11 +341,11 @@ test('table adaptation keeps theme-emitted header and row backgrounds intact', (
 })
 
 test('table and filter surfaces keep consuming theme-emitted table background tokens', () => {
-  const defaultsSource = readRootFile('src/style/themes/defaults.scss')
+  const defaultsSource = readRootFile('../ouroboros-amis-runtime/src/style/themes/defaults.scss')
   const lightDefaultsBody = extractMixinBody(defaultsSource, 'light-theme-default-vars')
   const darkDefaultsBody = extractMixinBody(defaultsSource, 'dark-theme-default-vars')
-  const crudStyleSource = readRootFile('src/components/amis/renderers/patch/CRUD.scss')
-  const tablePatchSource = readRootFile('src/components/amis/renderers/patch/Table.scss')
+  const crudStyleSource = readRootFile('../ouroboros-amis-runtime/src/renderers/patch/CRUD.scss')
+  const tablePatchSource = readRootFile('../ouroboros-amis-runtime/src/renderers/patch/Table.scss')
   const lightDefinitions = new Set(collectDefinitions(lightDefaultsBody))
   const darkDefinitions = new Set(collectDefinitions(darkDefaultsBody))
   const darkReferences = new Set(collectReferences(darkDefaultsBody))

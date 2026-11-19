@@ -24,7 +24,6 @@ describe('store/modules/tabs ownership', () => {
   test('exports normalized getters for tab route-state ownership', () => {
     expect(typeof tabsModule.getters.tabsList).toBe('function')
     expect(typeof tabsModule.getters.activeTabId).toBe('function')
-    expect(typeof tabsModule.getters.preventTabOperation).toBe('function')
     expect(typeof tabsModule.getters.scrollBarScrollTopMap).toBe('function')
 
     expect(
@@ -37,11 +36,6 @@ describe('store/modules/tabs ownership', () => {
         activeTabId: undefined,
       })
     ).toBe('')
-    expect(
-      tabsModule.getters.preventTabOperation({
-        preventTabOperation: undefined,
-      })
-    ).toBe(false)
     expect(
       tabsModule.getters.scrollBarScrollTopMap({
         scrollBarScrollTopMap: undefined,

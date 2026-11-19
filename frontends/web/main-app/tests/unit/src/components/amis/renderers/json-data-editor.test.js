@@ -1,7 +1,24 @@
 import { expect, test, vi } from 'vitest'
 
 vi.mock('amis', () => ({ FormItem: () => (component) => component }))
-import JsonDataEditor from '@/components/amis/renderers/JsonDataEditor'
+import JsonDataEditor, { JsonDataEditorControlRenderer } from 'ouroboros-amis-runtime/renderers/JsonDataEditor'
+
+test('AMIS JSON renderer awaits code diagnostics while reusable JSON controls keep synchronous format validation', async () => {
+  const props = { value: { expression: '${value +}' }, allowValueTypes: 'object', codeContext: { language: 'spel' } }
+  const embedded = new JsonDataEditor(props)
+  expect(embedded.validate()).toBe('')
+  const renderer = new JsonDataEditorControlRenderer(props)
+  const model = { uri: 'json', getVersionId: () => 1 }
+  renderer.editor = { getModel: () => model }
+  renderer.monaco = { MarkerSeverity: { Error: 8 }, editor: { getModelMarkers: () => [{ severity: 8, startLineNumber: 1, message: 'invalid expression' }] } }
+  renderer.intelligenceBridge = { validate: vi.fn(async () => {}) }
+  expect(await renderer.validate()).toContain('invalid expression')
+  renderer.props = { ...props, validateCode: false }
+  expect(await renderer.validate()).toBe('')
+  renderer.handleChange('{')
+  expect(renderer.validate()).toBe('格式错误')
+  expect(await new JsonDataEditorControlRenderer({ value: {}, allowValueTypes: 'object' }).validate()).toBe('')
+})
 
 test('dynamic behavior arrays remain structured values and reject other roots', () => {
   const onChange = vi.fn()

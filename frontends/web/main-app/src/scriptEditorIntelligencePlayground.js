@@ -1,3 +1,4 @@
+import { installHostRouter } from '@/router/installRouter'
 import { mountReactApp } from '@/bootstrap/bootstrapHostApp'
 import { dispatch, commit } from '@/store/storeFacade'
 import { getRouter, refreshRouter } from '@/router/routerFacade'
@@ -19,6 +20,7 @@ export async function initScriptEditorIntelligencePlayground() {
 
   commit('app/SET_AMIS_COMPONENES_REGISTERED', true)
   refreshRouter()
+  installHostRouter()
   getRouter()
   mountReactApp()
 }

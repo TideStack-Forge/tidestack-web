@@ -33,7 +33,7 @@ import type {
   BasePlugin,
   Validator,
   ActionPanel,
-} from '@/components/amis/editor/lazyRegister'
+} from 'ouroboros-amis-runtime/editor/lazyRegister'
 
 const MANIFEST_FILE_NAME = 'components.manifest.json'
 const MANAGE_FILE_NAME = 'manage.json'

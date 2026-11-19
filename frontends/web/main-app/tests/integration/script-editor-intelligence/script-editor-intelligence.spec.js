@@ -78,13 +78,13 @@ test('shows mocked groovy global suggestions', async ({ page }) => {
   await expect(suggestions).toContainText('toMap')
 })
 
-test('api mode requests the logicflow snapshot endpoint and applies returned metadata', async ({
+test('api mode uses the shared context and language session endpoints', async ({
   page,
 }) => {
   const requests = []
   page.on('request', (request) => {
     if (
-      request.url().includes('/api/dev/playground-app/logicflow/script-intelligence/snapshot')
+      request.method() === 'POST' && /\/api\/dev\/playground-app\/code-intelligence\/(context|sessions)$/.test(request.url())
     ) {
       requests.push(request.postDataJSON())
     }
@@ -92,18 +92,19 @@ test('api mode requests the logicflow snapshot endpoint and applies returned met
 
   await openPlayground(page, '?source=api')
 
-  await expect.poll(() => requests.length).toBe(2)
+  await expect.poll(() => requests.length).toBeGreaterThanOrEqual(2)
   await expect(page.getByText('Data Source API', { exact: false })).toBeVisible()
   await expect(
     page.getByText(
-      'Loading raw metadata from metadata endpoints plus live script-intelligence snapshots from /api/dev/playground-app/logicflow/script-intelligence/snapshot.',
+      'Loading raw metadata from metadata endpoints plus live script-intelligence snapshots from /api/dev/playground-app/code-intelligence/context.',
       { exact: true }
     )
   ).toBeVisible()
   await expect(page.getByText('Metadata dev-helper-runtime', { exact: false })).toHaveCount(2)
-  await expect(page.getByText('Snapshot dev-helper-cache', { exact: false })).toHaveCount(2)
+  await expect(page.getByText('Snapshot dev-helper-cache', { exact: false })).toHaveCount(1)
+  await expect(page.getByText('Snapshot editor-lsp', { exact: false })).toHaveCount(1)
 
-  expect(requests.map((request) => request.language).sort()).toEqual([
+  expect([...new Set(requests.map((request) => request.language || request.context?.language))].sort()).toEqual([
     'groovy',
     'javascript',
   ])

@@ -53,7 +53,7 @@ vi.mock('@/common/menus/post-login-navigation', async () => {
   }
 })
 
-import { openMenuAfterLogin, openMenuItem } from '../../../../../../src/common/menus/index.js'
+import { openMenuAfterLogin, openMenuItem, readPostLoginTarget } from '../../../../../../src/common/menus/index.js'
 
 beforeEach(() => {
   store.getters['user/menu'] = { globalMenu: [] }
@@ -127,7 +127,7 @@ test('valid non-menu route opens the route tab path', async () => {
 
   await openMenuAfterLogin()
 
-  expect(tabs.openOrSwitchTab).toHaveBeenCalledWith('/welcome')
+  expect(tabs.openOrSwitchTab).toHaveBeenCalledWith('/welcome', {})
   expect(replaceLocation).not.toHaveBeenCalled()
 })
 
@@ -179,6 +179,27 @@ test('openMenuItem applies fullScreen mode from the resolved child target', asyn
   })
 
   expect(replaceLocation).toHaveBeenCalledWith('/welcome?isfullscreen=true')
+  expect(tabs.openOrSwitchTab).not.toHaveBeenCalled()
+})
+
+test('closing the last tab resolves a fullscreen home to the final fullscreen URL', () => {
+  store.getters['user/menu'] = { globalMenu: [{ path: '/welcome?view=all#summary', showMode: 'fullScreen' }] }
+  getRouteInfo.mockReturnValue({ name: 'welcome' })
+  expect(readPostLoginTarget().path).toBe('/welcome?view=all&isfullscreen=true#summary')
+  expect(replaceLocation).not.toHaveBeenCalled()
+})
+
+test.each([
+  { url: 'https://example.com/docs' },
+  { path: '/dev-docs', showMode: 'newWindow' },
+])('closing the last tab retains a shell URL for out-of-window home %j', async (menu) => {
+  store.getters['user/menu'] = { globalMenu: [menu] }
+  resolvePostLoginFallbackPath.mockReturnValue('/welcome')
+  isExternal.mockImplementation(url => url.startsWith('https://'))
+  expect(readPostLoginTarget().path).toBe('/welcome')
+  await openMenuAfterLogin({ syncLocation: false })
+  expect(window.open).toHaveBeenCalledWith(menu.url || menu.path)
+  expect(replaceLocation).not.toHaveBeenCalled()
   expect(tabs.openOrSwitchTab).not.toHaveBeenCalled()
 })
 

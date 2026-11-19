@@ -9,11 +9,11 @@ vi.mock('amis-core', () => ({
   registerAction: mockRegisterAction,
 }))
 
-vi.mock('@/common/menus/registry', () => ({
+vi.mock('#ouroboros-host/common/menus/registry', () => ({
   menu: { setMenuBadge: mockSetMenuBadge },
 }))
 
-const { SetMenuBadge } = await import('@/components/amis/actions/SetMenuBadge.js')
+const { SetMenuBadge } = await import('ouroboros-amis-runtime/actions/SetMenuBadge.js')
 
 describe('setMenuBadge amis action', () => {
   beforeEach(() => {

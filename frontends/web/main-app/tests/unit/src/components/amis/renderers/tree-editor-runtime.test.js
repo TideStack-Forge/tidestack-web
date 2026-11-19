@@ -135,14 +135,14 @@ const { mockAlert, mockConfirm, mockOpenDialog } = vi.hoisted(() => ({
   mockOpenDialog: vi.fn(),
 }))
 
-vi.mock('@/common/modal', () => ({
+vi.mock('#ouroboros-host/common/modal', () => ({
   alert: mockAlert,
   confirm: mockConfirm,
   openDialog: mockOpenDialog,
 }))
 
 const { default: TreeEditor, TreeEditorTreeSelector } =
-  await import('@/components/amis/renderers/TreeEditor.tsx')
+  await import('ouroboros-amis-runtime/renderers/TreeEditor.tsx')
 
 function createEditor(overrides = {}) {
   const editor = Object.create(TreeEditor.prototype)

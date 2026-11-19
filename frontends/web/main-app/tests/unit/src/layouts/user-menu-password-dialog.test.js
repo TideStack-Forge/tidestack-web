@@ -24,6 +24,10 @@ const { mockOpenDialog, mockDispatch, mockI18nService, resetMocks } = vi.hoisted
   }
 })
 
+vi.mock('@/router/routerFacade', () => ({
+  pushLocation: vi.fn(),
+}))
+
 vi.mock('@/common/modal', () => ({
   openDialog: mockOpenDialog,
 }))

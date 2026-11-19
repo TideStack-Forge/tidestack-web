@@ -13,7 +13,7 @@ vi.mock('amis', () => ({
   dataMapping: (api) => api,
 }))
 
-await import('../../../../../../src/components/amis/renderers/report-view-runtime/ReportViewRuntime.tsx')
+await import('../../../../../../../ouroboros-amis-runtime/src/renderers/report-view-runtime/ReportViewRuntime.tsx')
 
 function deferred() {
   let resolve

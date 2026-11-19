@@ -1,7 +1,7 @@
 import { expect, test, vi } from 'vitest'
 import { renderToStaticMarkup } from 'react-dom/server'
 vi.mock('amis', () => ({ FormItem: () => (component) => component }))
-import { BusinessActionReference } from '@/components/amis/renderers/BusinessActionReference'
+import { BusinessActionReference } from 'ouroboros-amis-runtime/renderers/BusinessActionReference'
 
 function setup(overrides = {}) {
   const root = {

@@ -4,7 +4,7 @@ import { readCurrentRoute } from '@/router/routerFacade'
 import {
   buildReportDataTableSchema,
   buildReportVisualizationSchema,
-} from '@/components/amis/renderers/report-view-runtime'
+} from 'ouroboros-amis-runtime/renderers/report-view-runtime'
 
 const LOADING_SCHEMA = {
   type: 'page',

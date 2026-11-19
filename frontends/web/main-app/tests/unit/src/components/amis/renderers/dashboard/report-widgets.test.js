@@ -25,10 +25,11 @@ function transpileFile(filePath) {
 function loadReportWidgetsModule() {
   const filePath = path.join(
     mainAppRoot,
-    'src/components/amis/renderers/dashboard/widgets/reportWidgets.ts'
+    '../ouroboros-amis-runtime/src/renderers/dashboard/widgets/reportWidgets.ts'
   )
   const module = { exports: {} }
-  const localRequire = Module.createRequire(filePath)
+  const sourceRequire = Module.createRequire(filePath)
+  const localRequire = (request) => request.startsWith('.') ? sourceRequire(request) : require(request)
   const context = vm.createContext({
     module,
     exports: module.exports,

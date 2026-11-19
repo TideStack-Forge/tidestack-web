@@ -2,6 +2,8 @@
 
 TideStack 前端基座：React／qiankun 主应用、Nginx 代理与独立容器运行资源。
 
+分发包含同级 `ouroboros-amis-runtime` 共享源码包，沿用总仓宿主绑定与构建机制。
+
 本仓由平台总仓按清单单向导出，源码和测试保持同源；贡献请回到平台主仓评审。默认分支为 `master`。
 
 ## 开发与构建

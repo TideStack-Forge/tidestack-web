@@ -1,6 +1,6 @@
 # CSS Variables 契约清单
 
-> 本文维护 Tier 1/2 的 CSS Variables 契约，并列出适配层与内部变量供定位。正式声明在 `src/style/contract/*.scss`：primitives 以 mixin 导出，semantic/components 以 Sass 清单声明名称；具体值由 theme、density 与适配样式定义。名称在清单中不保证目标主题已提供缺省值，使用前需检查最终样式与 fallback。
+> 本文维护 Tier 1/2 的 CSS Variables 契约，并列出适配层与内部变量供定位。正式声明在 `ouroboros-amis-runtime/src/style/contract/*.scss`：primitives 以 mixin 导出，semantic/components 以 Sass 清单声明名称；具体值由 theme、density 与适配样式定义。名称在清单中不保证目标主题已提供缺省值，使用前需检查最终样式与 fallback。
 
 ## 版本
 
@@ -386,7 +386,7 @@ v1.0.0
 
 ## 内部变量（不对外承诺稳定性）
 
-以下变量用于 `main-app` 壳层、布局和局部交互实现，不属于 public contract；若后续需要对外承诺稳定性，应先进入 `src/style/contract/*.scss`。
+以下变量用于 `main-app` 壳层、布局和局部交互实现，不属于 public contract；若后续需要对外承诺稳定性，应先进入 `ouroboros-amis-runtime/src/style/contract/*.scss`。
 
 ### 密度运行时系数
 

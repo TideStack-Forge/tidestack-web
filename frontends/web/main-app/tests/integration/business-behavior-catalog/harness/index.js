@@ -18,7 +18,9 @@ async function mount() {
           type: 'form',
           id: 'behaviorHarness',
           name: 'behaviorHarness',
-          wrapWithPanel: false,
+          wrapWithPanel: Boolean(editorFixture?.api),
+          api: editorFixture?.api,
+          actions: editorFixture?.actions,
           data: editorFixture
             ? undefined
             : {

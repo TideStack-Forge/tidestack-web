@@ -47,8 +47,8 @@ vi.mock('@/store/storeFacade', () => ({
   store,
 }))
 
-vi.mock('@/router/routerFacade', () => ({
-  replaceLocation,
+vi.mock('@/router/tabNavigationCommand', () => ({
+  navigateTab: replaceLocation,
 }))
 
 vi.mock('@/router/utils', () => ({
@@ -57,6 +57,7 @@ vi.mock('@/router/utils', () => ({
 
 vi.mock('@/common/menus', () => ({
   openMenuAfterLogin,
+  readPostLoginTarget: () => ({ path: '/welcome' }),
 }))
 
 vi.mock('@/common/eventBus', () => ({
@@ -107,7 +108,6 @@ test('editor leave guards reject switch, replace and destructive closes before c
     expect(await tabs.closeOtherTabs('other')).toBe(false)
     expect(await tabs.closeRightTabs('other')).toBe(false)
     expect(store.dispatch).not.toHaveBeenCalled()
-    expect(replaceLocation).not.toHaveBeenCalled()
     expect(publish).not.toHaveBeenCalled()
     expect(store.getters.tabsList[1].fullPath).toBe('/editing')
   } finally {
@@ -159,6 +159,39 @@ test('removing a leave guard restores normal tab switching', async () => {
   expect(store.dispatch).toHaveBeenCalledWith('tabs/changeActiveTab', 'other')
 })
 
+test('updating an existing tab preserves the accepted query and resolved icon in the store', async () => {
+  const tabs = tabNavigationRuntimeModule.default
+  store.getters.tabsList = [{ id: 'target', path: '/items', fullPath: '/items?old=1', icon: 'old' }]
+  findBestMatchingTabId.mockReturnValue('target')
+  getRouteInfo.mockReturnValue({ icon: 'new' })
+  store.dispatch.mockImplementation((type, payload) => {
+    if (type === 'tabs/changeTab') {
+      store.getters.tabsList = store.getters.tabsList.map(tab => tab.id === payload.id ? { ...payload } : tab)
+    }
+    if (type === 'tabs/changeActiveTab') store.getters.activeTabId = payload
+  })
+  expect(await tabs.openOrSwitchTab('/items?new=2', { isFixed: true })).toBe('target')
+  expect(store.getters.tabsList).toEqual([expect.objectContaining({
+    fullPath: '/items?new=2', icon: 'new', isFixed: true,
+  })])
+  expect(store.getters.activeTabId).toBe('target')
+})
+
+test('a superseded existing-tab projection does not apply metadata or subscribe callbacks', async () => {
+  const tabs = tabNavigationRuntimeModule.default
+  store.getters.tabsList = [{ id: 'target', fullPath: '/items' }]
+  findBestMatchingTabId.mockReturnValue('target')
+  const callback = vi.fn()
+  const switchTab = vi.spyOn(tabs, 'switchTab').mockResolvedValue(undefined)
+  try {
+    expect(await tabs.openOrSwitchTab('/items', { syncLocation: false, isCurrent: () => false, isFixed: true, callback })).toBe(false)
+    expect(store.dispatch).not.toHaveBeenCalled()
+    expect(subscribe).not.toHaveBeenCalled()
+  } finally {
+    switchTab.mockRestore()
+  }
+})
+
 beforeEach(() => {
   store.getters.tabsList = []
   store.getters.activeTabId = ''
@@ -166,7 +199,7 @@ beforeEach(() => {
   store.getters['user/menuGetter'].mockReset()
   store.getters['app/config'] = {}
   store.dispatch.mockReset()
-  replaceLocation.mockReset()
+  replaceLocation.mockReset().mockImplementation(async (_path, project) => (await project?.(() => true)) !== false)
   getRouteInfo.mockReset()
   openMenuAfterLogin.mockReset()
   subscribe.mockReset()
@@ -210,7 +243,7 @@ test('openOrSwitchTab prefers the best matching existing tab', async () => {
     '/dev/app-list?tab=todo',
     store.getters.tabsList
   )
-  expect(switchTab).toHaveBeenCalledWith('tab-1', { callback: expect.any(Function) })
+  expect(switchTab).toHaveBeenCalledWith('tab-1', expect.objectContaining({ callback: expect.any(Function), syncLocation: false, isCurrent: expect.any(Function) }))
   expect(subscribe).toHaveBeenCalledWith('MSG_FROM_TAB_tab-1', expect.any(Function))
   expect(result).toBe('tab-1')
   switchTab.mockRestore()
@@ -242,7 +275,7 @@ test('switchTab still syncs location by default for direct callers', async () =>
 
   await tabNavigationRuntimeModule.default.switchTab('tab-1')
 
-  expect(replaceLocation).toHaveBeenCalledWith('/dev/app-list?tab=todo')
+  expect(replaceLocation).toHaveBeenCalledWith('/dev/app-list?tab=todo', expect.any(Function))
 })
 
 test('openOrSwitchTab passes disabled location sync to matched tab switch', async () => {
@@ -310,10 +343,9 @@ test('openTab derives title via route and i18n fallback and pushes active tab st
     icon: 'app',
   })
 
-  expect(store.dispatch).toHaveBeenNthCalledWith(1, 'tabs/setPreventTabOperation')
-  expect(store.dispatch).toHaveBeenNthCalledWith(2, 'tabs/pushTabScrollTop', 42)
+  expect(store.dispatch).toHaveBeenNthCalledWith(1, 'tabs/pushTabScrollTop', 42)
   expect(store.dispatch).toHaveBeenNthCalledWith(
-    3,
+    2,
     'tabs/pushTab',
     expect.objectContaining({
       path: '/dev/app-list',
@@ -322,8 +354,8 @@ test('openTab derives title via route and i18n fallback and pushes active tab st
       icon: 'app',
     })
   )
-  expect(store.dispatch).toHaveBeenNthCalledWith(4, 'tabs/changeActiveTab', tabId)
-  expect(replaceLocation).toHaveBeenCalledWith('/dev/app-list')
+  expect(store.dispatch).toHaveBeenNthCalledWith(3, 'tabs/changeActiveTab', tabId)
+  expect(replaceLocation).toHaveBeenCalledWith('/dev/app-list', expect.any(Function))
   getMultiTab.mockRestore()
 })
 
@@ -437,7 +469,7 @@ test('openTab still syncs location by default for direct callers', async () => {
 
   await tabNavigationRuntimeModule.default.openTab('/dev/app-list', { title: '显式标题' })
 
-  expect(replaceLocation).toHaveBeenCalledWith('/dev/app-list')
+  expect(replaceLocation).toHaveBeenCalledWith('/dev/app-list', expect.any(Function))
   getMultiTab.mockRestore()
 })
 
@@ -514,7 +546,7 @@ test('openOrSwitchTab can replace the current source tab in place', async () => 
     })
   )
   expect(store.dispatch).toHaveBeenCalledWith('tabs/changeActiveTab', 'tab-source')
-  expect(replaceLocation).toHaveBeenCalledWith('/dev/newenergy/business-model')
+  expect(replaceLocation).toHaveBeenCalledWith('/dev/newenergy/business-model', expect.any(Function))
 })
 
 test('openOrSwitchTab skips replaceLocation during guard-driven open', async () => {
@@ -600,7 +632,7 @@ test('closeOtherTabs preserves fixed tabs by default and still routes to the req
     saveId: 'tab-keep',
     includeFixedTabs: false,
   })
-  expect(replaceLocation).toHaveBeenCalledWith('/dev/app-list')
+  expect(replaceLocation).toHaveBeenCalledWith('/dev/app-list', expect.any(Function))
 })
 
 test('closeOtherTabs can keep the requested tab active even when no closable tabs remain', async () => {
@@ -618,7 +650,7 @@ test('closeOtherTabs can keep the requested tab active even when no closable tab
     expect.anything()
   )
   expect(store.dispatch).toHaveBeenCalledWith('tabs/changeActiveTab', 'tab-keep')
-  expect(replaceLocation).toHaveBeenCalledWith('/dev/app-list')
+  expect(replaceLocation).toHaveBeenCalledWith('/dev/app-list', expect.any(Function))
 })
 
 test('closeTab falls back to openMenuAfterLogin when the last tab closes', async () => {
@@ -712,7 +744,7 @@ test('closeTab synchronously activates the previous tab when closing the active 
 
   expect(delay).not.toHaveBeenCalled()
   expect(store.dispatch).toHaveBeenCalledWith('tabs/changeActiveTab', 'tab-1')
-  expect(replaceLocation).toHaveBeenCalledWith('/dev/app-list')
+  expect(replaceLocation).toHaveBeenCalledWith('/dev/app-list', expect.any(Function))
   expect(openMenuAfterLogin).not.toHaveBeenCalled()
 })
 
@@ -770,7 +802,7 @@ test('openTab replaces the only non-multi tab while preserving explicit metadata
     expect.stringMatching(/^MSG_FROM_TAB_tab-/),
     callback
   )
-  expect(replaceLocation).toHaveBeenCalledWith('/dev/app-detail?id=2')
+  expect(replaceLocation).toHaveBeenCalledWith('/dev/app-detail?id=2', expect.any(Function))
   getMultiTab.mockRestore()
 })
 

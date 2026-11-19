@@ -2,7 +2,7 @@
 import { expect, test, vi } from 'vitest'
 import { renderToStaticMarkup } from 'react-dom/server'
 vi.mock('amis', () => ({ FormItem: () => (component) => component }))
-import { BusinessBehaviorCatalog } from '@/components/amis/renderers/BusinessBehaviorCatalog'
+import { BusinessBehaviorCatalog } from 'ouroboros-amis-runtime/renderers/BusinessBehaviorCatalog'
 
 function control(fetcher, overrides = {}) {
   const instance = new BusinessBehaviorCatalog({

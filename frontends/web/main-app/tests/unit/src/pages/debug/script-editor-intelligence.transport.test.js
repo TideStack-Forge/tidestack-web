@@ -54,7 +54,7 @@ test('playground fetcher delegates api mode requests through the provided client
 
   const snapshotResponse = await fetcher({
     method: 'post',
-    url: '/api/dev/playground-app/logicflow/script-intelligence/snapshot',
+    url: '/api/dev/playground-app/code-intelligence/context',
     data: {
       language: 'javascript',
     },
@@ -69,7 +69,7 @@ test('playground fetcher delegates api mode requests through the provided client
   assert.deepEqual(calls, [
     {
       method: 'post',
-      url: '/api/dev/playground-app/logicflow/script-intelligence/snapshot',
+      url: '/api/dev/playground-app/code-intelligence/context',
       data: {
         language: 'javascript',
       },
@@ -115,9 +115,23 @@ test('playground fetcher intercepts mock snapshot requests locally', async () =>
   assert.deepEqual(result, {
     status: 0,
     data: {
-      source: 'playground-mock',
-      runtimeProfile: 'playground-mock',
-      versionToken: 'groovy-playground-v1',
+      documentId: undefined, documentVersion: undefined, draftRevision: undefined,
+      snapshot: { source: 'playground-mock', runtimeProfile: 'playground-mock', versionToken: 'groovy-playground-v1' },
     },
   })
+})
+
+test('mock language sessions exercise the same LSP messages and lifecycle as the real client', async () => {
+  const fetcher = createPlaygroundFetcher({ sourceMode: 'mock', intelligenceApi: '/api/mock/code-intelligence/context',
+    buildMockSnapshot: () => ({ globals: [{ name: '$input', members: [{ name: 'customerName', memberKind: 'field' }] }] }) })
+  const url = '/api/mock/code-intelligence/sessions'
+  const opened = (await fetcher({ method: 'post', url, data: { text: '$input.', context: { language: 'groovy' } } })).data
+  assert(opened.messages[0].result.capabilities.completionProvider)
+  const response = await fetcher({ method: 'post', url: `${url}/${opened.sessionId}/messages`, data: [
+    { id: 'completion', method: 'textDocument/completion', params: { position: { line: 0, character: 7 } } },
+  ] })
+  assert.equal(response.data.messages[0].id, 'completion')
+  assert.equal(response.data.messages[0].result[0].label, 'customerName')
+  await fetcher({ method: 'delete', url: `${url}/${opened.sessionId}` })
+  await assert.rejects(fetcher({ method: 'get', url: `${url}/${opened.sessionId}/notifications` }), /not found/)
 })

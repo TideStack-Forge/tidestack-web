@@ -1,5 +1,5 @@
 import { test, expect, vi } from 'vitest'
-import { renderBusinessBehaviorControl } from '@/components/amis/renderers/BusinessBehaviorControl'
+import { renderBusinessBehaviorControl } from 'ouroboros-amis-runtime/renderers/BusinessBehaviorControl'
 
 test('isolated control emits only actual edits and resets its formal AMIS store after cancelled async changes', async () => {
   const render = vi.fn(),

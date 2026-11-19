@@ -95,7 +95,7 @@ function createJavascriptContext() {
   const ts = require('typescript')
   const files = new Map()
   const providers = { completion: [], hover: [], signature: [] }
-  const state = { files, providers, compilerOptionsHistory: [], extraLibs: [], modelLanguages: [] }
+  const state = { files, providers, compilerOptionsHistory: [], extraLibs: [], modelLanguages: [], markers: [] }
   let version = 0
   const model = createTextModel('LocalDate.', 'inmemory://logicflow-script.js')
   model.getValue = () => model.text || 'LocalDate.'
@@ -107,7 +107,7 @@ function createJavascriptContext() {
   model.getLineContent = () => model.getValue()
   const service = ts.createLanguageService({
     getScriptFileNames: () => [...files.keys()],
-    getScriptVersion: () => String(version),
+    getScriptVersion: file => String(files.get(file)?.version ?? version),
     getScriptSnapshot: file => {
       const value = files.get(file)?.source ?? ts.sys.readFile(file)
       return value == null ? undefined : ts.ScriptSnapshot.fromString(value)
@@ -123,11 +123,13 @@ function createJavascriptContext() {
   return {
     editor: { getModel: () => model },
     monaco: {
+      MarkerSeverity: { Error: 8, Warning: 4 },
       Uri: { parse: text => ({ toString: () => text }) },
       Range: class { constructor(startLineNumber, startColumn, endLineNumber, endColumn) { Object.assign(this, { startLineNumber, startColumn, endLineNumber, endColumn }) } },
       editor: {
+        setModelMarkers(_model, _owner, markers) { state.markers = markers },
         createModel(source, language, uri) {
-          const item = { source, uri, language, disposed: false, setValue(value) { item.source = value }, dispose() { item.disposed = true; files.delete(uri.toString()) } }
+          const item = { source, uri, language, version: 1, disposed: false, setValue(value) { item.source = value; item.version++ }, dispose() { item.disposed = true; files.delete(uri.toString()) } }
           files.set(uri.toString(), item); return item
         },
         setModelLanguage(_model, language) { state.modelLanguages.push(language) },
@@ -137,6 +139,8 @@ function createJavascriptContext() {
             getCompletionsAtPosition: (file, offset) => service.getCompletionsAtPosition(file, offset, {}),
             getQuickInfoAtPosition: (file, offset) => service.getQuickInfoAtPosition(file, offset),
             getSignatureHelpItems: (file, offset) => service.getSignatureHelpItems(file, offset, {}),
+            getSyntacticDiagnostics: file => service.getSyntacticDiagnostics(file),
+            getSemanticDiagnostics: file => service.getSemanticDiagnostics(file),
           }), dispose() {} }
         },
       },
@@ -159,6 +163,27 @@ function createJavascriptContext() {
     state, model, service,
   }
 }
+
+test('JavaScript validation uses real grammar and types without executing scripts or leaking declaration errors', async () => {
+  const { createJavascriptScriptEditorAdapter } = loadModule('script-editor-intelligence/javascript/adapter.ts')
+  const context = createJavascriptContext()
+  const adapter = createJavascriptScriptEditorAdapter(context)
+  try {
+    context.model.setValue('const value = ;')
+    await adapter.apply(createMockSnapshot())
+    await adapter.validate()
+    assert.ok(context.state.markers.some(marker => marker.severity === 8 && /Expression expected/.test(marker.message)))
+    context.model.setValue('const value: string = "hello";')
+    await adapter.validate()
+    assert.ok(context.state.markers.some(marker => /Type annotations/.test(marker.message)))
+    context.model.setValue('const value = 1; value.toUpperCase();')
+    await adapter.validate()
+    assert.ok(context.state.markers.some(marker => /toUpperCase/.test(marker.message)))
+    context.model.setValue('throw new Error("must never execute"); return $input.orderId;')
+    await adapter.validate()
+    assert.deepEqual(context.state.markers, [])
+  } finally { adapter.dispose() }
+})
 
 test('javascript discards worker queries rejected after their document is disposed', async () => {
   const { createJavascriptScriptEditorAdapter } = loadModule('script-editor-intelligence/javascript/adapter.ts')
@@ -308,8 +333,8 @@ test('bridge fetches mocked javascript snapshot and installs graaljs declaration
   })
 
   const props = {
-    intelligenceScene: 'logicflow-script-node',
-    intelligenceApi: '/api/mock/script-intelligence',
+    codeSite: 'logicflow.script', codePointer: '/script',
+    intelligenceApi: '/api/mock/code-intelligence/context',
     language: 'javascript',
     value: 'return LocalDate.now()',
     data: {
@@ -317,7 +342,7 @@ test('bridge fetches mocked javascript snapshot and installs graaljs declaration
       __CURRENT_NODE_TYPE: 'script',
       __FLOW_MODEL: {
         name: 'OrderFlow',
-        nodes: [],
+        nodes: [{ name: 'script-node-1', type: 'script' }],
       },
     },
     env: {
@@ -325,7 +350,7 @@ test('bridge fetches mocked javascript snapshot and installs graaljs declaration
         fetchCalls.push({ api, body, options })
         return {
           status: 0,
-          data: snapshot,
+          data: { ...body, snapshot },
         }
       },
     },
@@ -337,14 +362,13 @@ test('bridge fetches mocked javascript snapshot and installs graaljs declaration
   assert.equal(fetchCalls.length, 1)
   assert.deepEqual(fetchCalls[0].api, {
     method: 'post',
-    url: '/api/mock/script-intelligence',
-    data: {
-      flowModel: props.data.__FLOW_MODEL,
-      nodeName: 'script-node-1',
-      language: 'javascript',
-      script: 'return LocalDate.now()',
-    },
+    url: '/api/mock/code-intelligence/context',
+    data: fetchCalls[0].body,
   })
+  assert.equal(fetchCalls[0].body.codeSite, 'logicflow.script')
+  assert.equal(fetchCalls[0].body.location.nodeName, 'script-node-1')
+  assert.equal(fetchCalls[0].body.draft.nodes[0].script, context.model.getValue(), 'send the current document even when AMIS props lag')
+  assert.equal(fetchCalls[0].body.documentId, context.model.uri.toString())
   assert.deepEqual(fetchCalls[0].body, fetchCalls[0].api.data)
   assert.deepEqual(fetchCalls[0].options, { ignoreData: true })
   const virtual = [...context.state.files.values()][0]
@@ -379,8 +403,8 @@ test('bridge accepts axios-style snapshot responses from env fetcher', async () 
 
   try {
     await bridge.refresh({
-      intelligenceScene: 'logicflow-script-node',
-      intelligenceApi: '/api/dev/playground-app/logicflow/script-intelligence/snapshot',
+      codeSite: 'logicflow.script', codePointer: '/script',
+      intelligenceApi: '/api/dev/playground-app/code-intelligence/context',
       language: 'javascript',
       value: 'return LocalDate.now()',
       data: {
@@ -388,18 +412,18 @@ test('bridge accepts axios-style snapshot responses from env fetcher', async () 
         __CURRENT_NODE_TYPE: 'script',
         __FLOW_MODEL: {
           name: 'OrderFlow',
-          nodes: [],
+          nodes: [{ name: 'script-node-1', type: 'script' }],
         },
       },
       env: {
-        async fetcher() {
+        async fetcher(api) {
           return {
             status: 200,
             data: {
               code: 0,
               status: 0,
               msg: '',
-              data: snapshot,
+              data: { ...api.data, snapshot },
             },
           }
         },
@@ -410,12 +434,14 @@ test('bridge accepts axios-style snapshot responses from env fetcher', async () 
   }
 
   assert.equal(warnings.length, 0)
-  assert.equal(context.state.files.size, 1)
-  assert.match([...context.state.files.values()][0].source, /LocalDate/)
+  const suggestions = await context.state.providers.completion.at(-1).provider.provideCompletionItems(
+    context.model, { lineNumber: 1, column: 11 }, {}, {}
+  )
+  assert.ok(suggestions.suggestions.some(item => item.label === 'now'))
   bridge.dispose()
 })
 
-test('groovy adapter exposes mock snapshot completions hover and signatures', () => {
+test('snapshot adapter exposes completions hover and signatures for expression profiles', () => {
   const { createGroovyScriptEditorAdapter } = loadModule(
     'script-editor-intelligence/groovy/adapter.ts'
   )
@@ -483,6 +509,46 @@ test('groovy adapter exposes mock snapshot completions hover and signatures', ()
   adapter.dispose()
 
   assert.deepEqual(groovy.state.disposed, ['signature', 'hover', 'completion'])
+})
+
+test('reference JavaScript candidates and members are labelled while draft fields remain ordinary', async () => {
+  const { createJavascriptScriptEditorAdapter } = loadModule('script-editor-intelligence/javascript/adapter.ts')
+  const context = createJavascriptContext()
+  const snapshot = createMockSnapshot()
+  snapshot.source = 'dev-platform-fallback'
+  snapshot.globals[0].origin = 'DRAFT_INFERENCE'
+  snapshot.globals[1].origin = 'PLATFORM_REFERENCE'
+  snapshot.javaTypes[0].origin = 'PLATFORM_REFERENCE'
+  const adapter = createJavascriptScriptEditorAdapter(context)
+  try {
+    await adapter.apply(snapshot)
+    const provider = context.state.providers.completion[0].provider
+    const references = (await provider.provideCompletionItems(context.model, { lineNumber: 1, column: 11 })).suggestions
+    assert(references.some(item => item.label === 'now'))
+    assert(references.every(item => item.detail.includes('平台参考') && item.sortText.startsWith('zz-reference-')))
+    assert(references.every(item => item.documentation.value.includes('应用环境未验证')))
+    context.model.setValue('$input.')
+    const draft = (await provider.provideCompletionItems(context.model, { lineNumber: 1, column: 8 })).suggestions
+    assert(draft.some(item => item.label === 'orderId'))
+    assert(draft.every(item => !item.detail?.includes('平台参考')))
+  } finally { adapter.dispose() }
+})
+
+test('expression candidates propagate reference provenance to nested members and hover', () => {
+  const { createGroovyScriptEditorAdapter } = loadModule('script-editor-intelligence/groovy/adapter.ts')
+  const snapshot = createMockSnapshot()
+  snapshot.globals[0].origin = 'DRAFT_INFERENCE'
+  snapshot.globals[1].origin = 'PLATFORM_REFERENCE'
+  snapshot.javaTypes[0].origin = 'PLATFORM_REFERENCE'
+  const fixture = createGroovyMonaco()
+  const uri = 'inmemory://expression'
+  const adapter = createGroovyScriptEditorAdapter({ editor: { getModel: () => createTextModel('', uri) }, monaco: fixture.monaco }, 'spel')
+  adapter.apply(snapshot)
+  const members = fixture.state.providers.completion.provider.provideCompletionItems(createTextModel('LocalDate.', uri), { lineNumber: 1, column: 11 }).suggestions
+  assert(members.every(item => item.detail.includes('应用环境未验证')))
+  const hover = fixture.state.providers.hover.provider.provideHover(createTextModel('LocalDate.now', uri), { lineNumber: 1, column: 14 })
+  assert(hover.contents.some(item => item.value.includes('平台参考')))
+  adapter.dispose()
 })
 
 
@@ -606,13 +672,16 @@ test('bridge discards responses after newer requests and after disposal', async 
   const props = { codeSite: 'logicflow.script', codePointer: '/script', language: 'javascript', intelligenceApi: '/context',
     data: { __CURRENT_NODE_NAME: 'node', __FLOW_MODEL: { name: 'flow', nodes: [{ name: 'node', type: 'script' }] } },
     env: { fetcher: (_api, body) => new Promise(resolve => pending.push({ resolve, body })) } }
+  context.model.setValue('old')
   const first = bridge.refresh({ ...props, value: 'old' })
+  context.model.setValue('new')
   const second = bridge.refresh({ ...props, value: 'new' })
   const respond = (index, token) => pending[index].resolve({ status: 0, data: { ...pending[index].body, snapshot: { ...createMockSnapshot(), versionToken: token } } })
   respond(1, 'new'); await second
   const installed = [...context.state.files.values()][0]
   respond(0, 'old'); await first
   assert.equal([...context.state.files.values()][0], installed)
+  context.model.setValue('disposed')
   const third = bridge.refresh({ ...props, value: 'disposed' })
   bridge.dispose(); respond(2, 'disposed'); await third
   assert.equal(context.state.files.size, 0)
@@ -741,4 +810,80 @@ test('backend javascript has ECMAScript and Graal globals without DOM on globalT
   assert((await complete('const name = "test"; name.')).includes('toUpperCase'))
   assert.equal(context.state.compilerOptionsHistory.length, 0)
   adapter.dispose()
+})
+
+test('failed LSP and fallback requests are contained during refresh and reported by explicit validation', async () => {
+  const { createScriptEditorIntelligenceBridge } = loadModule('script-editor-intelligence/bridge.ts')
+  const context = createJavascriptContext()
+  const bridge = createScriptEditorIntelligenceBridge(context)
+  const unavailable = new Error('Editor service unavailable')
+  const props = { codeSite: 'business-model.api-script', codeResourceType: 'business-model',
+    codePointer: '/apis/search/beforeScript', language: 'unavailable-fixture', intelligenceApi: '/api/dev/app/code-intelligence/context',
+    data: { name: 'Business', apis: { search: { beforeScript: 'return input' } } },
+    env: { fetcher: async () => { throw unavailable } } }
+  try {
+    await assert.doesNotReject(bridge.refresh(props))
+    await assert.rejects(bridge.validate(props), error => error === unavailable)
+  } finally { bridge.dispose() }
+})
+
+for (const dispose of [false, true]) test(`late LSP failure preserves ${dispose ? 'disposal' : 'the newer language adapter'}`, async () => {
+  const { createScriptEditorIntelligenceBridge } = loadModule('script-editor-intelligence/bridge.ts')
+  const context = createJavascriptContext()
+  const bridge = createScriptEditorIntelligenceBridge(context)
+  let rejectSession
+  const props = { codeSite: 'business-model.api-script', codeResourceType: 'business-model',
+    codePointer: '/apis/search/beforeScript', language: 'unavailable-fixture', intelligenceApi: '/api/dev/app/code-intelligence/context',
+    data: { name: 'Business', apis: { search: { beforeScript: 'return input' } } },
+    env: { fetcher: async api => {
+      if (api.url.endsWith('/sessions')) return new Promise((_resolve, reject) => { rejectSession = reject })
+      throw new Error('Previous service unavailable')
+    } } }
+  try {
+    const previous = bridge.refresh(props)
+    await new Promise(resolve => setImmediate(resolve))
+    assert.equal(typeof rejectSession, 'function')
+    await bridge.refresh({ ...props, language: 'javascript', env: { fetcher: async (_api, body) =>
+      ({ status: 0, data: { ...body, snapshot: createMockSnapshot() } }) } })
+    assert(context.state.files.size > 0)
+    if (dispose) bridge.dispose()
+    const installed = [...context.state.files.entries()]
+    rejectSession(new Error('Previous service unavailable'))
+    await assert.doesNotReject(previous)
+    assert.deepEqual([...context.state.files.entries()], installed)
+  } finally { bridge.dispose() }
+})
+
+test('unavailable semantic service uses labelled reference candidates until the environment changes', async () => {
+  const { createScriptEditorIntelligenceBridge } = loadModule('script-editor-intelligence/bridge.ts')
+  const { registerEditorLanguagePlugin } = requireMirroredSrcModule(__filename, './script-editor-intelligence/languagePlugins.ts')
+  const { createGroovyScriptEditorAdapter } = requireMirroredSrcModule(__filename, './script-editor-intelligence/groovy/adapter.ts')
+  const registration = registerEditorLanguagePlugin({ languageId: 'reference-fixture',
+    createReferenceAdapter: context => createGroovyScriptEditorAdapter(context, 'reference-fixture') })
+  const context = createJavascriptContext(), calls = []
+  const snapshot = createMockSnapshot()
+  snapshot.source = 'dev-platform-fallback'
+  snapshot.globals.forEach(binding => { binding.origin = 'PLATFORM_REFERENCE' })
+  snapshot.javaTypes.forEach(type => { type.origin = 'PLATFORM_REFERENCE' })
+  context.model.setValue('LocalDate.')
+  let invalidate
+  const bridge = createScriptEditorIntelligenceBridge({ ...context, subscribeEnvironment: (_app, listener) => {
+    invalidate = listener; return () => { invalidate = undefined }
+  } })
+  const props = { codeSite: 'logicflow.script', codePointer: '/script', language: 'reference-fixture',
+    intelligenceApi: '/api/dev/app/code-intelligence/context', data: { __CURRENT_NODE_NAME: 'script',
+      __FLOW_MODEL: { name: 'flow', nodes: [{ name: 'script', type: 'script' }] } },
+    env: { fetcher: async (api, body) => {
+      calls.push(api.url)
+      if (api.url.endsWith('/sessions')) throw new Error('Application is unavailable')
+      return { status: 0, data: { ...body, snapshot } }
+    } } }
+  try {
+    await bridge.refresh(props)
+    await bridge.refresh({ ...props, value: 'LocalDate.n' })
+    assert.equal(calls.filter(url => url.endsWith('/sessions')).length, 1)
+    const result = context.state.providers.completion.at(-1).provider.provideCompletionItems(context.model, { lineNumber: 1, column: 11 })
+    assert(result.suggestions.some(item => item.label === 'now' && item.detail.includes('应用环境未验证')))
+    assert.equal(typeof invalidate, 'function')
+  } finally { bridge.dispose(); registration.dispose() }
 })

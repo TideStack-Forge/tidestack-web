@@ -18,7 +18,6 @@ const {
       'user/isLogin': true,
       'user/menu': { globalMenu: [] },
       'app/whiteList': [],
-      preventTabOperation: false,
       activeTabId: '',
       tabsList: [],
       getAppName: vi.fn(() => '测试平台'),
@@ -134,6 +133,9 @@ vi.mock('../../../../src/router/routerTopologyRuntime.ts', () => ({
   readRouterTopology,
 }))
 
+const { installHostRouter } = await import('../../../../src/router/installRouter.ts')
+installHostRouter()
+
 const routerEngineModule = await import('../../../../src/router/engines/routerEngine.ts')
 
 function flush() {
@@ -144,7 +146,6 @@ beforeEach(() => {
   store.getters['user/isLogin'] = true
   store.getters['user/menu'] = { globalMenu: [] }
   store.getters['app/whiteList'] = []
-  store.getters.preventTabOperation = false
   store.getters.activeTabId = ''
   store.getters.tabsList = []
   store.getters.getAppName = vi.fn(() => '测试平台')
@@ -200,6 +201,7 @@ test('initial router bootstrap executes the official tab decision once for the d
   expect(tabs.openOrSwitchTab).toHaveBeenCalledWith('/dev/orgrbacdemo/builtin-position', {
     title: '内置岗位',
     syncLocation: false,
+    isCurrent: expect.any(Function),
   })
   expect(store.getters.activeTabId).toBe('tab-1')
   expect(store.getters.tabsList).toEqual([
@@ -265,6 +267,7 @@ test('refreshRouter replays the browser URL and opens the matching tab for prote
   expect(tabs.openOrSwitchTab).toHaveBeenCalledWith('/dev/orgrbacdemo/builtin-position?tab=todo', {
     title: '内置岗位',
     syncLocation: false,
+    isCurrent: expect.any(Function),
   })
   expect(store.getters.activeTabId).toBe('tab-1')
   expect(document.title).toBe('内置岗位 - 测试平台')

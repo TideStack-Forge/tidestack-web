@@ -3,15 +3,15 @@ import type { NavigationDecision } from './navigationDecision'
 export interface NavigationExecutionContext {
   to: any
   next: any
+  onCommit?: (action: (isCurrent: () => boolean) => Promise<any>) => void
 }
 
 export interface NavigationExecutionHandlers {
-  clearPreventTabOperation: () => any
   openNotFoundPage: (to: any) => any
-  openOrSwitchTab: (fullPath: string, options: { title?: string, syncLocation?: boolean }) => any
+  openOrSwitchTab: (fullPath: string, options: { title?: string, syncLocation?: boolean, isCurrent?: () => boolean }) => any
   openRootMenu: () => any
-  switchTab: (activeTabId: string, options?: { syncLocation?: boolean }) => any
-  updateTab: (activeTabId: string, fullPath: string, options?: { syncLocation?: boolean }) => any
+  switchTab: (activeTabId: string, options?: { syncLocation?: boolean, isCurrent?: () => boolean }) => any
+  updateTab: (activeTabId: string, fullPath: string, options?: { syncLocation?: boolean, isCurrent?: () => boolean }) => any
 }
 
 export type NavigationDecisionExecutor = (
@@ -24,8 +24,13 @@ export function createNavigationExecutor(
 ): NavigationDecisionExecutor {
   return async function executeNavigationDecision(
     decision: NavigationDecision,
-    { to, next }: NavigationExecutionContext
+    { to, next, onCommit }: NavigationExecutionContext
   ) {
+    async function project(action: (isCurrent: () => boolean) => Promise<any>) {
+      if (onCommit) { onCommit(action); return next() }
+      const result = await action(() => true)
+      return result === false ? next(false) : next()
+    }
     if (decision.type === 'open-root-menu') {
       await handlers.openRootMenu()
       return next(false)
@@ -35,14 +40,8 @@ export function createNavigationExecutor(
       return next()
     }
 
-    if (decision.type === 'clear-prevent-tab-operation') {
-      handlers.clearPreventTabOperation()
-      return next()
-    }
-
     if (decision.type === 'open-not-found') {
-      await handlers.openNotFoundPage(to)
-      return next()
+      return project((isCurrent) => handlers.openNotFoundPage(to))
     }
 
     if (decision.type === 'redirect') {
@@ -50,19 +49,17 @@ export function createNavigationExecutor(
     }
 
     if (decision.type === 'switch-tab') {
-      await handlers.switchTab(decision.activeTabId, { syncLocation: false })
-      return next()
+      return project((isCurrent) => handlers.switchTab(decision.activeTabId, { syncLocation: false, isCurrent }))
     }
 
     if (decision.type === 'update-tab') {
-      await handlers.updateTab(decision.activeTabId, decision.fullPath, { syncLocation: false })
-      return next()
+      return project((isCurrent) => handlers.updateTab(decision.activeTabId, decision.fullPath, { syncLocation: false, isCurrent }))
     }
 
-    await handlers.openOrSwitchTab(decision.fullPath, {
+    return project((isCurrent) => handlers.openOrSwitchTab(decision.fullPath, {
       title: decision.title,
       syncLocation: false,
-    })
-    return next()
+      isCurrent,
+    }))
   }
 }

@@ -31,7 +31,7 @@ const {
   }
 })
 
-vi.mock('@/utils/Stomp', () => ({
+vi.mock('#ouroboros-host/utils/Stomp', () => ({
   send,
   subscribe,
   unsubscribe,
@@ -109,7 +109,7 @@ vi.mock('amis/lib/renderers/Log', () => {
 })
 
 const logModule = await import(
-  '../../../../../../src/components/amis/renderers/patch/Log.tsx'
+  '../../../../../../../ouroboros-amis-runtime/src/renderers/patch/Log.tsx'
 )
 const OuroborosLog = logModule.default
 

@@ -13,7 +13,6 @@ export function readNavigationContext(to: any) {
     ),
     postLoginFallbackPath: resolvePostLoginFallbackPath(menu),
     whiteList: store.getters['app/whiteList'] || [],
-    preventTabOperation: Boolean(store.getters.preventTabOperation),
     activeTabId: store.getters.activeTabId || '',
     tabsList: store.getters.tabsList || [],
   })

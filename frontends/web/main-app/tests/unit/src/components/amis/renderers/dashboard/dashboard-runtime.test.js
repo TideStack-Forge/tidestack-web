@@ -28,10 +28,11 @@ function transpileFile(filePath) {
 function loadDashboardEmptyStateSurfaceModule() {
   const filePath = path.join(
     mainAppRoot,
-    'src/components/amis/renderers/dashboard/DashboardEmptyStateSurface.tsx'
+    '../ouroboros-amis-runtime/src/renderers/dashboard/DashboardEmptyStateSurface.tsx'
   )
   const module = { exports: {} }
-  const localRequire = Module.createRequire(filePath)
+  const sourceRequire = Module.createRequire(filePath)
+  const localRequire = (request) => request.startsWith('.') ? sourceRequire(request) : require(request)
   const context = vm.createContext({
     module,
     exports: module.exports,
@@ -77,10 +78,11 @@ function createMockEventBus() {
 function loadDashboardModule() {
   const filePath = path.join(
     mainAppRoot,
-    'src/components/amis/renderers/dashboard/Dashboard.tsx'
+    '../ouroboros-amis-runtime/src/renderers/dashboard/Dashboard.tsx'
   )
   const module = { exports: {} }
-  const localRequire = Module.createRequire(filePath)
+  const sourceRequire = Module.createRequire(filePath)
+  const localRequire = (request) => request.startsWith('.') ? sourceRequire(request) : require(request)
   const emptyStateSurfaceModule = loadDashboardEmptyStateSurfaceModule()
   const eventBus = createMockEventBus()
   const amisMock = {
@@ -136,7 +138,7 @@ function loadDashboardModule() {
       if (request === './DashboardEmptyStateSurface') {
         return emptyStateSurfaceModule
       }
-      if (request === '@/common/eventBus') {
+      if (request === '#ouroboros-host/common/eventBus') {
         return {
           EventBus: eventBus,
         }

@@ -13,7 +13,6 @@ function createDecisionInput(overrides = {}) {
     toQueryRedirect: undefined,
     postLoginFallbackPath: '/welcome',
     whiteList: ['/login'],
-    preventTabOperation: false,
     routeName: 'app-list',
     activeTabId: '',
     tabsList: [],
@@ -121,16 +120,28 @@ describe('resolveNavigationDecision', () => {
     })
   })
 
-  test('clears preventTabOperation before any tab execution branch', () => {
+  test('accepts a tab command without scheduling a second tab projection', () => {
     expect(
       resolveNavigationDecision(
         createDecisionInput({
           isLogin: true,
-          preventTabOperation: true,
+          tabIntent: true,
         })
       )
     ).toEqual({
-      type: 'clear-prevent-tab-operation',
+      type: 'allow',
+    })
+  })
+
+  test('requires login before accepting a tab command', () => {
+    expect(resolveNavigationDecision(createDecisionInput({
+      isLogin: false,
+      tabIntent: true,
+      toPath: '/dev/app-list',
+      toFullPath: '/dev/app-list',
+    }))).toEqual({
+      type: 'redirect',
+      location: { path: '/login', query: { redirect: '/dev/app-list' } },
     })
   })
 

@@ -6,7 +6,7 @@ const { subscribe, unsubscribe, dataMapping } = vi.hoisted(() => ({
   dataMapping: vi.fn((value) => value),
 }))
 
-vi.mock('@/utils/Stomp', () => ({
+vi.mock('#ouroboros-host/utils/Stomp', () => ({
   subscribe,
   unsubscribe,
 }))
@@ -68,7 +68,7 @@ vi.mock('amis/lib/renderers/Service', () => {
 })
 
 const serviceModule = await import(
-  '../../../../../../src/components/amis/renderers/patch/Service.tsx'
+  '../../../../../../../ouroboros-amis-runtime/src/renderers/patch/Service.tsx'
 )
 const OuroborosService = serviceModule.default
 

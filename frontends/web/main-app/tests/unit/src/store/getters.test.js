@@ -27,7 +27,6 @@ describe('store/getters compatibility route-tab seam', () => {
       tabs: {
         tabsList: undefined,
         activeTabId: undefined,
-        preventTabOperation: undefined,
         scrollBarScrollTopMap: undefined,
       },
       app: {},
@@ -35,7 +34,6 @@ describe('store/getters compatibility route-tab seam', () => {
 
     expect(getters.tabsList(state)).toEqual([])
     expect(getters.activeTabId(state)).toBe('')
-    expect(getters.preventTabOperation(state)).toBe(false)
     expect(getters.scrollBarScrollTopMap(state)).toEqual({})
   })
 

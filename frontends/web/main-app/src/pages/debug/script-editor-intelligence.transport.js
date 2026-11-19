@@ -1,3 +1,5 @@
+const { createPlaygroundLanguageMock } = require('./script-editor-intelligence.mock')
+
 function buildMetadataApi(appName, language) {
   return `/api/dev/${appName}/metadata/script-intelligence/${language}?mode=raw`
 }
@@ -12,9 +14,15 @@ function createPlaygroundFetcher(options) {
       ? normalized.buildMockSnapshot
       : () => null
   const client = normalized.client
+  const languageMock = createPlaygroundLanguageMock(buildMockSnapshot)
 
   return async function playgroundFetcher(api, data) {
     const request = api?.data != null ? api.data : data || {}
+
+    if (sourceMode === 'mock') {
+      const result = languageMock(String(api?.method || 'get').toLowerCase(), api?.url, request)
+      if (result !== undefined) return { status: 0, data: result }
+    }
 
     if (sourceMode === 'mock' && api?.url === intelligenceApi) {
       if (Array.isArray(debugState.requests)) {
@@ -22,7 +30,10 @@ function createPlaygroundFetcher(options) {
       }
       return {
         status: 0,
-        data: buildMockSnapshot(request),
+        data: {
+          documentId: request.documentId, documentVersion: request.documentVersion, draftRevision: request.draftRevision,
+          snapshot: buildMockSnapshot(request),
+        },
       }
     }
 

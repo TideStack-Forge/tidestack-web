@@ -12,7 +12,7 @@ const { mainAppRoot } = require(
 function loadInputTreePluginModule() {
   const filePath = path.join(
     mainAppRoot,
-    'src/components/amis/editor/plugins/patch/InputTree.ts'
+    '../ouroboros-amis-runtime/src/editor/plugins/patch/InputTree.ts'
   )
   const source = fs.readFileSync(filePath, 'utf8')
   const transpiled = ts.transpileModule(source, {
@@ -27,7 +27,8 @@ function loadInputTreePluginModule() {
   class MockTreeControlPlugin {}
 
   const module = { exports: {} }
-  const localRequire = Module.createRequire(filePath)
+  const sourceRequire = Module.createRequire(filePath)
+  const localRequire = (request) => request.startsWith('.') ? sourceRequire(request) : require(request)
   const mockedRequire = (request) => {
     if (request === 'amis-editor') {
       return {

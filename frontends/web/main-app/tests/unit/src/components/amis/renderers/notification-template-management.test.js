@@ -2,7 +2,7 @@ import { describe, expect, test, vi } from 'vitest'
 import {
   NotificationTemplateManagementState,
   differences,
-} from '@/components/amis/renderers/notificationTemplateManagement'
+} from 'ouroboros-amis-runtime/renderers/notificationTemplateManagement'
 
 function definition(overrides = {}) {
   return {

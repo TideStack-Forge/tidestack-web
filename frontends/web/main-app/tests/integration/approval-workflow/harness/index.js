@@ -55,6 +55,12 @@ const harnessSchema = {
 async function mountHarness() {
   statusElement.textContent = 'Loading approval workflow component library...'
 
+  if (new URLSearchParams(window.location.search).has('presentation')) {
+    window.renderApprovalPresentation = (schema, data) => renderAmisSchema(editorRoot, schema, { data })
+    statusElement.textContent = 'Approval presentation ready'
+    return
+  }
+
   await registerComponentLibrary(
     {
       name: 'approval-workflow-designer-playwright',

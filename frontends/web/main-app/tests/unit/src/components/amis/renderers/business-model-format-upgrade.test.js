@@ -1,7 +1,7 @@
 import { expect, test, vi } from 'vitest'
 import { renderToStaticMarkup } from 'react-dom/server'
 vi.mock('amis', () => ({ FormItem: () => (component) => component }))
-import { BusinessModelFormatUpgrade } from '@/components/amis/renderers/BusinessModelFormatUpgrade'
+import { BusinessModelFormatUpgrade } from 'ouroboros-amis-runtime/renderers/BusinessModelFormatUpgrade'
 
 const draft = () => ({
   modelType: 'default',

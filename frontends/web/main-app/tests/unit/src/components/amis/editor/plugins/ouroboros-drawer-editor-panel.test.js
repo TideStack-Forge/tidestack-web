@@ -79,7 +79,7 @@ function findControlByName(node, controlName) {
 function loadDrawerPluginModule() {
   const filePath = path.join(
     mainAppRoot,
-    'src/components/amis/editor/plugins/OuroborosDrawer.tsx'
+    '../ouroboros-amis-runtime/src/editor/plugins/OuroborosDrawer.tsx'
   )
   const source = fs.readFileSync(filePath, 'utf8')
   const transpiled = ts.transpileModule(source, {
@@ -109,7 +109,8 @@ function loadDrawerPluginModule() {
   }
 
   const module = { exports: {} }
-  const localRequire = Module.createRequire(filePath)
+  const sourceRequire = Module.createRequire(filePath)
+  const localRequire = (request) => request.startsWith('.') ? sourceRequire(request) : require(request)
   const mockedRequire = (request) => {
     if (request === 'amis-editor') {
       return {

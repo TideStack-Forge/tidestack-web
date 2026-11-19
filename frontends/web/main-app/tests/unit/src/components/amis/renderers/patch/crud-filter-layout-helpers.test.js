@@ -14,7 +14,7 @@ function loadGridModule() {
   return require(
     path.join(
       process.cwd(),
-      'src/components/amis/renderers/patch/crudFilterGridLayout.ts'
+      '../ouroboros-amis-runtime/src/renderers/patch/crudFilterGridLayout.ts'
     )
   )
 }

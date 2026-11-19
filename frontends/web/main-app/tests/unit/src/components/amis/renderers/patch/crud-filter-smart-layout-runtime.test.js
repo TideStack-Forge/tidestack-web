@@ -28,7 +28,7 @@ function loadRuntimeClass() {
   return require(
     path.join(
       process.cwd(),
-      'src/components/amis/renderers/patch/crudFilterSmartLayoutRuntime.ts'
+      '../ouroboros-amis-runtime/src/renderers/patch/crudFilterSmartLayoutRuntime.ts'
     )
   ).CrudFilterSmartLayoutRuntime
 }

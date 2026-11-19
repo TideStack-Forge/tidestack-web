@@ -12,7 +12,7 @@ const { mainAppRoot } = require(
 function loadOuroborosFormModule() {
   const filePath = path.join(
     mainAppRoot,
-    'src/components/amis/renderers/patch/Form.tsx'
+    '../ouroboros-amis-runtime/src/renderers/patch/Form.tsx'
   )
   const source = fs.readFileSync(filePath, 'utf8')
   const transpiled = ts.transpileModule(source, {
@@ -38,7 +38,8 @@ function loadOuroborosFormModule() {
   }
 
   const module = { exports: {} }
-  const localRequire = Module.createRequire(filePath)
+  const sourceRequire = Module.createRequire(filePath)
+  const localRequire = (request) => request.startsWith('.') ? sourceRequire(request) : require(request)
   const mockedRequire = (request) => {
     if (request === 'amis-core/lib/renderers/Form') {
       return {

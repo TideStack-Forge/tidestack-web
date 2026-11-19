@@ -39,7 +39,7 @@ function sha256(text) {
 }
 
 function collectInputTableRuntimeSourceFiles() {
-  const inputTableDir = 'src/components/amis/renderers/patch/InputTable'
+  const inputTableDir = '../ouroboros-amis-runtime/src/renderers/patch/InputTable'
   const absoluteInputTableDir = path.join(process.cwd(), inputTableDir)
 
   if (!fs.existsSync(absoluteInputTableDir)) {
@@ -55,16 +55,16 @@ function collectInputTableRuntimeSourceFiles() {
 
 function collectRuntimeSourceFiles() {
   return [
-    'src/components/amis/renderers/patch/Table.tsx',
-    'src/components/amis/renderers/patch/CRUD.tsx',
-    'src/components/amis/renderers/patch/InputTable/index.tsx',
+    '../ouroboros-amis-runtime/src/renderers/patch/Table.tsx',
+    '../ouroboros-amis-runtime/src/renderers/patch/CRUD.tsx',
+    '../ouroboros-amis-runtime/src/renderers/patch/InputTable/index.tsx',
     ...collectInputTableRuntimeSourceFiles().filter(
       (filePath) =>
-        filePath !== 'src/components/amis/renderers/patch/InputTable/index.tsx'
+        filePath !== '../ouroboros-amis-runtime/src/renderers/patch/InputTable/index.tsx'
     ),
-    'src/components/amis/renderers/patch/cooperativeTableRendering.tsx',
-    'src/components/amis/renderers/patch/tableLazyRow/LazyRow.tsx',
-    'src/components/amis/renderers/patch/tableRenderPerformance.ts',
+    '../ouroboros-amis-runtime/src/renderers/patch/cooperativeTableRendering.tsx',
+    '../ouroboros-amis-runtime/src/renderers/patch/tableLazyRow/LazyRow.tsx',
+    '../ouroboros-amis-runtime/src/renderers/patch/tableRenderPerformance.ts',
     'tests/integration/amis-main-thread-performance/harness/index.js',
   ]
 }

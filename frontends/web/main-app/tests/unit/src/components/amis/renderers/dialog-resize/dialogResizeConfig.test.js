@@ -19,7 +19,7 @@ function loadModule() {
   return require(
     path.join(
       mainAppRoot,
-      'src/components/amis/renderers/dialog-resize/dialogResizeConfig.ts'
+      '../ouroboros-amis-runtime/src/renderers/dialog-resize/dialogResizeConfig.ts'
     )
   )
 }

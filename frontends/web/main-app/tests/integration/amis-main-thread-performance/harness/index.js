@@ -10,7 +10,7 @@ import { TableControlRenderer } from 'amis/lib/renderers/Form/InputTable'
 import { FormRendererBase } from 'amis-core/lib/renderers/Form'
 
 import { renderAmisSchema } from '@/components/amis/AmisComponent'
-import OuroborosTableRenderer from '@/components/amis/renderers/patch/Table'
+import OuroborosTableRenderer from 'ouroboros-amis-runtime/renderers/patch/Table'
 import { configAxios } from '@/utils/http'
 
 import performanceData from '../fixtures/performanceData'

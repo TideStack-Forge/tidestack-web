@@ -11,7 +11,7 @@ vi.mock('amis', () => ({
 async function loadSchemaFilter(relativeFileName) {
   registeredFilters.length = 0
   vi.resetModules()
-  await import(`../../../../../../src/components/amis/schemaFilter/${relativeFileName}`)
+  await import(`ouroboros-amis-runtime/schemaFilter/${relativeFileName}`)
   return { registeredFilters }
 }
 

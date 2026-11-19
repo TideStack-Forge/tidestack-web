@@ -40,14 +40,14 @@ import { processAmisSchema } from '@/common/i18n/amis'
 import { alert, confirm } from '@/common/modal'
 import { pushLocation, readCurrentRoute } from '@/router/routerFacade'
 
-import './runtimePreset'
+import 'ouroboros-amis-runtime/runtimePreset'
 import { Client } from '@/utils/http'
-import { resolvePlatformContext, type PlatformContext } from './platform/context'
+import { resolvePlatformContext, type PlatformContext } from 'ouroboros-amis-runtime/platform/context'
 import {
   resolveFrontendResourcePlatformContext,
   resolveFrontendResourceRenderContext,
   type FrontendResourceRenderContext,
-} from './schemaFilter/frontendResourceReference'
+} from 'ouroboros-amis-runtime/schemaFilter/frontendResourceReference'
 
 import type { ToastConf } from 'amis-ui/lib/components/Toast'
 

@@ -18,7 +18,7 @@ const {
   resolveGroupedExportToolbars,
   resolveVisibleGroupedExportToolbars,
 } = require(
-  path.join(process.cwd(), 'src/components/amis/renderers/patch/tableExcelExport.ts')
+  path.join(process.cwd(), '../ouroboros-amis-runtime/src/renderers/patch/tableExcelExport.ts')
 )
 
 test('table Excel policy normalizes runtime columns over pristine schema', () => {

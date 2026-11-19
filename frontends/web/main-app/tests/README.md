@@ -32,6 +32,8 @@
   - `npm run test:unit`
 - Run all integration tests:
   - `npm run test:integration`
+- Run AMIS editor regressions through the Web lazy editor entry:
+  - `npm run test:integration:amis-editor`
 - Run the full frontend test stack:
   - `npm run test:all`
 

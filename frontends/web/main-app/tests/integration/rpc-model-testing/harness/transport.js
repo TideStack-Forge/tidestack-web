@@ -1,7 +1,7 @@
 import {
   modelHash,
   persistableModel,
-} from '@/components/amis/renderers/rpc-model-editor/rpcModelEditorState'
+} from 'ouroboros-amis-runtime/renderers/rpc-model-editor/rpcModelEditorState'
 let saved = persistableModel({
   name: 'example',
   title: '示例接口',

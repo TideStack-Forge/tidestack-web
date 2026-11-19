@@ -8,15 +8,15 @@ vi.mock('amis-core', () => ({
   registerAction,
 }))
 
-vi.mock('@/common/tabs', () => ({
+vi.mock('#ouroboros-host/common/tabs', () => ({
   default: {
     openOrSwitchTab,
     openTab,
   },
 }))
 
-const { OpenOrSwitchTab } = await import('../../../../../../src/components/amis/actions/OpenOrSwitchTab.js')
-const { OpenTab } = await import('../../../../../../src/components/amis/actions/OpenTab.js')
+const { OpenOrSwitchTab } = await import('../../../../../../../ouroboros-amis-runtime/src/actions/OpenOrSwitchTab.js')
+const { OpenTab } = await import('../../../../../../../ouroboros-amis-runtime/src/actions/OpenTab.js')
 
 describe('tab open actions', () => {
   beforeEach(() => {

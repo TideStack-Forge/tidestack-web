@@ -14,7 +14,7 @@ const { mainAppRoot } = require(
 function loadFormSmartLayoutModule() {
   const filePath = path.join(
     mainAppRoot,
-    'src/components/amis/renderers/patch/formSmartLayout.ts'
+    '../ouroboros-amis-runtime/src/renderers/patch/formSmartLayout.ts'
   )
   const source = fs.readFileSync(filePath, 'utf8')
   const transpiled = ts.transpileModule(source, {
@@ -25,7 +25,8 @@ function loadFormSmartLayoutModule() {
     },
   })
 
-  const localRequire = Module.createRequire(filePath)
+  const sourceRequire = Module.createRequire(filePath)
+  const localRequire = (request) => request.startsWith('.') ? sourceRequire(request) : require(request)
   const module = { exports: {} }
   const mockedRequire = (request) => {
     if (request === './runtimeSystemConfig') {
@@ -50,7 +51,7 @@ function loadFormSmartLayoutModule() {
 function loadRuntimeSystemConfigModule() {
   const filePath = path.join(
     mainAppRoot,
-    'src/components/amis/renderers/patch/runtimeSystemConfig.ts'
+    '../ouroboros-amis-runtime/src/renderers/patch/runtimeSystemConfig.ts'
   )
   const source = fs.readFileSync(filePath, 'utf8')
   const transpiled = ts.transpileModule(source, {
@@ -62,7 +63,8 @@ function loadRuntimeSystemConfigModule() {
   })
 
   const module = { exports: {} }
-  const localRequire = Module.createRequire(filePath)
+  const sourceRequire = Module.createRequire(filePath)
+  const localRequire = (request) => request.startsWith('.') ? sourceRequire(request) : require(request)
   const context = vm.createContext({
     module,
     exports: module.exports,
@@ -79,7 +81,7 @@ function loadRuntimeSystemConfigModule() {
 function loadOuroborosFormModule(formSmartLayoutModule) {
   const filePath = path.join(
     mainAppRoot,
-    'src/components/amis/renderers/patch/Form.tsx'
+    '../ouroboros-amis-runtime/src/renderers/patch/Form.tsx'
   )
   const source = fs.readFileSync(filePath, 'utf8')
   const transpiled = ts.transpileModule(source, {
@@ -136,7 +138,8 @@ function loadOuroborosFormModule(formSmartLayoutModule) {
   }
 
   const module = { exports: {} }
-  const localRequire = Module.createRequire(filePath)
+  const sourceRequire = Module.createRequire(filePath)
+  const localRequire = (request) => request.startsWith('.') ? sourceRequire(request) : require(request)
   const mockedRequire = (request) => {
     if (request === 'amis-core/lib/renderers/Form') {
       return {

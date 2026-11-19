@@ -93,20 +93,20 @@ vi.mock('amis-ui/lib/components/Spinner', () => ({
   default: () => null,
 }))
 
-vi.mock('@/common/modal', () => ({
+vi.mock('#ouroboros-host/common/modal', () => ({
   popModalMethods: vi.fn(),
   pushModalMethods: vi.fn(),
 }))
 
-vi.mock('@/store/storeFacade', () => ({
+vi.mock('#ouroboros-host/store/storeFacade', () => ({
   readGetters: vi.fn(() => ({})),
 }))
 
-vi.mock('@/common/i18n/amis', () => ({
+vi.mock('#ouroboros-host/common/i18n/amis', () => ({
   processAmisSchema: vi.fn((schemaId, schema) => schema),
 }))
 
-vi.mock('@/common/eventBus', () => ({
+vi.mock('#ouroboros-host/common/eventBus', () => ({
   EventBus: {
     subscribe: vi.fn(),
     unsubscribe: vi.fn(),
@@ -122,13 +122,13 @@ const {
   normalizeModalBodyFormActionsForRender,
   suppressModalBodyFormActionsForRender,
   withModalSchemaResolvedHandler,
-} = await import('../../../../../../src/components/amis/renderers/modalFormActions.ts')
+} = await import('../../../../../../../ouroboros-amis-runtime/src/renderers/modalFormActions.ts')
 const { default: OuroborosDialog } =
-  await import('../../../../../../src/components/amis/renderers/OuroborosDialog.tsx')
+  await import('../../../../../../../ouroboros-amis-runtime/src/renderers/OuroborosDialog.tsx')
 const { default: OuroborosDrawer } =
-  await import('../../../../../../src/components/amis/renderers/OuroborosDrawer.tsx')
+  await import('../../../../../../../ouroboros-amis-runtime/src/renderers/OuroborosDrawer.tsx')
 const { default: AmisSchema } =
-  await import('../../../../../../src/components/amis/renderers/AmisSchema.tsx')
+  await import('../../../../../../../ouroboros-amis-runtime/src/renderers/AmisSchema.tsx')
 
 const modalRenderers = [
   ['dialog', OuroborosDialog, modalMocks.dialogRenderCalls],

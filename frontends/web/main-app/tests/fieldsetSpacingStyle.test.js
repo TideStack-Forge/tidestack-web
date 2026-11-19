@@ -4,7 +4,7 @@ const path = require('path')
 const sass = require('sass')
 
 const rootDir = path.resolve(__dirname, '..')
-const sourcePath = path.join(rootDir, 'src/style/vendor/amis/patches.scss')
+const sourcePath = path.join(rootDir, '../ouroboros-amis-runtime/src/style/vendor/amis/patches.scss')
 const source = fs.readFileSync(sourcePath, 'utf8')
 const css = sass.compileString(source, {
   loadPaths: [rootDir],

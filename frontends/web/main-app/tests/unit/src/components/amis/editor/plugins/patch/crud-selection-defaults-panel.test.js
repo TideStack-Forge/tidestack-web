@@ -12,7 +12,7 @@ const { mainAppRoot } = require(
 function loadCrudPluginModule() {
   const filePath = path.join(
     mainAppRoot,
-    'src/components/amis/editor/plugins/patch/CRUD.ts'
+    '../ouroboros-amis-runtime/src/editor/plugins/patch/CRUD.ts'
   )
   const source = fs.readFileSync(filePath, 'utf8')
   const transpiled = ts.transpileModule(source, {
@@ -28,7 +28,8 @@ function loadCrudPluginModule() {
   class MockCRUDPlugin {}
 
   const module = { exports: {} }
-  const localRequire = Module.createRequire(filePath)
+  const sourceRequire = Module.createRequire(filePath)
+  const localRequire = (request) => request.startsWith('.') ? sourceRequire(request) : require(request)
   const mockedRequire = (request) => {
     if (request === 'amis-editor') {
       return {

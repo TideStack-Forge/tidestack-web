@@ -42,18 +42,18 @@ vi.mock('amis/lib/renderers/Dialog', () => ({
   },
 }))
 
-vi.mock('@/common/modal', () => ({
+vi.mock('#ouroboros-host/common/modal', () => ({
   popModalMethods: vi.fn(),
   pushModalMethods: vi.fn(),
 }))
 
-vi.mock('@/store/storeFacade', () => ({
+vi.mock('#ouroboros-host/store/storeFacade', () => ({
   readGetters: vi.fn(() => ({ 'user/menu': { globalMenu: [], globalSubNav: [] } })),
   subscribeState: vi.fn(() => () => {}),
 }))
 
 const dialogModule =
-  await import('../../../../../../src/components/amis/renderers/OuroborosDialog.tsx')
+  await import('../../../../../../../ouroboros-amis-runtime/src/renderers/OuroborosDialog.tsx')
 const OuroborosDialog = dialogModule.default
 
 function flattenReactChildren(node) {

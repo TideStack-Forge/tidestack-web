@@ -3,7 +3,7 @@ import React from 'react'
 import { expect, test, vi } from 'vitest'
 import { renderToStaticMarkup } from 'react-dom/server'
 vi.mock('amis', () => ({ FormItem: () => (component) => component }))
-import { BusinessBehaviorDefinitions } from '@/components/amis/renderers/BusinessBehaviorDefinitions'
+import { BusinessBehaviorDefinitions } from 'ouroboros-amis-runtime/renderers/BusinessBehaviorDefinitions'
 
 function control(value, memberType = 'event', extra = {}) {
   const instance = new BusinessBehaviorDefinitions({

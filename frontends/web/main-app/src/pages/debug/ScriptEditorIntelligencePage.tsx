@@ -78,7 +78,7 @@ const {
 
 const DEFAULT_SOURCE_MODE: SourceMode = 'mock'
 const DEFAULT_APP_NAME = PLAYGROUND_APP_NAME
-const MOCK_INTELLIGENCE_API = '/api/mock/script-intelligence'
+const MOCK_INTELLIGENCE_API = '/api/mock/code-intelligence/context'
 
 const pageStyle = {
   minHeight: '100vh',
@@ -157,7 +157,7 @@ function resolveSourceMode(): SourceMode {
 }
 function buildIntelligenceApi(sourceMode: SourceMode, appName: string) {
   return sourceMode === 'api'
-    ? `/api/dev/${appName}/logicflow/script-intelligence/snapshot`
+    ? `/api/dev/${appName}/code-intelligence/context`
     : MOCK_INTELLIGENCE_API
 }
 function createDebugEditorState(): DebugEditorState {
@@ -185,7 +185,9 @@ function buildEditorSchema(
             type: 'script-editor',
             name,
             language,
-            intelligenceScene: 'logicflow-script-node',
+            codeSite: 'logicflow.script',
+            codePointer: '/script',
+            codeResourceType: 'logicflow',
             intelligenceApi,
             value,
             size: 'full',
@@ -261,7 +263,7 @@ export function ScriptEditorIntelligencePage() {
         javascriptScript: javascriptCode,
         __CURRENT_NODE_NAME: 'script-node-1',
         __CURRENT_NODE_TYPE: 'script',
-        __FLOW_MODEL: PLAYGROUND_FLOW_MODEL,
+        __FLOW_MODEL: { ...PLAYGROUND_FLOW_MODEL, nodes: [{ name: 'script-node-1', type: 'script', language: 'javascript', inputPorts: [{ name: 'input' }] }] },
       },
     }),
     []
@@ -272,7 +274,7 @@ export function ScriptEditorIntelligencePage() {
         groovyScript: groovyCode,
         __CURRENT_NODE_NAME: 'script-node-1',
         __CURRENT_NODE_TYPE: 'script',
-        __FLOW_MODEL: PLAYGROUND_FLOW_MODEL,
+        __FLOW_MODEL: { ...PLAYGROUND_FLOW_MODEL, nodes: [{ name: 'script-node-1', type: 'script', language: 'groovy', inputPorts: [{ name: 'input' }] }] },
       },
     }),
     []
@@ -339,10 +341,9 @@ export function ScriptEditorIntelligencePage() {
         entry.editor?.trigger?.('playwright', 'editor.action.triggerSuggest', {})
       },
       getJavascriptExtraLibs() {
-        const extraLibs =
-          debugState.editors.javascript.monaco?.languages?.typescript?.javascriptDefaults?.getExtraLibs?.() ||
-          {}
-        return Object.values(extraLibs).map((item: any) => item.content || '')
+        const models = debugState.editors.javascript.monaco?.editor?.getModels?.() || []
+        return models.filter((model: any) => model.uri.toString().startsWith('inmemory://ouroboros-intelligence/'))
+          .map((model: any) => model.getValue())
       },
     }
 
@@ -391,11 +392,11 @@ export function ScriptEditorIntelligencePage() {
   function getPanelDescription(language: PlaygroundLanguage) {
     return sourceMode === 'api'
       ? language === 'javascript'
-        ? 'Uses the logicflow snapshot API and applies returned GraalJS declarations.'
-        : 'Uses the logicflow snapshot API and applies returned Groovy completions, hover and signatures.'
+        ? 'Uses the shared code context API and applies returned GraalJS declarations.'
+        : 'Uses the shared language sessions for Groovy semantic features.'
       : language === 'javascript'
         ? 'Mocked logicflow globals plus Java.type static members.'
-        : 'Mocked imports, flow input globals, hover and signature probes.'
+        : 'Fixed mock LSP candidates exercise the shared language client; no Groovy compiler is running.'
   }
 
   return (

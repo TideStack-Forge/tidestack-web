@@ -9,7 +9,7 @@ module.exports = defineConfig({
   outputDir: scenarioBackend ? './target/playwright-code-context-scenarios' : groovyBackend ? './target/playwright-groovy-lsp' : mockBackend
     ? './target/playwright-code-intelligence-transport'
     : './target/playwright-code-intelligence',
-  timeout: 90_000,
+  timeout: groovyBackend ? 180_000 : 90_000,
   expect: { timeout: 15_000 },
   workers: 1,
   use: {
@@ -22,7 +22,7 @@ module.exports = defineConfig({
   webServer: [
     {
       command: groovyBackend
-        ? 'python3 ../../../testing/integration/feature/development/groovy-language-service/scripts/full_chain.py --prepare --spring.application.name=example'
+        ? `python3 ../../../testing/integration/feature/development/groovy-language-service/scripts/full_chain.py --prepare ${process.env.LANGUAGE_CONTAINER_IMAGE ? '--container-image ' + process.env.LANGUAGE_CONTAINER_IMAGE : ''} --spring.application.name=example`
         : mockBackend
         ? 'node ../script-editor-intelligence-mock-server/server.js --port 43184'
         : 'python3 tests/integration/script-editor-intelligence/start-backend.py',

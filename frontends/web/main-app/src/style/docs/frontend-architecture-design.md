@@ -1,6 +1,6 @@
 # 前端样式表与布局系统完整架构设计
 
-当前运行时密度为 `compact`、`normal`、`comfortable` 三档，默认 `normal`；注册与变量值以 [density/index.scss](../density/index.scss) 及其转出的三个文件为准。下文 compact/comfortable 代码块仅作两种取值示例。
+当前运行时密度为 `compact`、`normal`、`comfortable` 三档，默认 `normal`；注册与变量值以 [density/index.scss](../../../../ouroboros-amis-runtime/src/style/density/index.scss) 及其转出的三个文件为准。下文 compact/comfortable 代码块仅作两种取值示例。
 
 ## 目录
 

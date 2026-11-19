@@ -6,7 +6,6 @@ const { store, resolvePostLoginFallbackPath } = vi.hoisted(() => ({
       'user/menu': { globalMenu: [] },
       'user/isLogin': false,
       'app/whiteList': [],
-      preventTabOperation: false,
       activeTabId: '',
       tabsList: [],
     },
@@ -45,7 +44,6 @@ const navigationContextRuntimeModule = await import('../../../../src/router/navi
 
 function createExecutionDependencies() {
   return {
-    clearPreventTabOperation: vi.fn(),
     openNotFoundPage: vi.fn(),
     openOrSwitchTab: vi.fn(),
     openRootMenu: vi.fn(),
@@ -94,11 +92,11 @@ test('switch-tab activates the current tab and allows navigation', async () => {
 
   await executeNavigationDecision({ type: 'switch-tab', activeTabId: 'tab-1' }, { to, next })
 
-  expect(dependencies.switchTab).toHaveBeenCalledWith('tab-1', { syncLocation: false })
+  expect(dependencies.switchTab).toHaveBeenCalledWith('tab-1', { syncLocation: false, isCurrent: expect.any(Function) })
   expect(next).toHaveBeenCalledWith()
 })
 
-test('clear-prevent-tab-operation clears the store flag and allows navigation', async () => {
+test('allow accepts navigation without applying a second tab projection', async () => {
   const { executeNavigationDecision, dependencies } = createExecutor()
   if (!executeNavigationDecision) {
     return
@@ -107,9 +105,10 @@ test('clear-prevent-tab-operation clears the store flag and allows navigation', 
   const next = vi.fn()
   const to = { path: '/dev/app-list', fullPath: '/dev/app-list', meta: {} }
 
-  await executeNavigationDecision({ type: 'clear-prevent-tab-operation' }, { to, next })
+  await executeNavigationDecision({ type: 'allow' }, { to, next })
 
-  expect(dependencies.clearPreventTabOperation).toHaveBeenCalledTimes(1)
+  expect(dependencies.openOrSwitchTab).not.toHaveBeenCalled()
+  expect(dependencies.switchTab).not.toHaveBeenCalled()
   expect(next).toHaveBeenCalledWith()
 })
 
@@ -148,7 +147,7 @@ test('update-tab refreshes the active tab fullPath and allows navigation', async
     { to, next }
   )
 
-  expect(dependencies.updateTab).toHaveBeenCalledWith('tab-1', '/dev/app-list?tab=done', { syncLocation: false })
+  expect(dependencies.updateTab).toHaveBeenCalledWith('tab-1', '/dev/app-list?tab=done', { syncLocation: false, isCurrent: expect.any(Function) })
   expect(next).toHaveBeenCalledWith()
 })
 
@@ -169,6 +168,7 @@ test('open-or-switch-tab opens or reuses a tab with the resolved title and allow
   expect(dependencies.openOrSwitchTab).toHaveBeenCalledWith('/dev/app-list?tab=todo', {
     title: '应用列表',
     syncLocation: false,
+    isCurrent: expect.any(Function),
   })
   expect(next).toHaveBeenCalledWith()
 })
@@ -177,7 +177,6 @@ test('readNavigationContext defaults unset whitelist and tabs getters for contro
   store.getters['user/menu'] = { globalMenu: [] }
   store.getters['user/isLogin'] = true
   store.getters['app/whiteList'] = undefined
-  store.getters.preventTabOperation = undefined
   store.getters.activeTabId = undefined
   store.getters.tabsList = undefined
   resolvePostLoginFallbackPath.mockReturnValue('/errorAfterLogin')
@@ -191,7 +190,6 @@ test('readNavigationContext defaults unset whitelist and tabs getters for contro
   })
 
   expect(context.whiteList).toEqual([])
-  expect(context.preventTabOperation).toBe(false)
   expect(context.activeTabId).toBe('')
   expect(context.tabsList).toEqual([])
 })

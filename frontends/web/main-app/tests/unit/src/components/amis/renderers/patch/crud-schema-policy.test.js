@@ -16,7 +16,7 @@ const {
   patchCrudBodySchema,
   resolveFilterInitValues,
 } = require(
-  path.join(process.cwd(), 'src/components/amis/renderers/patch/crudSchemaPolicy.ts')
+  path.join(process.cwd(), '../ouroboros-amis-runtime/src/renderers/patch/crudSchemaPolicy.ts')
 )
 
 test('crud schema policy keeps path and selection defaults explicit', () => {

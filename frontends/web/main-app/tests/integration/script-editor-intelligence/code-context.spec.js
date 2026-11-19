@@ -7,7 +7,10 @@ async function mount(page, field, hints = {}, fixture = {}) {
     window.__codeEditors = {}
     window.__OUROBOROS_SCRIPT_EDITOR_DEBUG__ = {
       onIntelligenceApplied: () => window.__codeApplied++,
-      onMounted: ({ editor, props }) => (window.__codeEditors[props.name] = editor),
+      onMounted: ({ editor, props, monaco }) => {
+        window.__codeEditors[props.name] = editor
+        window.__codeMonaco = monaco
+      },
     }
   })
   const context = {
@@ -38,6 +41,8 @@ async function mount(page, field, hints = {}, fixture = {}) {
             ...(field.type === 'json-data-editor' ? { codeContext: context } : context),
           },
         ],
+        api: fixture.api,
+        actions: fixture.actions,
       },
     })
   )
@@ -88,6 +93,48 @@ async function mount(page, field, hints = {}, fixture = {}) {
     () => window.behaviorCatalogHarness?.ready && window.__codeApplied > 0
   )
   return requests
+}
+
+for (const validateCode of [undefined, false]) {
+  test(`AMIS form ${validateCode === false ? 'allows code errors when disabled' : 'blocks code errors until corrected'}`, async ({ page }, testInfo) => {
+    const submissions = []
+    await page.route('**/editor-validation-submit', async route => {
+      submissions.push(route.request().postDataJSON())
+      await route.fulfill({ json: { status: 0, data: {} } })
+    })
+    await mount(page, { type: 'script-editor', name: 'code', validateCode, required: true }, {}, {
+      context: { language: 'javascript', codeSite: 'logicflow.script', codePointer: '/script' },
+      flow: { name: 'flow', nodes: [{ name: 'script', type: 'script', language: 'javascript', script: '' }] },
+      nodeName: 'script', api: 'post:/editor-validation-submit',
+      actions: [{ type: 'submit', label: '保存代码' }],
+    })
+    if (validateCode === false) {
+      await page.getByRole('button', { name: '保存代码' }).click()
+      await expect(page.locator('.cxd-Form-feedback')).toBeVisible()
+      expect(submissions).toHaveLength(0)
+    }
+    await page.evaluate(() => window.__codeEditors.code.setValue('const value = ;'))
+    await page.getByRole('button', { name: '保存代码' }).click()
+    if (validateCode !== false) {
+      await expect(page.locator('.cxd-Form-feedback')).toContainText('Expression expected')
+      expect(submissions).toHaveLength(0)
+      await page.screenshot({ path: testInfo.outputPath('code-error-blocks-submit.png'), fullPage: true })
+      await page.evaluate(() => window.__codeEditors.code.setValue('return $input.customerId;'))
+      await page.getByRole('button', { name: '保存代码' }).click()
+    }
+    try {
+      await expect.poll(() => submissions.length).toBe(1)
+    } finally {
+      await testInfo.attach('form-validation-result', { body: JSON.stringify({ submissions, browser: await page.evaluate(() => ({
+        values: window.behaviorCatalogHarness.values(),
+        code: window.__codeEditors.code.getValue(),
+        models: window.__codeMonaco.editor.getModels().map(model => ({ uri: model.uri.toString(), version: model.getVersionId(), text: model.getValue() })),
+        markers: window.__codeMonaco.editor.getModelMarkers({}),
+        feedback: [...document.querySelectorAll('.cxd-Form-feedback')].map(element => element.textContent),
+      })) }, null, 2), contentType: 'application/json' })
+    }
+    expect(submissions[0].code).toBe(validateCode === false ? 'const value = ;' : 'return $input.customerId;')
+  })
 }
 
 test('JSON mapping uses the unified context endpoint and completes inside string values', async ({

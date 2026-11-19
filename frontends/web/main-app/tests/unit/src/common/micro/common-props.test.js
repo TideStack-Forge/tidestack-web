@@ -60,7 +60,7 @@ vi.mock('@/utils/theme', () => ({
   setTheme: vi.fn(),
 }))
 
-vi.mock('@/components/amis/editor/lazyRegister', () => ({
+vi.mock('ouroboros-amis-runtime/editor/lazyRegister', () => ({
   registerActionPanel: vi.fn(),
   registerValidator: vi.fn(),
   registerEditorPlugin: vi.fn(),

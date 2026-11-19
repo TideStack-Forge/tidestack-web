@@ -24,7 +24,7 @@ describe('PersonnelProfileField renderer and plugin', () => {
 
   describe('renderer registration', () => {
     it('should export PersonnelProfileField component', () => {
-      const rendererPath = path.join(mainAppRoot, 'src/components/amis/renderers/PersonnelProfileField.tsx')
+      const rendererPath = path.join(mainAppRoot, '../ouroboros-amis-runtime/src/renderers/PersonnelProfileField.tsx')
       const rendererModule = require(rendererPath)
 
       expect(rendererModule.default).toBeDefined()
@@ -32,7 +32,7 @@ describe('PersonnelProfileField renderer and plugin', () => {
     })
 
     it('should have correct props interface', () => {
-      const rendererPath = path.join(mainAppRoot, 'src/components/amis/renderers/PersonnelProfileField.tsx')
+      const rendererPath = path.join(mainAppRoot, '../ouroboros-amis-runtime/src/renderers/PersonnelProfileField.tsx')
       const rendererModule = require(rendererPath)
       const component = rendererModule.default
 
@@ -41,7 +41,7 @@ describe('PersonnelProfileField renderer and plugin', () => {
     })
 
     it('should render without crashing when fieldName is provided', () => {
-      const rendererPath = path.join(mainAppRoot, 'src/components/amis/renderers/PersonnelProfileField.tsx')
+      const rendererPath = path.join(mainAppRoot, '../ouroboros-amis-runtime/src/renderers/PersonnelProfileField.tsx')
       const rendererModule = require(rendererPath)
       const PersonnelProfileField = rendererModule.default
 
@@ -58,7 +58,7 @@ describe('PersonnelProfileField renderer and plugin', () => {
     })
 
     it('should render without crashing when fieldName is missing', () => {
-      const rendererPath = path.join(mainAppRoot, 'src/components/amis/renderers/PersonnelProfileField.tsx')
+      const rendererPath = path.join(mainAppRoot, '../ouroboros-amis-runtime/src/renderers/PersonnelProfileField.tsx')
       const rendererModule = require(rendererPath)
       const PersonnelProfileField = rendererModule.default
 
@@ -75,7 +75,7 @@ describe('PersonnelProfileField renderer and plugin', () => {
 
   describe('editor plugin registration', () => {
     it('should export PersonnelProfileFieldPlugin class', () => {
-      const pluginPath = path.join(mainAppRoot, 'src/components/amis/editor/plugins/PersonnelProfileField.tsx')
+      const pluginPath = path.join(mainAppRoot, '../ouroboros-amis-runtime/src/editor/plugins/PersonnelProfileField.tsx')
       const pluginModule = require(pluginPath)
 
       expect(pluginModule.PersonnelProfileFieldPlugin).toBeDefined()
@@ -83,7 +83,7 @@ describe('PersonnelProfileField renderer and plugin', () => {
     })
 
     it('should have correct plugin metadata', () => {
-      const pluginPath = path.join(mainAppRoot, 'src/components/amis/editor/plugins/PersonnelProfileField.tsx')
+      const pluginPath = path.join(mainAppRoot, '../ouroboros-amis-runtime/src/editor/plugins/PersonnelProfileField.tsx')
       const pluginModule = require(pluginPath)
       const Plugin = pluginModule.PersonnelProfileFieldPlugin
 
@@ -99,7 +99,7 @@ describe('PersonnelProfileField renderer and plugin', () => {
     })
 
     it('should have valid scaffold configuration', () => {
-      const pluginPath = path.join(mainAppRoot, 'src/components/amis/editor/plugins/PersonnelProfileField.tsx')
+      const pluginPath = path.join(mainAppRoot, '../ouroboros-amis-runtime/src/editor/plugins/PersonnelProfileField.tsx')
       const pluginModule = require(pluginPath)
       const Plugin = pluginModule.PersonnelProfileFieldPlugin
 
@@ -117,7 +117,7 @@ describe('PersonnelProfileField renderer and plugin', () => {
     })
 
     it('should generate valid panel body configuration', () => {
-      const pluginPath = path.join(mainAppRoot, 'src/components/amis/editor/plugins/PersonnelProfileField.tsx')
+      const pluginPath = path.join(mainAppRoot, '../ouroboros-amis-runtime/src/editor/plugins/PersonnelProfileField.tsx')
       const pluginModule = require(pluginPath)
       const Plugin = pluginModule.PersonnelProfileFieldPlugin
 
@@ -152,13 +152,13 @@ describe('PersonnelProfileField renderer and plugin', () => {
   describe('integration safety', () => {
     it('should not throw when personnel profile renderer is imported', () => {
       expect(() => {
-        require(path.join(mainAppRoot, 'src/components/amis/renderers/PersonnelProfileField.tsx'))
+        require(path.join(mainAppRoot, '../ouroboros-amis-runtime/src/renderers/PersonnelProfileField.tsx'))
       }).not.toThrow()
     })
 
     it('should not throw when plugin index is imported', () => {
       expect(() => {
-        require(path.join(mainAppRoot, 'src/components/amis/editor/plugins/index.ts'))
+        require(path.join(mainAppRoot, '../ouroboros-amis-runtime/src/editor/plugins/index.ts'))
       }).not.toThrow()
     })
   })

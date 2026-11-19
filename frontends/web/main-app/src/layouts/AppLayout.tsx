@@ -23,7 +23,6 @@ import { useMicroLayoutApps } from './useMicroLayoutApps'
 
 const APP_LAYOUT_IGNORED_STORE_MUTATIONS = new Set([
   'tabs/PUSH_TAB_SCROLL_TOP',
-  'tabs/SET_PREVENT_TAB_OPERATION',
 ])
 
 function ModalScopeHost({ appConfig = {} }: { appConfig?: Record<string, any> }) {

@@ -142,14 +142,14 @@ vi.mock('@/components/amis/AmisComponent', () => ({
   },
 }))
 
-vi.mock('../../../../src/components/amis/AmisComponent', () => ({
+vi.mock('../../../../../ouroboros-amis-runtime/src/AmisComponent', () => ({
   default: function AmisComponentMock(props) {
     recordAmisComponentProps(props)
     return React.createElement('div', { 'data-testid': 'amis-component-mock' })
   },
 }))
 
-vi.mock('../../../../src/components/amis/AmisComponent.tsx', () => ({
+vi.mock('../../../../../ouroboros-amis-runtime/src/AmisComponent.tsx', () => ({
   default: function AmisComponentMock(props) {
     recordAmisComponentProps(props)
     return React.createElement('div', { 'data-testid': 'amis-component-mock' })

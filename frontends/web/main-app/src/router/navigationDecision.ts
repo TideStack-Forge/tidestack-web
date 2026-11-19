@@ -9,7 +9,7 @@ export interface NavigationDecisionInput {
   toQueryRedirect?: string
   postLoginFallbackPath: string
   whiteList: string[]
-  preventTabOperation: boolean
+  tabIntent?: boolean
   routeName: string
   activeTabId?: string
   tabsList?: Array<{ id?: string; path?: string; fullPath?: string }>
@@ -20,7 +20,6 @@ export type NavigationDecision =
   | { type: 'allow' }
   | { type: 'redirect'; location: Record<string, any> }
   | { type: 'open-root-menu' }
-  | { type: 'clear-prevent-tab-operation' }
   | { type: 'open-not-found' }
   | { type: 'switch-tab'; activeTabId: string }
   | { type: 'update-tab'; activeTabId: string; fullPath: string }
@@ -94,10 +93,6 @@ export function resolveNavigationDecision(
     return { type: 'allow' }
   }
 
-  if (input.preventTabOperation) {
-    return { type: 'clear-prevent-tab-operation' }
-  }
-
   if (input.routeName.toLowerCase() === 'notfound') {
     return { type: 'open-not-found' }
   }
@@ -113,6 +108,10 @@ export function resolveNavigationDecision(
             : { redirect: input.toFullPath },
       },
     }
+  }
+
+  if (input.tabIntent) {
+    return { type: 'allow' }
   }
 
   if (activeTab && input.activeTabId && activeTab.fullPath === input.toFullPath) {

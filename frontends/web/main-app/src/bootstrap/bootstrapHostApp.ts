@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { installHostRouter } from '@/router/installRouter'
 import { createElement } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
 
@@ -43,6 +44,7 @@ function registerLegacyIframeParamsHandler() {
 }
 
 export function mountReactApp() {
+  installHostRouter()
   const container = document.getElementById('mothership-app-root')
   if (!container) {
     throw new Error('Missing #mothership-app-root container')
@@ -57,6 +59,7 @@ export function mountReactApp() {
 }
 
 export async function bootstrapHostApp() {
+  installHostRouter()
   registerLegacyIframeParamsHandler()
 
   const appConfig = await dispatch('app/init')

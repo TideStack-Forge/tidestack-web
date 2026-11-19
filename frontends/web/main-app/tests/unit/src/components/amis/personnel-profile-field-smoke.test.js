@@ -7,23 +7,23 @@ const mainAppRoot = path.resolve(__dirname, '../../../../..')
 describe('PersonnelProfileField smoke tests', () => {
   describe('file structure', () => {
     it('should have PersonnelProfileField renderer file', () => {
-      const rendererPath = path.join(mainAppRoot, 'src/components/amis/renderers/PersonnelProfileField.tsx')
+      const rendererPath = path.join(mainAppRoot, '../ouroboros-amis-runtime/src/renderers/PersonnelProfileField.tsx')
       expect(fs.existsSync(rendererPath)).toBe(true)
     })
 
     it('should have PersonnelProfileField plugin file', () => {
-      const pluginPath = path.join(mainAppRoot, 'src/components/amis/editor/plugins/PersonnelProfileField.tsx')
+      const pluginPath = path.join(mainAppRoot, '../ouroboros-amis-runtime/src/editor/plugins/PersonnelProfileField.tsx')
       expect(fs.existsSync(pluginPath)).toBe(true)
     })
 
     it('should be registered in renderers index', () => {
-      const indexPath = path.join(mainAppRoot, 'src/components/amis/renderers/index.ts')
+      const indexPath = path.join(mainAppRoot, '../ouroboros-amis-runtime/src/renderers/index.ts')
       const content = fs.readFileSync(indexPath, 'utf8')
       expect(content).toContain("import './PersonnelProfileField'")
     })
 
     it('should be registered in plugins index', () => {
-      const indexPath = path.join(mainAppRoot, 'src/components/amis/editor/plugins/index.ts')
+      const indexPath = path.join(mainAppRoot, '../ouroboros-amis-runtime/src/editor/plugins/index.ts')
       const content = fs.readFileSync(indexPath, 'utf8')
       expect(content).toContain("import './PersonnelProfileField'")
     })
@@ -31,7 +31,7 @@ describe('PersonnelProfileField smoke tests', () => {
 
   describe('renderer implementation', () => {
     it('should have valid TypeScript syntax', () => {
-      const rendererPath = path.join(mainAppRoot, 'src/components/amis/renderers/PersonnelProfileField.tsx')
+      const rendererPath = path.join(mainAppRoot, '../ouroboros-amis-runtime/src/renderers/PersonnelProfileField.tsx')
       const content = fs.readFileSync(rendererPath, 'utf8')
 
       expect(content).toContain('export default function PersonnelProfileField')
@@ -40,7 +40,7 @@ describe('PersonnelProfileField smoke tests', () => {
     })
 
     it('should handle missing fieldName gracefully', () => {
-      const rendererPath = path.join(mainAppRoot, 'src/components/amis/renderers/PersonnelProfileField.tsx')
+      const rendererPath = path.join(mainAppRoot, '../ouroboros-amis-runtime/src/renderers/PersonnelProfileField.tsx')
       const content = fs.readFileSync(rendererPath, 'utf8')
 
       expect(content).toContain('未指定')
@@ -48,7 +48,7 @@ describe('PersonnelProfileField smoke tests', () => {
     })
 
     it('should use placeholder rendering approach', () => {
-      const rendererPath = path.join(mainAppRoot, 'src/components/amis/renderers/PersonnelProfileField.tsx')
+      const rendererPath = path.join(mainAppRoot, '../ouroboros-amis-runtime/src/renderers/PersonnelProfileField.tsx')
       const content = fs.readFileSync(rendererPath, 'utf8')
 
       expect(content).toContain('personnel-profile-field-placeholder')
@@ -58,7 +58,7 @@ describe('PersonnelProfileField smoke tests', () => {
 
   describe('plugin implementation', () => {
     it('should extend BasePlugin', () => {
-      const pluginPath = path.join(mainAppRoot, 'src/components/amis/editor/plugins/PersonnelProfileField.tsx')
+      const pluginPath = path.join(mainAppRoot, '../ouroboros-amis-runtime/src/editor/plugins/PersonnelProfileField.tsx')
       const content = fs.readFileSync(pluginPath, 'utf8')
 
       expect(content).toContain('export class PersonnelProfileFieldPlugin extends BasePlugin')
@@ -66,7 +66,7 @@ describe('PersonnelProfileField smoke tests', () => {
     })
 
     it('should have correct metadata', () => {
-      const pluginPath = path.join(mainAppRoot, 'src/components/amis/editor/plugins/PersonnelProfileField.tsx')
+      const pluginPath = path.join(mainAppRoot, '../ouroboros-amis-runtime/src/editor/plugins/PersonnelProfileField.tsx')
       const content = fs.readFileSync(pluginPath, 'utf8')
 
       expect(content).toContain("name = '人员档案字段'")
@@ -76,7 +76,7 @@ describe('PersonnelProfileField smoke tests', () => {
     })
 
     it('should have scaffold configuration', () => {
-      const pluginPath = path.join(mainAppRoot, 'src/components/amis/editor/plugins/PersonnelProfileField.tsx')
+      const pluginPath = path.join(mainAppRoot, '../ouroboros-amis-runtime/src/editor/plugins/PersonnelProfileField.tsx')
       const content = fs.readFileSync(pluginPath, 'utf8')
 
       expect(content).toContain('scaffolds:')
@@ -85,7 +85,7 @@ describe('PersonnelProfileField smoke tests', () => {
     })
 
     it('should have panelBodyCreator with fieldName control', () => {
-      const pluginPath = path.join(mainAppRoot, 'src/components/amis/editor/plugins/PersonnelProfileField.tsx')
+      const pluginPath = path.join(mainAppRoot, '../ouroboros-amis-runtime/src/editor/plugins/PersonnelProfileField.tsx')
       const content = fs.readFileSync(pluginPath, 'utf8')
 
       expect(content).toContain('panelBodyCreator(context: BaseEventContext)')
@@ -94,7 +94,7 @@ describe('PersonnelProfileField smoke tests', () => {
     })
 
     it('should have standard form controls', () => {
-      const pluginPath = path.join(mainAppRoot, 'src/components/amis/editor/plugins/PersonnelProfileField.tsx')
+      const pluginPath = path.join(mainAppRoot, '../ouroboros-amis-runtime/src/editor/plugins/PersonnelProfileField.tsx')
       const content = fs.readFileSync(pluginPath, 'utf8')
 
       expect(content).toContain("name: 'label'")
@@ -106,7 +106,7 @@ describe('PersonnelProfileField smoke tests', () => {
 
   describe('integration safety', () => {
     it('should not break renderer index imports', () => {
-      const indexPath = path.join(mainAppRoot, 'src/components/amis/renderers/index.ts')
+      const indexPath = path.join(mainAppRoot, '../ouroboros-amis-runtime/src/renderers/index.ts')
       const content = fs.readFileSync(indexPath, 'utf8')
 
       const imports = content.match(/^import\s+.*$/gm) || []
@@ -118,7 +118,7 @@ describe('PersonnelProfileField smoke tests', () => {
     })
 
     it('should not break plugin index imports', () => {
-      const indexPath = path.join(mainAppRoot, 'src/components/amis/editor/plugins/index.ts')
+      const indexPath = path.join(mainAppRoot, '../ouroboros-amis-runtime/src/editor/plugins/index.ts')
       const content = fs.readFileSync(indexPath, 'utf8')
 
       const imports = content.match(/^import\s+.*$/gm) || []
@@ -130,8 +130,8 @@ describe('PersonnelProfileField smoke tests', () => {
     })
 
     it('should follow existing naming patterns', () => {
-      const rendererPath = path.join(mainAppRoot, 'src/components/amis/renderers/PersonnelProfileField.tsx')
-      const pluginPath = path.join(mainAppRoot, 'src/components/amis/editor/plugins/PersonnelProfileField.tsx')
+      const rendererPath = path.join(mainAppRoot, '../ouroboros-amis-runtime/src/renderers/PersonnelProfileField.tsx')
+      const pluginPath = path.join(mainAppRoot, '../ouroboros-amis-runtime/src/editor/plugins/PersonnelProfileField.tsx')
 
       expect(fs.existsSync(rendererPath)).toBe(true)
       expect(fs.existsSync(pluginPath)).toBe(true)

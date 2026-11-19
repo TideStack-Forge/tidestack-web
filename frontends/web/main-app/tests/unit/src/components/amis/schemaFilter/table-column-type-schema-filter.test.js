@@ -13,7 +13,7 @@ vi.mock('amis', () => ({
 }))
 
 const { normalizeTableStaticColumnTypes } =
-  await import('../../../../../../src/components/amis/schemaFilter/tableColumnTypeSchemaFilter.ts')
+  await import('../../../../../../../ouroboros-amis-runtime/src/schemaFilter/tableColumnTypeSchemaFilter.ts')
 
 test('registers table column type normalization through the AMIS schema filter', () => {
   expect(addSchemaFilter).toHaveBeenCalledTimes(1)

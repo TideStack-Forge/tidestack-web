@@ -89,7 +89,6 @@ const initialState = {
   appLoading: false, // 微应用加载状态
   activeTabId: '', // 当前活跃tab
   tabsList: [],
-  preventTabOperation: false,
   scrollBarScrollTopMap: {},
   tabStorage: null,
 }
@@ -128,10 +127,6 @@ const mutations = {
   // 添加挂载微应用
   CHANGE_APP_LOADING(state, data) {
     state.appLoading = data
-  },
-
-  SET_PREVENT_TAB_OPERATION(state, preventTabOperation) {
-    state.preventTabOperation = Boolean(preventTabOperation)
   },
 
   // 删除活跃的tabs
@@ -221,12 +216,6 @@ const actions = {
     }
     commit('CHANGE_APP_LOADING', data)
   },
-  setPreventTabOperation({ commit }) {
-    commit('SET_PREVENT_TAB_OPERATION', true)
-  },
-  clearPreventTabOperation({ commit }) {
-    commit('SET_PREVENT_TAB_OPERATION', false)
-  },
   // 关闭指定tab
   async closeTab({ commit }, id) {
     commit('REMOVE_TAB', id)
@@ -276,7 +265,6 @@ const actions = {
 const getters = {
   tabsList: (state) => normalizeTabsList(state.tabsList),
   activeTabId: (state) => normalizeActiveTabId(state.activeTabId),
-  preventTabOperation: (state) => Boolean(state.preventTabOperation),
   scrollBarScrollTopMap: (state) => normalizeScrollBarScrollTopMap(state.scrollBarScrollTopMap),
 }
 

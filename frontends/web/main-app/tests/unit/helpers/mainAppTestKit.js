@@ -12,7 +12,10 @@ function resolveMirroredRelativeDir(testFilePath) {
 }
 
 function resolveMirroredSrcPath(testFilePath, relativePath = '.') {
-  return path.resolve(srcRoot, resolveMirroredRelativeDir(testFilePath), relativePath)
+  const target = path.resolve(srcRoot, resolveMirroredRelativeDir(testFilePath), relativePath)
+  const prefix = path.join(srcRoot, 'components/amis') + path.sep
+  return target.startsWith(prefix) && !/Amis(?:Component|Page)\.tsx$/.test(target)
+    ? target.replace(prefix, path.resolve(mainAppRoot, '../ouroboros-amis-runtime/src') + path.sep) : target
 }
 
 function readMirroredSrcFile(testFilePath, relativePath) {
@@ -33,6 +36,9 @@ function registerTypescriptRequire() {
   const previousTsx = require.extensions['.tsx']
 
   function compileTypescript(module, filename) {
+    if (filename.includes('ouroboros-amis-runtime')) {
+      module.paths = [path.join(mainAppRoot, 'node_modules'), ...module.paths]
+    }
     const source = fs.readFileSync(filename, 'utf8')
     const output = ts.transpileModule(source, {
       compilerOptions: {

@@ -1,4 +1,5 @@
 const assert = require('node:assert/strict')
+import { vi } from 'vitest'
 const path = require('node:path')
 const { registerTypescriptRequire, requireMirroredSrcModule } = require(path.join(process.cwd(), 'tests/unit/helpers/mainAppTestKit'))
 registerTypescriptRequire()
@@ -21,6 +22,58 @@ function fixture() {
   return { session, props, calls, markers, change: value => { text = value; version++; listener?.() } }
 }
 
+test('form validation waits for diagnostics for the current document, including an empty success report', async () => {
+  const f = fixture()
+  const original = f.props.env.fetcher
+  let notifications = []
+  f.props.env.fetcher = async api => api.method === 'get'
+    ? { status: 0, data: { messages: notifications.splice(0) } }
+    : original(api)
+  const publish = (version, diagnostics) => ({ method: 'textDocument/publishDiagnostics', params: { uri: 'ouroboros://session', version, diagnostics } })
+  try {
+    await f.session.refresh(f.props)
+    notifications.push(publish(1, [{ severity: 1, message: 'missing expression', range: { start: { line: 0, character: 0 }, end: { line: 0, character: 1 } } }]))
+    await f.session.validate()
+    assert.equal(f.markers.at(-1)[0].message, 'missing expression')
+    f.change('return 1')
+    notifications.push(publish(1, []))
+    let validated = false
+    const pending = f.session.validate().then(() => { validated = true })
+    await new Promise(resolve => setTimeout(resolve, 20))
+    assert.equal(validated, false)
+    notifications.push(publish(2, []))
+    await pending
+    assert.deepEqual(f.markers.at(-1), [])
+  } finally { f.session.dispose() }
+})
+
+test('form validation rejects unavailable services and disposed sessions', async () => {
+  const f = fixture()
+  const original = f.props.env.fetcher
+  f.props.env.fetcher = async api => api.method === 'get'
+    ? { status: 1, msg: 'Language service unavailable' }
+    : original(api)
+  try {
+    await f.session.refresh(f.props)
+    await assert.rejects(f.session.validate(), /unavailable/)
+  } finally { f.session.dispose() }
+  await assert.rejects(f.session.validate(), /已关闭/)
+})
+
+test('form validation times out instead of treating absent diagnostics as success', async () => {
+  vi.useFakeTimers()
+  const f = fixture()
+  try {
+    await f.session.refresh(f.props)
+    const assertion = assert.rejects(f.session.validate(), /诊断超时/)
+    await vi.advanceTimersByTimeAsync(30_050)
+    await assertion
+  } finally {
+    f.session.dispose()
+    vi.useRealTimers()
+  }
+})
+
 test('uses named LSP batches and synchronizes the current document before requesting completion', async () => {
   const f = fixture()
   try {
@@ -31,7 +84,7 @@ test('uses named LSP batches and synchronizes the current document before reques
     assert.equal(changes.at(-1).params.contentChanges[0].text, 'String text = "hello"\ntext.')
     assert.equal(changes.at(-1).params.textDocument.version, 2)
     await f.session.refresh({ ...f.props, data: { ...f.props.data, __FLOW_MODEL: { ...f.props.data.__FLOW_MODEL, inputSchema: { type: 'string' } } } })
-    assert.equal(f.calls.filter(call => call.url.endsWith('/context')).length, 2)
+    assert.equal(f.calls.filter(call => call.url.endsWith('/context')).length, 1)
   } finally { f.session.dispose() }
   assert.equal(f.calls.at(-1).method, 'delete')
   assert.deepEqual(f.markers.at(-1), [])
@@ -47,6 +100,33 @@ test('does not send cancelled language requests or reopen a disposed editor', as
   await f.session.refresh(f.props)
   assert.equal(await f.session.request('textDocument/completion', {}), null)
   assert.equal(f.calls.filter(call => call.url.endsWith('/sessions')).length, 1)
+})
+
+test('cancellation during document synchronization avoids an obsolete completion request', async () => {
+  const f = fixture()
+  await f.session.refresh(f.props)
+  const original = f.props.env.fetcher
+  let release, cancel, synchronized
+  const started = new Promise(resolve => { synchronized = resolve })
+  f.props.env.fetcher = async api => {
+    if (Array.isArray(api.data) && api.data.some(message => message.method === 'textDocument/didChange')) {
+      synchronized()
+      await new Promise(resolve => { release = resolve })
+    }
+    return original(api)
+  }
+  try {
+    f.change('customer.')
+    const request = f.session.request('textDocument/completion', {}, {
+      onCancellationRequested: listener => { cancel = listener; return { dispose() {} } },
+    })
+    await started
+    cancel()
+    release()
+    assert.equal(await request, null)
+    assert.equal(f.calls.flatMap(call => Array.isArray(call.data) ? call.data : [])
+      .some(message => message.method === 'textDocument/completion'), false)
+  } finally { f.session.dispose() }
 })
 
 
@@ -120,7 +200,14 @@ test('diagnostics are scoped to the current document version and clearing result
     notifications = [diagnostic('ouroboros://session', 1, 'stale'), diagnostic('ouroboros://other', 2, 'other'), diagnostic('ouroboros://session', 2, 'current')]
     await f.session.request('textDocument/completion', {})
     assert.deepEqual(f.markers.at(-1).map(marker => marker.message), ['current'])
-    notifications = [diagnostic('ouroboros://session', 2)]
+    const updates = f.markers.length
+    await f.session.request('textDocument/codeAction', {})
+    assert.equal(f.markers.length, updates, 'identical diagnostics must not invalidate the current code action menu')
+    f.change('corrected source')
+    assert.deepEqual(f.markers.at(-1), [], 'editing must immediately remove diagnostics from the old document version')
+    await f.session.request('textDocument/hover', {})
+    assert.deepEqual(f.markers.at(-1), [], 'old-version notifications must not restore stale diagnostics')
+    notifications = [diagnostic('ouroboros://session', 3)]
     await f.session.request('textDocument/hover', {})
     assert.deepEqual(f.markers.at(-1), [])
   } finally { f.session.dispose() }

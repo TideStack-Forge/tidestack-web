@@ -33,14 +33,14 @@ export function createNavigationGuard(
       shouldConfirmLeave,
       isErrorRoute,
       ...navigationContext,
+      tabIntent: Boolean(next.tabIntent),
     }
 
     const decision = resolveNavigationDecision(decisionInput)
 
-    // Always update document title for all navigation attempts
-    updateDocumentTitle(to)
+    if (!next.onCommit) updateDocumentTitle(to)
 
-    return executeNavigationDecision(decision, { to, next })
+    return executeNavigationDecision(decision, { to, next, onCommit: next.onCommit })
   }
 }
 
@@ -51,6 +51,7 @@ export function installNavigationOrchestration(
   executeNavigationDecision: NavigationDecisionExecutor
 ) {
   installStatisticsStudioBeforeUnloadGuard()
+  router.afterEach(updateDocumentTitle)
   router.beforeEach(
     createNavigationGuard(updateDocumentTitle, readDecisionContext, executeNavigationDecision)
   )

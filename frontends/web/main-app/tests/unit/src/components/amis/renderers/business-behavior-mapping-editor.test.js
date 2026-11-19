@@ -3,7 +3,7 @@ import React from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { expect, test, vi } from 'vitest'
 vi.mock('amis', () => ({ FormItem: () => (component) => component }))
-import { BusinessBehaviorMappingEditor } from '@/components/amis/renderers/BusinessBehaviorMappingEditor'
+import { BusinessBehaviorMappingEditor } from 'ouroboros-amis-runtime/renderers/BusinessBehaviorMappingEditor'
 
 function control(value, extra = {}) {
   const instance = new BusinessBehaviorMappingEditor({
