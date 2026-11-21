@@ -117,6 +117,10 @@ export class BusinessBehaviorDefinitions extends React.Component<Props, State> {
       return copy
     }
     definitions[index] = update(definitions[index], 0)
+    if (this.props.memberType === 'subscription' && path.startsWith('target.') &&
+        definitions[index].target && !definitions[index].target.kind) {
+      definitions[index].target.kind = 'action'
+    }
     this.props.onChange(definitions, undefined, true)
   }
 
@@ -318,7 +322,7 @@ export class BusinessBehaviorDefinitions extends React.Component<Props, State> {
           this.get(definition, path),
           (value) => this.change(index, path, value),
           types,
-          /(?:inputMapping|outputMapping|listenerInputMapping)$/.test(path)
+          /(?:inputMapping|outputMapping)$/.test(path)
             ? `/${this.props.name}/${index}/${path.replaceAll('.', '/')}`
             : undefined
         )}
@@ -451,25 +455,25 @@ export class BusinessBehaviorDefinitions extends React.Component<Props, State> {
     const event =
       this.props.catalog?.events?.find(
         (item: Definition) =>
-          item.name === definition.sourceEventName &&
-          this.props.modelFullName === definition.sourceEventModelFullName
+          item.name === definition.sourceEvent?.eventName &&
+          this.props.modelFullName === definition.sourceEvent?.modelFullName
       ) ||
-      (definition.sourceEventModelFullName &&
-      this.state.references.event?.model === definition.sourceEventModelFullName
+      (definition.sourceEvent?.modelFullName &&
+      this.state.references.event?.model === definition.sourceEvent?.modelFullName
         ? this.state.references.event.members.find(
-            (item) => item.name === definition.sourceEventName
+            (item) => item.name === definition.sourceEvent?.eventName
           )
         : undefined)
     const target =
       this.props.catalog?.actions?.find(
         (item: Definition) =>
-          item.name === definition.targetActionName &&
-          this.props.modelFullName === definition.targetActionModelFullName
+          item.name === definition.target?.actionName &&
+          this.props.modelFullName === definition.target?.modelFullName
       ) ||
-      (definition.targetActionModelFullName &&
-      this.state.references.action?.model === definition.targetActionModelFullName
+      (definition.target?.modelFullName &&
+      this.state.references.action?.model === definition.target?.modelFullName
         ? this.state.references.action.members.find(
-            (item) => item.name === definition.targetActionName
+            (item) => item.name === definition.target?.actionName
           )
         : undefined)
     return (
@@ -535,14 +539,14 @@ export class BusinessBehaviorDefinitions extends React.Component<Props, State> {
 
   private reference(definition: Definition, index: number, kind: 'event' | 'action') {
     const modelPath =
-      kind === 'event' ? 'sourceEventModelFullName' : 'targetActionModelFullName'
-    const namePath = kind === 'event' ? 'sourceEventName' : 'targetActionName'
+      kind === 'event' ? 'sourceEvent.modelFullName' : 'target.modelFullName'
+    const namePath = kind === 'event' ? 'sourceEvent.eventName' : 'target.actionName'
     const label = kind === 'event' ? '订阅事件' : '响应动作'
     const candidates: Definition[] =
-      definition[modelPath] === this.props.modelFullName
+      this.get(definition, modelPath) === this.props.modelFullName
         ? this.props.catalog?.[kind === 'event' ? 'events' : 'actions'] || []
-        : definition[modelPath] &&
-            this.state.references[kind]?.model === definition[modelPath]
+        : this.get(definition, modelPath) &&
+            this.state.references[kind]?.model === this.get(definition, modelPath)
           ? this.state.references[kind].members
           : []
     return (
@@ -566,7 +570,7 @@ export class BusinessBehaviorDefinitions extends React.Component<Props, State> {
                 : undefined,
             },
             {
-              value: definition[modelPath],
+              value: this.get(definition, modelPath),
               disabled: this.disabled(),
               onChange: (model: string) => {
                 this.change(index, modelPath, model)
@@ -575,10 +579,10 @@ export class BusinessBehaviorDefinitions extends React.Component<Props, State> {
             }
           )}
         </label>
-        {definition[modelPath] && definition[modelPath] !== this.props.modelFullName ? (
+        {this.get(definition, modelPath) && this.get(definition, modelPath) !== this.props.modelFullName ? (
           <Button
             type="button"
-            onClick={() => void this.loadReferenceMembers(definition[modelPath], kind)}>
+            onClick={() => void this.loadReferenceMembers(this.get(definition, modelPath), kind)}>
             读取可见成员
           </Button>
         ) : null}
@@ -596,22 +600,20 @@ export class BusinessBehaviorDefinitions extends React.Component<Props, State> {
             })),
           },
           {
-            value: definition[namePath],
+            value: this.get(definition, namePath),
             disabled: this.disabled(),
             onChange: (name: string) => {
               const definitions = [...this.props.value]
-              definitions[index] = {
-                ...definition,
-                [modelPath]: definition[modelPath] || this.props.modelFullName,
-                [namePath]: name,
-              }
+              definitions[index] = kind === 'event'
+                ? { ...definition, sourceEvent: { modelFullName: definition.sourceEvent?.modelFullName || this.props.modelFullName, eventName: name } }
+                : { ...definition, target: { ...definition.target, kind: 'action', modelFullName: definition.target?.modelFullName || this.props.modelFullName, actionName: name } }
               this.props.onChange(definitions, undefined, true)
             },
           }
         )}
         <details
           open={
-            !!definition[modelPath] && definition[modelPath] !== this.props.modelFullName
+            !!this.get(definition, modelPath) && this.get(definition, modelPath) !== this.props.modelFullName
           }>
           <summary>手动填写外部引用</summary>
           {this.text(definition, index, modelPath, '模型全名')}
@@ -622,11 +624,11 @@ export class BusinessBehaviorDefinitions extends React.Component<Props, State> {
             kind === 'event' ? '事件标识' : '动作标识'
           )}
         </details>
-        {definition[namePath] &&
-        !candidates.some((item) => item.name === definition[namePath]) ? (
+        {this.get(definition, namePath) &&
+        !candidates.some((item) => item.name === this.get(definition, namePath)) ? (
           <p role="status">外部引用待核验</p>
         ) : null}
-        {this.state.references[kind]?.model === definition[modelPath] &&
+        {this.state.references[kind]?.model === this.get(definition, modelPath) &&
         this.state.references[kind]?.error ? (
           <p role="alert">{this.state.references[kind].error}</p>
         ) : null}
@@ -894,12 +896,12 @@ export class BusinessBehaviorDefinitions extends React.Component<Props, State> {
           </p>
         ) : null}
         {this.reference(definition, index, 'event')}
-        {definition.listenerName ? (
-          <p>此订阅使用原代码监听器：{definition.listenerName}。在高级定义中维护。</p>
+        {definition.target?.listenerName ? (
+          <p>此订阅使用原代码监听器：{definition.target?.listenerName}。在高级定义中维护。</p>
         ) : (
           <>
             {this.reference(definition, index, 'action')}
-            {this.mapping(definition, index, 'inputMapping', true)}
+            {this.mapping(definition, index, 'target.inputMapping', true)}
           </>
         )}
         <details>
@@ -913,11 +915,15 @@ export class BusinessBehaviorDefinitions extends React.Component<Props, State> {
                 'object,string,boolean'
               )
             : this.text(definition, index, 'filter', '事件筛选表达式', true)}
-          {this.text(definition, index, 'executionPrincipalRef', '事件处理身份')}
-          <small>使用已授权的应用用户标识；不会继承事件发起人的身份。</small>
+          {this.choice(definition, index, 'executionMode', '执行模式', [
+            ['JOIN_SOURCE_TRANSACTION', '同步加入源事务，失败一起回滚'],
+            ['AFTER_COMMIT_TRANSACTIONAL', '提交后独立事务，业务写入与确认一起提交'],
+            ...(definition.target?.kind === 'listener' ? [['AFTER_COMMIT_INDEPENDENT', '提交后独立执行，监听器保障外部副作用']] as [string, string][] : []),
+          ])}
+          <small>平台按消费模型解析已授权服务账号。原事件发起人保留为审计身份。</small>
         </details>
-        {!definition.executionPrincipalRef ? (
-          <p role="alert">尚未配置事件处理身份，请在交付设置中指定。</p>
+        {!definition.executionMode ? (
+          <p role="alert">请选择订阅执行模式。</p>
         ) : null}
       </>
     )
@@ -944,14 +950,10 @@ export class BusinessBehaviorDefinitions extends React.Component<Props, State> {
                 !Array.isArray(definition) ? (
                 <article key={index} aria-label={`${title}定义 ${index + 1}`}>
                   <div className="BusinessBehaviorEditor-basics">
-                    {type !== 'subscription'
-                      ? this.text(definition, index, 'title', '显示名称')
-                      : null}
+                    {this.text(definition, index, 'title', '显示名称')}
                     {this.text(definition, index, 'name', '标识')}
                   </div>
-                  {type !== 'subscription'
-                    ? this.text(definition, index, 'description', '业务说明', true)
-                    : null}
+                  {this.text(definition, index, 'description', '业务说明', true)}
                   {type === 'action'
                     ? this.action(definition, index)
                     : type === 'event'

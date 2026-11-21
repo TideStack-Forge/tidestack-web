@@ -15,6 +15,6 @@
   "utils/Deferred",
   "utils/Stomp",
   "utils/http",
-  "utils/statisticsStudioDirtyGuard",
+  "utils/statisticsDatasetEditorDirtyGuard",
   "utils/url"
 ]

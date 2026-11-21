@@ -176,19 +176,10 @@ test('unified editor checks automatically, preserves unknown metadata and keeps 
 test('subscription maps independent params and data, retains external refs and targets code Actions without adding listeners', async ({
   page,
 }, testInfo) => {
-  const subscription = {
-    name: 'confirm',
-    sourceEventModelFullName: 'external.Payment',
-    sourceEventName: 'paid',
-    targetActionModelFullName: 'sales.Order',
-    targetActionName: 'codeApprove',
-    executionPrincipalRef: 'worker',
-    inputMapping: {
+  const subscription = { name: 'confirm', future: 1, sourceEvent: { modelFullName: 'external.Payment', eventName: 'paid' }, target: { kind: 'action', modelFullName: 'sales.Order', actionName: 'codeApprove', inputMapping: {
       'params.order.id': '${ event.subject.id }',
       data: '${ event.payload }',
-    },
-    future: 1,
-  }
+    } }, executionMode: 'AFTER_COMMIT_TRANSACTIONAL' }
   await mount(page, { eventSubscriptions: [subscription] })
   await page.getByRole('button', { name: '事件订阅', exact: true }).click()
   await page.getByRole('button', { name: /confirm/ }).click()
@@ -201,12 +192,12 @@ test('subscription maps independent params and data, retains external refs and t
   await expect
     .poll(
       async () =>
-        (await values(page)).eventSubscriptions[0].inputMapping['params.order.id']
+        (await values(page)).eventSubscriptions[0].target.inputMapping['params.order.id']
     )
     .toBe('${ event.payload.orderId }')
   const saved = (await values(page)).eventSubscriptions[0]
-  expect(saved.sourceEventModelFullName).toBe('external.Payment')
-  expect(saved.inputMapping.data).toBe('${ event.payload }')
+  expect(saved.sourceEvent.modelFullName).toBe('external.Payment')
+  expect(saved.target.inputMapping.data).toBe('${ event.payload }')
   expect(saved.future).toBe(1)
   expect(saved).not.toHaveProperty('listenerName')
   await testInfo.attach('subscription-workbench', {
@@ -276,15 +267,7 @@ test('fixed input values preserve types, quote platform EL and block unfinished 
 }, testInfo) => {
   await mount(page, {
     eventSubscriptions: [
-      {
-        name: 'confirm',
-        sourceEventModelFullName: 'sales.Order',
-        sourceEventName: 'recordsCreated',
-        targetActionModelFullName: 'sales.Order',
-        targetActionName: 'codeApprove',
-        executionPrincipalRef: 'worker',
-        inputMapping: { 'params.id': 1, 'data.note': '${ event.payload.note }' },
-      },
+      { name: 'confirm', sourceEvent: { modelFullName: 'sales.Order', eventName: 'recordsCreated' }, target: { kind: 'action', modelFullName: 'sales.Order', actionName: 'codeApprove', inputMapping: { 'params.id': 1, 'data.note': '${ event.payload.note }' } }, executionMode: 'AFTER_COMMIT_TRANSACTIONAL' },
     ],
   })
   await page.getByRole('button', { name: '事件订阅', exact: true }).click()
@@ -294,7 +277,7 @@ test('fixed input values preserve types, quote platform EL and block unfinished 
   await data.getByLabel('固定值', { exact: true }).fill("O'Brien ${literal}")
   await expect
     .poll(
-      async () => (await values(page)).eventSubscriptions[0].inputMapping['data.note']
+      async () => (await values(page)).eventSubscriptions[0].target.inputMapping['data.note']
     )
     .toBe("${ 'O''Brien $${literal}' }")
   await data.getByText('数字', { exact: true }).click()
@@ -302,41 +285,41 @@ test('fixed input values preserve types, quote platform EL and block unfinished 
   await data.getByLabel('固定值', { exact: true }).fill('12')
   await expect
     .poll(
-      async () => (await values(page)).eventSubscriptions[0].inputMapping['data.note']
+      async () => (await values(page)).eventSubscriptions[0].target.inputMapping['data.note']
     )
     .toBe(12)
   await data.getByLabel('固定值', { exact: true }).fill('')
   await expect(page.getByText('输入尚未完成', { exact: true })).toBeVisible()
   await page.getByRole('button', { name: '事件', exact: true }).click()
   await expect(page.getByText(/请先修正当前输入/)).toBeVisible()
-  expect((await values(page)).eventSubscriptions[0].inputMapping['data.note']).toBe(12)
+  expect((await values(page)).eventSubscriptions[0].target.inputMapping['data.note']).toBe(12)
   await data.getByLabel('固定值', { exact: true }).fill('13')
   await expect
     .poll(
-      async () => (await values(page)).eventSubscriptions[0].inputMapping['data.note']
+      async () => (await values(page)).eventSubscriptions[0].target.inputMapping['data.note']
     )
     .toBe(13)
   await data.getByText('空值', { exact: true }).click()
   await expect
     .poll(
-      async () => (await values(page)).eventSubscriptions[0].inputMapping['data.note']
+      async () => (await values(page)).eventSubscriptions[0].target.inputMapping['data.note']
     )
     .toBe(null)
   await data.getByRole('button', { name: '添加数据映射' }).click()
   await data.getByLabel('目标字段 3').fill('note')
   await expect(page.getByRole('alert').filter({ hasText: '目标字段冲突' })).toBeVisible()
-  expect(Object.keys((await values(page)).eventSubscriptions[0].inputMapping)).toEqual([
+  expect(Object.keys((await values(page)).eventSubscriptions[0].target.inputMapping)).toEqual([
     'params.id',
     'data.note',
   ])
   await data.getByRole('button', { name: '删除映射' }).last().click()
   await data.getByText('不传入', { exact: true }).click()
   await page.getByRole('button', { name: '取消', exact: true }).click()
-  expect((await values(page)).eventSubscriptions[0].inputMapping['data.note']).toBe(null)
+  expect((await values(page)).eventSubscriptions[0].target.inputMapping['data.note']).toBe(null)
   await data.getByText('不传入', { exact: true }).click()
   await page.getByRole('button', { name: '确定', exact: true }).click()
   await expect
-    .poll(async () => (await values(page)).eventSubscriptions[0].inputMapping)
+    .poll(async () => (await values(page)).eventSubscriptions[0].target.inputMapping)
     .toEqual({ 'params.id': 1 })
   await testInfo.attach('typed-mapping', {
     body: await page.screenshot({
@@ -352,14 +335,7 @@ test('external event candidates can be loaded while unavailable names remain int
 }) => {
   await mount(page, {
     eventSubscriptions: [
-      {
-        name: 'confirm',
-        sourceEventModelFullName: 'external.Payment',
-        sourceEventName: 'paid',
-        targetActionModelFullName: 'sales.Order',
-        targetActionName: 'codeApprove',
-        executionPrincipalRef: 'worker',
-      },
+      { name: 'confirm', sourceEvent: { modelFullName: 'external.Payment', eventName: 'paid' }, target: { kind: 'action', modelFullName: 'sales.Order', actionName: 'codeApprove' }, executionMode: 'AFTER_COMMIT_TRANSACTIONAL' },
     ],
   })
   await page.getByRole('button', { name: '事件订阅', exact: true }).click()
@@ -371,10 +347,7 @@ test('external event candidates can be loaded while unavailable names remain int
   await source.getByLabel('模型全名', { exact: true }).fill('unloaded.Payment')
   await source.getByLabel('事件标识', { exact: true }).fill('futurePaid')
   await expect(source.getByText('外部引用待核验', { exact: true })).toBeVisible()
-  expect((await values(page)).eventSubscriptions[0]).toMatchObject({
-    sourceEventModelFullName: 'unloaded.Payment',
-    sourceEventName: 'futurePaid',
-  })
+  expect((await values(page)).eventSubscriptions[0]).toMatchObject({ sourceEvent: { modelFullName: 'unloaded.Payment', eventName: 'futurePaid' }, executionMode: 'AFTER_COMMIT_TRANSACTIONAL' })
 })
 
 test('event payload fields are edited without raw JSON and advanced compositions remain intact', async ({

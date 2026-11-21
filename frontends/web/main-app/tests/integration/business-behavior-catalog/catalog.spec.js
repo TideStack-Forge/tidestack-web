@@ -170,11 +170,7 @@ test('workflow event sources, conditional notifications and write effects remain
     allowedProducerKinds: ['workflow'],
     occurrenceCondition: '源事实提交后经可靠投影产生',
   })
-  contract.subscriptions.push({
-    name: 'notifyTask',
-    sourceEventModelFullName: 'sales.Order',
-    sourceEventName: 'workflowTaskCreated',
-  })
+  contract.subscriptions.push({ name: 'notifyTask', sourceEvent: { modelFullName: 'sales.Order', eventName: 'workflowTaskCreated' }, executionMode: 'AFTER_COMMIT_TRANSACTIONAL' })
   contract.sources.push(
     {
       memberType: 'action',

@@ -5,10 +5,10 @@ const {
   readRouterTopology,
   tabs,
   getBootstrapMode,
-  clearStatisticsStudioDirty,
-  getStatisticsStudioLeaveMessage,
-  installStatisticsStudioBeforeUnloadGuard,
-  shouldConfirmStatisticsStudioRouteLeave,
+  clearStatisticsDatasetEditorDirty,
+  getStatisticsDatasetEditorLeaveMessage,
+  installStatisticsDatasetEditorBeforeUnloadGuard,
+  shouldConfirmStatisticsDatasetEditorRouteLeave,
   i18nManager,
   resolvePostLoginFallbackPath,
   isExternal,
@@ -51,10 +51,10 @@ const {
     }),
   },
   getBootstrapMode: vi.fn(() => 'host'),
-  clearStatisticsStudioDirty: vi.fn(),
-  getStatisticsStudioLeaveMessage: vi.fn(() => 'leave?'),
-  installStatisticsStudioBeforeUnloadGuard: vi.fn(),
-  shouldConfirmStatisticsStudioRouteLeave: vi.fn(() => false),
+  clearStatisticsDatasetEditorDirty: vi.fn(),
+  getStatisticsDatasetEditorLeaveMessage: vi.fn(() => 'leave?'),
+  installStatisticsDatasetEditorBeforeUnloadGuard: vi.fn(),
+  shouldConfirmStatisticsDatasetEditorRouteLeave: vi.fn(() => false),
   i18nManager: {
     tn: vi.fn((path, key) => {
       if (key !== 'title') {
@@ -118,11 +118,11 @@ vi.mock('@/common/i18n', () => ({
   },
 }))
 
-vi.mock('@/utils/statisticsStudioDirtyGuard', () => ({
-  clearStatisticsStudioDirty,
-  getStatisticsStudioLeaveMessage,
-  installStatisticsStudioBeforeUnloadGuard,
-  shouldConfirmStatisticsStudioRouteLeave,
+vi.mock('@/utils/statisticsDatasetEditorDirtyGuard', () => ({
+  clearStatisticsDatasetEditorDirty,
+  getStatisticsDatasetEditorLeaveMessage,
+  installStatisticsDatasetEditorBeforeUnloadGuard,
+  shouldConfirmStatisticsDatasetEditorRouteLeave,
 }))
 
 vi.mock('../../../../src/layouts/AppLayoutOutlet.tsx', () => ({
@@ -156,10 +156,10 @@ beforeEach(() => {
   tabs.updateTab.mockReset()
   tabs.openOrSwitchTab.mockClear()
   getBootstrapMode.mockClear()
-  clearStatisticsStudioDirty.mockClear()
-  getStatisticsStudioLeaveMessage.mockClear()
-  installStatisticsStudioBeforeUnloadGuard.mockClear()
-  shouldConfirmStatisticsStudioRouteLeave.mockClear()
+  clearStatisticsDatasetEditorDirty.mockClear()
+  getStatisticsDatasetEditorLeaveMessage.mockClear()
+  installStatisticsDatasetEditorBeforeUnloadGuard.mockClear()
+  shouldConfirmStatisticsDatasetEditorRouteLeave.mockClear()
   i18nManager.tn.mockClear()
   i18nManager.tCommon.mockClear()
   i18nManager.onLocaleChange.mockClear()

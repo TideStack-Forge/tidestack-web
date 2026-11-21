@@ -1186,3 +1186,41 @@ test('AmisSchema uses a normalized copy returned by its resolver', async () => {
   expect(renderer.state.schema).toBe(resolved)
   expect(schema.title).toBe('原始标题')
 })
+
+test('AmisSchema reloads when model context arrives or changes and ignores older responses', async () => {
+  const responses = []
+  const fetcher = vi.fn(() => new Promise(resolve => responses.push(resolve)))
+  const renderer = new AmisSchema({
+    schemaId: '/dev/{appName}/business-model/editor',
+    data: { appName: 'crm', fullName: 'demo.Orders' },
+    env: { fetcher },
+  }, {})
+  renderer.setState = next => { renderer.state = { ...renderer.state, ...next } }
+  function refresh(data) {
+    renderer.props = { ...renderer.props, data }
+    renderer.refreshSchema()
+    renderer.refreshSchema.flush()
+  }
+  refresh(renderer.props.data)
+  expect(fetcher).toHaveBeenCalledTimes(1)
+  refresh({ ...renderer.props.data, modelType: 'composite-view' })
+  expect(fetcher).toHaveBeenCalledTimes(2)
+  expect(fetcher.mock.calls[1][0].data).toMatchObject({ modelType: 'composite-view' })
+  const composite = { type: 'composite-view-editor' }
+  responses[1]({ status: 0, data: composite })
+  await vi.waitFor(() => expect(renderer.state.schema).toEqual(composite))
+  responses[0]({ status: 0, data: { type: 'default-editor' } })
+  await Promise.resolve()
+  await Promise.resolve()
+  expect(renderer.state.schema).toEqual(composite)
+  refresh(renderer.props.data)
+  expect(fetcher).toHaveBeenCalledTimes(2)
+  refresh({ ...renderer.props.data, fullName: 'demo.PrivateOrders' })
+  expect(fetcher).toHaveBeenCalledTimes(3)
+  responses[2]({ status: 0, data: composite })
+  refresh({ ...renderer.props.data, appName: 'sales' })
+  expect(fetcher).toHaveBeenCalledTimes(4)
+  responses[3]({ status: 0, data: composite })
+  await vi.waitFor(() => expect(renderer.state.schema).toEqual(composite))
+  renderer.componentWillUnmount()
+})

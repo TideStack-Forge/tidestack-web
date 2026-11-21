@@ -154,8 +154,9 @@ export class WidgetControl extends React.Component<WidgetProps, WidgetState> {
     const { widget, classnames, className, data: superData } = this.props
     const data = createObject(cloneObject(superData), { config: widget.config ?? {} })
 
-    // 从 widget.styleConfig 中获取样式配置
-    const styleConfig = widget.styleConfig || {}
+    // Styles are persisted as part of the formal widget config. Definition styles
+    // remain a runtime fallback for widgets supplied by the generic dashboard.
+    const styleConfig = { ...(widget.styleConfig || {}), ...(widget.config || {}) }
     const {
       showBorder = false,
       border,

@@ -1,12 +1,23 @@
 import { getBootstrapMode } from '@/utils'
+import { EventBus } from '@/common/eventBus'
 import {
-  clearStatisticsStudioDirty,
-  getStatisticsStudioLeaveMessage,
-  installStatisticsStudioBeforeUnloadGuard,
-  shouldConfirmStatisticsStudioRouteLeave,
-} from '@/utils/statisticsStudioDirtyGuard'
+  clearStatisticsDatasetEditorDirty,
+  getStatisticsDatasetEditorLeaveMessage,
+  installStatisticsDatasetEditorBeforeUnloadGuard,
+  shouldConfirmStatisticsDatasetEditorRouteLeave,
+} from '@/utils/statisticsDatasetEditorDirtyGuard'
+import {
+  clearStatisticsChartEditorDirty,
+  getStatisticsChartEditorLeaveMessage,
+  installStatisticsChartEditorBeforeUnloadGuard,
+  installStatisticsChartEditorEventBridge,
+  shouldConfirmStatisticsChartEditorRouteLeave,
+} from '@/utils/statisticsChartEditorDirtyGuard'
 import type { NavigationContext } from './navigationContext'
-import { resolveNavigationDecision, type NavigationDecisionInput } from './navigationDecision'
+import {
+  resolveNavigationDecision,
+  type NavigationDecisionInput,
+} from './navigationDecision'
 import type { NavigationDecisionExecutor } from './navigationExecution'
 
 export function createNavigationGuard(
@@ -16,21 +27,30 @@ export function createNavigationGuard(
 ) {
   return async (to: any, from: any, next: any) => {
     const isLegacyIframeMode = getBootstrapMode(window.location.href) === 'legacyIframe'
-    const shouldConfirmLeave = shouldConfirmStatisticsStudioRouteLeave(from, to)
+    const shouldConfirmLeave = shouldConfirmStatisticsDatasetEditorRouteLeave(from, to)
+    const shouldConfirmChartLeave = shouldConfirmStatisticsChartEditorRouteLeave(from, to)
 
-    if (shouldConfirmLeave) {
-      const confirmed = window.confirm(getStatisticsStudioLeaveMessage())
+    if (shouldConfirmLeave || shouldConfirmChartLeave) {
+      const confirmed = window.confirm(
+        shouldConfirmChartLeave
+          ? getStatisticsChartEditorLeaveMessage()
+          : getStatisticsDatasetEditorLeaveMessage()
+      )
       if (!confirmed) {
         return next(false)
       }
-      clearStatisticsStudioDirty(from.fullPath || from.path)
+      if (shouldConfirmChartLeave) {
+        clearStatisticsChartEditorDirty(from.fullPath || from.path)
+      } else {
+        clearStatisticsDatasetEditorDirty(from.fullPath || from.path)
+      }
     }
 
     const isErrorRoute = (to.name || '').toLowerCase() === 'error'
     const navigationContext = readDecisionContext(to)
     const decisionInput: NavigationDecisionInput = {
       isLegacyIframeMode,
-      shouldConfirmLeave,
+      shouldConfirmLeave: shouldConfirmLeave || shouldConfirmChartLeave,
       isErrorRoute,
       ...navigationContext,
       tabIntent: Boolean(next.tabIntent),
@@ -50,9 +70,15 @@ export function installNavigationOrchestration(
   readDecisionContext: (to: any) => NavigationContext,
   executeNavigationDecision: NavigationDecisionExecutor
 ) {
-  installStatisticsStudioBeforeUnloadGuard()
+  installStatisticsDatasetEditorBeforeUnloadGuard()
+  installStatisticsChartEditorBeforeUnloadGuard()
+  installStatisticsChartEditorEventBridge(EventBus, () => router.currentRoute?.fullPath)
   router.afterEach(updateDocumentTitle)
   router.beforeEach(
-    createNavigationGuard(updateDocumentTitle, readDecisionContext, executeNavigationDecision)
+    createNavigationGuard(
+      updateDocumentTitle,
+      readDecisionContext,
+      executeNavigationDecision
+    )
   )
 }

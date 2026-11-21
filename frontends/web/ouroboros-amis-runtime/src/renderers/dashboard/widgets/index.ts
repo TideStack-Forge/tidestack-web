@@ -1,1 +1,1 @@
-export { reportWidgetDefinitions } from './reportWidgets'
+export { chartWidgetDefinitions } from './chartWidgets'

@@ -118,6 +118,12 @@ function getPages(isPlaywrightHarness, includeDebugEntrypoint = false) {
   }
 
   if (isPlaywrightHarness) {
+    pages['enterprise-integration-playwright-harness'] = {
+      entry: 'tests/integration/enterprise-integration/harness/index.js',
+      template: 'tests/integration/enterprise-integration/harness/index.html',
+      filename: 'enterprise-integration-playwright-harness.html',
+      inject: true,
+    }
     pages['notification-runtime-playwright-harness'] = {
       entry: 'tests/integration/notification-runtime-management/harness/index.js',
       template: 'tests/integration/notification-runtime-management/harness/index.html',

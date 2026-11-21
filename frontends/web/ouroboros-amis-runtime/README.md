@@ -4,6 +4,8 @@ Web 主应用与 IDE 元数据编辑器共用的 Amis renderer、编辑器 prese
 
 包以源码发布给仓库内构建器。公开入口为 `ouroboros-amis-runtime/<path>`，如 `editor/editorRuntimePreset`、`editor/lazyRegister`、`renderers` 和 `style/themes`。消费者负责安装 `package.json` 中的 peerDependencies 并统一 React、Amis、MobX 实例。Webpack/Vite 应分别对 `.ts/.tsx/.scss` 使用自身正式编译链。
 
+`collaboration/YjsWorkspace` 提供协同文档、事务和待同步操作恢复，`collaboration/platformTransport` 复用宿主 STOMP。首个接入为业务模型关系画布，接入合同见[模型实时协同](../../../docs/design/cross-cutting/model-collaboration.md)。消费者统一 Yjs 实例。IDE 宿主目前对平台实时消息明确报不支持，协同试点在 Web 基座运行。
+
 ## 宿主契约
 
 共享源码通过 `#ouroboros-host/<port>` 使用宿主能力；完整清单见 [host-ports.json](host-ports.json)。两个产品均调用 [createHostBindings](host-bindings.cjs) 提供全部清单项，缺失项使构建失败。新增宿主依赖必须更新清单及两侧绑定，不得导入主应用私有源码或增加通配 fallback。

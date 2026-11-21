@@ -1,0 +1,504 @@
+.business-model-graph {
+  --graph-border: var(--borderColor, #e8e8e8);
+  --graph-primary: var(--color-primary, #2468f2);
+  --graph-surface: var(--body-bg, #fff);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 440px;
+  min-width: 0;
+  color: var(--text-color, #333);
+  font-size: 14px;
+  container-type: inline-size;
+
+  &__toolbar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-bottom: 8px;
+    flex-shrink: 0;
+  }
+  &__toolbar label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    font-weight: 400;
+  }
+  &__toolbar select,
+  &__toolbar input,
+  &__library input,
+  &__dialog input {
+    border: 1px solid var(--graph-border);
+    border-radius: var(--borderRadius, 4px);
+    padding: 6px 8px;
+    background: var(--graph-surface);
+    color: inherit;
+    height: 32px;
+    min-width: 0;
+  }
+  &__toolbar select {
+    max-width: 200px;
+  }
+  &__toolbar input {
+    width: 190px;
+  }
+  &__toolbar [aria-pressed='true'] {
+    border-color: var(--graph-primary);
+    color: var(--graph-primary);
+    background: var(--color-primary-bg, #edf3ff);
+  }
+  &__toolbar > span,
+  &__status {
+    font-size: 12px;
+    color: var(--text--muted-color, #888);
+  }
+  &__spacer {
+    flex: 1;
+  }
+  &__workspace {
+    display: flex;
+    flex: 1;
+    min-height: 300px;
+    min-width: 0;
+    border: 1px solid var(--graph-border);
+    border-radius: var(--borderRadius, 4px);
+    overflow: hidden;
+    position: relative;
+  }
+  &__viewport {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    position: relative;
+    background: var(--graph-surface);
+    background-image: radial-gradient(var(--graph-border) 0.7px, transparent 0.7px);
+    background-size: 18px 18px;
+    cursor: grab;
+    touch-action: none;
+  }
+  &__stage {
+    position: absolute;
+    inset: 0 auto auto 0;
+    width: 1px;
+    height: 1px;
+    transform-origin: 0 0;
+  }
+  &__connections {
+    position: absolute;
+    overflow: visible;
+    width: 1px;
+    height: 1px;
+    pointer-events: none;
+  }
+  &__edge {
+    pointer-events: auto;
+    color: #8a96aa;
+  }
+  &__edge > path {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    stroke-dasharray: 5 4;
+  }
+  &__edge.is-child {
+    color: var(--graph-primary);
+  }
+  &__edge.is-child > path {
+    stroke-dasharray: none;
+  }
+  &__edge > path.business-model-graph__edge-hit {
+    stroke: transparent;
+    stroke-width: 18;
+    cursor: pointer;
+    pointer-events: stroke;
+  }
+  &__edge text {
+    font-size: 12px;
+    fill: currentColor;
+    text-anchor: middle;
+    paint-order: stroke;
+    stroke: var(--graph-surface);
+    stroke-width: 6px;
+    stroke-linejoin: round;
+  }
+  &__edge:focus-visible {
+    outline: none;
+    color: var(--graph-primary);
+  }
+  &__node {
+    position: absolute;
+    z-index: 2;
+    width: 180px;
+    height: 82px;
+    padding: 10px;
+    border: 1px solid var(--graph-border);
+    border-radius: var(--borderRadius, 4px);
+    background: var(--graph-surface);
+    text-align: left;
+    font: inherit;
+    color: inherit;
+    cursor: grab;
+    touch-action: none;
+  }
+  &__node strong {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    font-size: 14px;
+    margin-bottom: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  &__node .fa-cube {
+    color: var(--graph-primary);
+  }
+  &__node .fa-lock {
+    margin-left: auto;
+    color: #999;
+  }
+  &__node small,
+  &__node > span {
+    display: block;
+    font-size: 11px;
+    color: #888;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  &__node > span {
+    margin-top: 5px;
+  }
+  &__group-title small {
+    margin-left: 6px;
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--text--muted-color, #888);
+  }
+  &__node:hover,
+  &__node.is-selected {
+    border-color: var(--graph-primary);
+  }
+  &__node:focus-visible,
+  &__group-title:focus-visible {
+    outline: 2px solid var(--graph-primary);
+    outline-offset: 2px;
+  }
+  &__node.is-selected {
+    background: var(--color-primary-bg, #f6f9ff);
+  }
+  .is-dim {
+    opacity: 0.25;
+  }
+  &__group {
+    position: absolute;
+    border: 1px solid #bdcbe1;
+    border-radius: var(--borderRadius, 4px);
+    background: #f8faff80;
+    pointer-events: none;
+  }
+  &__group-title {
+    position: absolute;
+    z-index: 3;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 40px;
+    padding: 0 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font: inherit;
+    font-size: 13px;
+    border: 0;
+    border-bottom: 1px solid var(--graph-border);
+    background: #edf2fae8;
+    color: #59677d;
+    text-align: left;
+    cursor: grab;
+    pointer-events: auto;
+    touch-action: none;
+  }
+  &__group-title .fa-arrows {
+    margin-left: auto;
+  }
+  &__zoom {
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+    display: flex;
+    height: 32px;
+    align-items: center;
+    border: 1px solid var(--graph-border);
+    border-radius: var(--borderRadius, 4px);
+    background: var(--graph-surface);
+  }
+  &__zoom button {
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    width: 32px;
+    height: 30px;
+    font-size: 17px;
+  }
+  &__zoom output {
+    min-width: 44px;
+    font-size: 12px;
+    text-align: center;
+  }
+  &__legend {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    display: flex;
+    gap: 12px;
+    padding: 7px 8px;
+    font-size: 11px;
+    color: #888;
+    background: var(--graph-surface);
+    border: 1px solid var(--graph-border);
+    border-radius: var(--borderRadius, 4px);
+  }
+  &__detail,
+  &__library {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    width: 264px;
+    background: var(--graph-surface);
+    border-left: 1px solid var(--graph-border);
+    overflow: auto;
+  }
+  &__detail header,
+  &__library header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px;
+    border-bottom: 1px solid var(--graph-border);
+  }
+  &__close {
+    border: 0;
+    background: transparent;
+    color: #888;
+    font-size: 20px;
+    cursor: pointer;
+    width: 28px;
+    height: 28px;
+  }
+  &__detail-body {
+    padding: 16px;
+    flex: 1;
+    overflow: auto;
+    font-size: 12px;
+  }
+  &__detail-body h3 {
+    margin-top: 0;
+    font-size: 16px;
+    font-weight: 500;
+  }
+  &__detail-body small {
+    color: #888;
+    overflow-wrap: anywhere;
+  }
+  &__detail-body p {
+    margin: 12px 0;
+    color: #777;
+  }
+  &__detail-body dl {
+    display: grid;
+    grid-template-columns: 72px minmax(0, 1fr);
+    gap: 12px;
+    margin: 20px 0;
+  }
+  &__detail-body dt {
+    color: #888;
+    font-weight: 400;
+  }
+  &__detail-body dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
+  &__detail footer {
+    padding: 12px;
+    border-top: 1px solid var(--graph-border);
+  }
+  &__detail footer button {
+    width: 100%;
+  }
+  &__relation {
+    width: 100%;
+    border: 0;
+    border-bottom: 1px solid var(--graph-border);
+    background: transparent;
+    padding: 10px 0;
+    text-align: left;
+    cursor: pointer;
+  }
+  &__relation small {
+    display: block;
+    padding-top: 5px;
+  }
+  &__relation:disabled {
+    color: #999;
+    cursor: default;
+  }
+  &__library {
+    width: 216px;
+    border-left: 0;
+    border-right: 1px solid var(--graph-border);
+    padding: 0 12px 12px;
+  }
+  &__library header {
+    padding: 8px 0;
+    margin-bottom: 12px;
+  }
+  &__library > p {
+    font-size: 11px;
+    color: #999;
+    margin: 8px 0;
+  }
+  &__library-model {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--graph-border);
+    cursor: grab;
+  }
+  &__library-model span {
+    flex: 1;
+    min-width: 0;
+  }
+  &__library-model small {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 11px;
+    white-space: nowrap;
+    color: #999;
+  }
+  &__library-model button {
+    background: var(--graph-surface);
+    border: 1px solid var(--graph-border);
+    border-radius: 4px;
+    color: var(--graph-primary);
+    cursor: pointer;
+    min-width: 28px;
+    height: 28px;
+  }
+  &__library-model button:disabled {
+    border: 0;
+    font-size: 11px;
+    color: #999;
+  }
+  &__status {
+    padding-top: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: space-between;
+  }
+  &__error,
+  &__message {
+    flex-shrink: 0;
+    padding: 8px 12px;
+    margin-bottom: 8px;
+    border: 1px solid var(--graph-border);
+    border-radius: 4px;
+    font-size: 12px;
+    overflow-wrap: anywhere;
+  }
+  &__error {
+    color: var(--color-danger, #c33);
+  }
+  &__message {
+    color: #777;
+  }
+  &__empty {
+    position: absolute;
+    left: 20px;
+    right: 20px;
+    top: 40%;
+    text-align: center;
+    color: #888;
+    font-size: 13px;
+    pointer-events: none;
+  }
+  &__drop {
+    position: absolute;
+    inset: 8px;
+    border: 2px dashed var(--graph-primary);
+    color: var(--graph-primary);
+    background: #edf3ffcc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    z-index: 4;
+  }
+  &__dialog {
+    width: 420px;
+    max-width: calc(100vw - 32px);
+    padding: 20px;
+    border: 1px solid var(--graph-border);
+    border-radius: 4px;
+    background: var(--graph-surface);
+    color: inherit;
+  }
+  &__dialog::backdrop {
+    background: #0005;
+  }
+  &__dialog h3 {
+    font-size: 16px;
+    margin-top: 0;
+  }
+  &__dialog input {
+    display: block;
+    width: 100%;
+    margin-top: 8px;
+  }
+  &__dialog label {
+    display: block;
+  }
+  &__dialog p {
+    margin: 16px 0;
+    color: #888;
+  }
+  &__dialog form > div {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+}
+.business-model-graph__state {
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  color: var(--text--muted-color, #888);
+}
+@container (max-width: 850px) {
+  .business-model-graph__detail {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 5;
+  }
+  .business-model-graph__toolbar input {
+    width: 150px;
+  }
+}
+.business-model-views .business-model-graph {
+  min-height: 400px;
+  height: max(400px, calc(100vh - 262px));
+}
+.business-model-page.is-module-tree-hidden > .cxd-Page-aside {
+  display: none;
+}

@@ -17,7 +17,10 @@ export interface WidgetWrapperProps {
 }
 
 export class WidgetWrapper extends React.Component<WidgetWrapperProps> {
-  buildDialogData(runtimeData: Record<string, any> | undefined, localData: Record<string, any> | undefined) {
+  buildDialogData(
+    runtimeData: Record<string, any> | undefined,
+    localData: Record<string, any> | undefined
+  ) {
     const dialogData: Record<string, any> = {}
     if (runtimeData && typeof runtimeData === 'object') {
       for (const key in runtimeData) {
@@ -101,7 +104,10 @@ export class WidgetWrapper extends React.Component<WidgetWrapperProps> {
         title: '样式配置',
         body: [styleFormSchema],
       },
-      this.buildDialogData(runtimeData, widget.styleConfig)
+      this.buildDialogData(runtimeData, {
+        ...(widget.styleConfig || {}),
+        ...(widget.config || {}),
+      })
     )
 
     if (!formData || !formData.length) return
@@ -127,35 +133,50 @@ export class WidgetWrapper extends React.Component<WidgetWrapperProps> {
   }
 
   render() {
-    const { children } = this.props
+    const { children, widget, definition } = this.props
 
     return (
       <>
         <div className="edit-toolbar">
-          <Button
-            level="link"
-            size="sm"
-            onClick={this.handleEditItem.bind(this)}
-            tooltip="配置">
-            <Icon icon="fa fa-cog" />
-          </Button>
-          <Button
-            level="link"
-            size="sm"
-            onClick={this.handleEditItemStyle.bind(this)}
-            tooltip="样式">
-            <Icon icon="fa fa-paint-brush" />
-          </Button>
-          <Button
-            level="link"
-            size="sm"
-            className="text-danger"
-            onClick={this.handleRemoveItem.bind(this)}
-            tooltip="删除">
-            <Icon icon="fa fa-trash" />
-          </Button>
-          <div className="draggable">
+          <div className="draggable" title="拖动组件">
             <Icon icon="fa fa-arrows" />
+            <span>{widget.config?.title || definition?.title || widget.widgetName}</span>
+          </div>
+          <div className="widget-edit-actions">
+            <Button
+              level="link"
+              size="sm"
+              onClick={this.handleEditItem.bind(this)}
+              title="配置组件"
+              tooltip="配置"
+            >
+              <span aria-hidden="true">
+                <Icon icon="fa fa-cog" />
+              </span>
+            </Button>
+            <Button
+              level="link"
+              size="sm"
+              onClick={this.handleEditItemStyle.bind(this)}
+              title="组件样式"
+              tooltip="样式"
+            >
+              <span aria-hidden="true">
+                <Icon icon="fa fa-paint-brush" />
+              </span>
+            </Button>
+            <Button
+              level="link"
+              size="sm"
+              className="text-danger"
+              onClick={this.handleRemoveItem.bind(this)}
+              title="删除组件"
+              tooltip="删除"
+            >
+              <span aria-hidden="true">
+                <Icon icon="fa fa-trash" />
+              </span>
+            </Button>
           </div>
         </div>
         {children}

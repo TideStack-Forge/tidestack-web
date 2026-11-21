@@ -9,9 +9,9 @@ import {
   isScriptEditorIntelligenceDebugPath,
 } from './scriptEditorIntelligencePlayground'
 import {
-  initStatisticsSqlEditorPlayground,
-  isStatisticsSqlEditorDebugPath,
-} from './statisticsSqlEditorPlayground'
+  initDatasetSqlEditorPlayground,
+  isDatasetSqlEditorDebugPath,
+} from './datasetSqlEditorPlayground'
 
 const debugPlaygrounds = [
   {
@@ -23,8 +23,8 @@ const debugPlaygrounds = [
     init: initScriptEditorIntelligencePlayground,
   },
   {
-    isPath: isStatisticsSqlEditorDebugPath,
-    init: initStatisticsSqlEditorPlayground,
+    isPath: isDatasetSqlEditorDebugPath,
+    init: initDatasetSqlEditorPlayground,
   },
 ]
 

@@ -1,19 +1,13 @@
 import React from 'react'
-import {
-  FormItem,
-  toast,
-  createObject,
-  buildApi,
-} from 'amis'
+import { FormItem, toast, createObject, buildApi } from 'amis'
 // @ts-ignore
 import { Responsive, WidthProvider } from 'react-grid-layout'
-import { isEqual, uniqueId } from 'lodash'
+import { cloneDeep, isEqual, uniqueId } from 'lodash'
 
 import type {
   Api,
   SchemaNode,
   FormControlProps,
-  Schema,
   RendererProps,
   ListenerAction,
   ActionObject,
@@ -42,14 +36,63 @@ import './Dashboard.scss'
 
 const ResponsiveGridLayout = WidthProvider(Responsive)
 
-function resolveDashboardWidgets(value: any, data: any): WidgetInstance[] {
-  if (Array.isArray(value?.widgets)) {
-    return value.widgets
+function resolveDashboardWidgets(
+  value: any,
+  data: any,
+  exposeChartReference: boolean,
+  preferData = false
+): WidgetInstance[] {
+  const widgets =
+    preferData && Array.isArray(data?.widgets)
+      ? data.widgets
+      : Array.isArray(value?.widgets)
+        ? value.widgets
+        : Array.isArray(data?.widgets)
+          ? data.widgets
+          : []
+  if (!exposeChartReference) {
+    return widgets
   }
-  if (Array.isArray(data?.widgets)) {
-    return data.widgets
+  return widgets.map((widget: WidgetInstance) => {
+    const chartName = widget?.chartName
+    if (typeof chartName !== 'string' || chartName.trim() === '') {
+      return widget
+    }
+    return {
+      ...widget,
+      config: {
+        ...(widget.config || {}),
+        chartName: widget.config?.chartName ?? chartName,
+      },
+    }
+  })
+}
+
+export interface DashboardLayoutConfig {
+  cols: number
+  rowHeight: number
+  draggable: boolean
+  resizable: boolean
+}
+
+function resolveDashboardLayout(
+  value: any,
+  data: any,
+  persistAsFields: boolean,
+  preferData = false
+): DashboardLayoutConfig {
+  if (!persistAsFields) {
+    return { cols: 24, rowHeight: 10, draggable: true, resizable: true }
   }
-  return []
+  const layout =
+    preferData && data?.layout ? data.layout : (value?.layout ?? data?.layout ?? {})
+  return {
+    cols: Number.isInteger(layout.cols) && layout.cols > 0 ? layout.cols : 24,
+    rowHeight:
+      Number.isInteger(layout.rowHeight) && layout.rowHeight > 0 ? layout.rowHeight : 30,
+    draggable: layout.draggable !== false,
+    resizable: layout.resizable !== false,
+  }
 }
 
 export type DashboardProps = FormControlProps & {
@@ -71,6 +114,8 @@ export type DashboardProps = FormControlProps & {
   widgetDefinitionsApi?: Api
   listTemplatesApi?: Api
   loadTemplateApi?: Api
+  /** 将画布内容作为业务模型的 widgets/layout 字段写回表单。 */
+  persistAsFields?: boolean
   cols?: Record<string, number>
   breakpoints?: Record<string, number>
 
@@ -96,8 +141,10 @@ export interface DashboardState {
   isDefinitionsDrawerOpen: boolean
   isEditing: boolean
   widgets: WidgetInstance[]
+  layout: DashboardLayoutConfig
+  editSnapshot?: WidgetInstance[]
+  activeBreakpoint: string
   categoriesCollapsed: Record<string, boolean>
-  rowHeight: number
   droppingItem?: {
     i: string
     w: number
@@ -116,7 +163,8 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
 
   private readonly dashboardEditEventName = uniqueId('dashboard.edit.')
 
-  private readonly dashboardComponentName = this.props.name || uniqueId('dashboard.component.')
+  private readonly dashboardComponentName =
+    this.props.name || uniqueId('dashboard.component.')
 
   constructor(props: DashboardProps) {
     super(props)
@@ -127,8 +175,9 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
       isEditing: false,
       isDefinitionsDrawerOpen: false,
       categoriesCollapsed: {},
-      widgets: resolveDashboardWidgets(props.value, props.data),
-      rowHeight: 10,
+      widgets: resolveDashboardWidgets(props.value, props.data, !!props.persistAsFields),
+      layout: resolveDashboardLayout(props.value, props.data, !!props.persistAsFields),
+      activeBreakpoint: 'md',
       droppingItem: undefined,
     }
   }
@@ -144,13 +193,29 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
 
   componentDidUpdate(
     prevProps: Readonly<DashboardProps>,
-    prevState: Readonly<DashboardState>,
-    snapshot?: any
+    prevState: Readonly<DashboardState>
   ): void {
-    // 当外部 value 变化时更新 widgets
-    if (!isEqual(this.props.value, prevProps.value)) {
-      this.setState(() => ({
-        widgets: resolveDashboardWidgets(this.props.value, this.props.data),
+    // 页面 initApi 返回数据后，Dashboard 的 data 会先于 value 更新。
+    // 非编辑态需要从最新的数据域重新同步画布内容。
+    const valueChanged = !isEqual(this.props.value, prevProps.value)
+    const dataChanged = !isEqual(this.props.data, prevProps.data)
+    if (valueChanged || dataChanged) {
+      const preferData = dataChanged && !valueChanged
+      this.setState((state) => ({
+        widgets: state.isEditing
+          ? state.widgets
+          : resolveDashboardWidgets(
+              this.props.value,
+              this.props.data,
+              !!this.props.persistAsFields,
+              preferData
+            ),
+        layout: resolveDashboardLayout(
+          this.props.value,
+          this.props.data,
+          !!this.props.persistAsFields,
+          preferData
+        ),
       }))
     }
 
@@ -159,10 +224,18 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
       prevState.widgetDefinitions.length === 0 &&
       this.state.widgetDefinitions.length > 0 &&
       this.state.widgets.length === 0 &&
-      resolveDashboardWidgets(this.props.value, this.props.data).length > 0
+      resolveDashboardWidgets(
+        this.props.value,
+        this.props.data,
+        !!this.props.persistAsFields
+      ).length > 0
     ) {
       this.setState(() => ({
-        widgets: resolveDashboardWidgets(this.props.value, this.props.data),
+        widgets: resolveDashboardWidgets(
+          this.props.value,
+          this.props.data,
+          !!this.props.persistAsFields
+        ),
       }))
     }
   }
@@ -188,10 +261,18 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
             // 加载完定义后，如果 props.value 有 widgets 但 state.widgets 为空，则更新
             if (
               this.state.widgets.length === 0 &&
-              resolveDashboardWidgets(this.props.value, this.props.data).length > 0
+              resolveDashboardWidgets(
+                this.props.value,
+                this.props.data,
+                !!this.props.persistAsFields
+              ).length > 0
             ) {
               this.setState({
-                widgets: resolveDashboardWidgets(this.props.value, this.props.data),
+                widgets: resolveDashboardWidgets(
+                  this.props.value,
+                  this.props.data,
+                  !!this.props.persistAsFields
+                ),
               })
             }
           })
@@ -209,10 +290,18 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
         // 加载完定义后，如果 props.value 有 widgets 但 state.widgets 为空，则更新
         if (
           this.state.widgets.length === 0 &&
-          resolveDashboardWidgets(this.props.value, this.props.data).length > 0
+          resolveDashboardWidgets(
+            this.props.value,
+            this.props.data,
+            !!this.props.persistAsFields
+          ).length > 0
         ) {
           this.setState({
-            widgets: resolveDashboardWidgets(this.props.value, this.props.data),
+            widgets: resolveDashboardWidgets(
+              this.props.value,
+              this.props.data,
+              !!this.props.persistAsFields
+            ),
           })
         }
       })
@@ -222,9 +311,8 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
 
   // 更新组件
   handleUpdateWidget(updatedWidget: WidgetInstance) {
-    const normalizedWidget = this.normalizeWidgetForOutput(updatedWidget)
     const updatedWidgets = this.state.widgets.map((w) =>
-      w.id === normalizedWidget.id ? normalizedWidget : w
+      w.id === updatedWidget.id ? updatedWidget : w
     )
     this.setState({ widgets: updatedWidgets })
   }
@@ -266,15 +354,10 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
 
   // 编辑按钮事件
   handleEditClick = () => {
-    this.setState({ isEditing: true })
+    this.setState({ isEditing: true, editSnapshot: cloneDeep(this.state.widgets) })
   }
 
-  doAction = async (
-    action: ListenerAction | ActionObject,
-    _data: any,
-    _throwErrors: boolean = false,
-    _args?: any
-  ) => {
+  doAction = async (action: ListenerAction | ActionObject) => {
     if (action.actionType === 'dashboard-edit-mode') {
       this.handleEditClick()
       return
@@ -297,13 +380,28 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
 
   // 取消编辑按钮事件
   handleCancelEdit = () => {
-    this.setState({ isEditing: false })
+    this.setState((state) => ({
+      isEditing: false,
+      widgets: state.editSnapshot ? cloneDeep(state.editSnapshot) : state.widgets,
+      editSnapshot: undefined,
+    }))
   }
 
   // 保存编辑按钮事件
   handleConfirmEdit = () => {
+    if (this.props.persistAsFields) {
+      const invalidWidget = this.state.widgets.find(
+        (widget) =>
+          widget.widgetName === 'chart' &&
+          !String(widget.config?.chartName ?? widget.chartName ?? '').trim()
+      )
+      if (invalidWidget) {
+        toast.error('请先为所有图表组件选择图表')
+        return
+      }
+    }
     this.notifyChange(!!this.props.submitOnChange)
-    this.setState({ isEditing: false })
+    this.setState({ isEditing: false, editSnapshot: undefined })
   }
 
   // 打开组件定义抽屉
@@ -371,37 +469,54 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
 
   notifyChange(submit = false) {
     const { value = {} } = this.props
-    const { name, onBulkChange, onChange, embedSchemaTpl } = this.props
+    const { name, onBulkChange, onChange, persistAsFields, embedSchemaTpl } = this.props
+
+    if (persistAsFields) {
+      const nextValue = {
+        ...value,
+        layout: { ...this.state.layout },
+        widgets: this.state.widgets.map((widget) => this.toBusinessModelWidget(widget)),
+      }
+      if (onBulkChange) {
+        onBulkChange(
+          {
+            widgets: nextValue.widgets,
+            layout: nextValue.layout,
+          },
+          submit
+        )
+        return
+      }
+      onChange?.(nextValue, submit, true)
+      return
+    }
+
     const normalizedWidgets = this.state.widgets.map((widget) =>
       this.normalizeWidgetForOutput(widget)
     )
-    let nextValue
-
-    if (!embedSchemaTpl) {
-      // 不嵌入schemaTpl，直接返回widgets
-      nextValue = { ...value, widgets: normalizedWidgets }
-    } else {
-      // 嵌入schemaTpl，需要从definition获取
-      const widgets = normalizedWidgets.map((widget) => {
-        const widgetDef = this.getWidgetDefinition(widget.widgetName)
-        if (!widgetDef) return widget
-
-        return {
-          ...widget,
-          config: {
-            ...widget.config,
-            schema: widgetDef.schemaTpl,
-          },
-        }
-      })
-      nextValue = { ...value, widgets }
-    }
+    const widgets = embedSchemaTpl
+      ? normalizedWidgets.map((widget) => {
+          const widgetDef = this.getWidgetDefinition(widget.widgetName)
+          if (!widgetDef) return widget
+          return {
+            ...widget,
+            config: {
+              ...widget.config,
+              schema: widgetDef.schemaTpl,
+            },
+          }
+        })
+      : normalizedWidgets
+    const nextValue = { ...value, widgets }
 
     if (name && onBulkChange) {
-      onBulkChange({
-        [name]: nextValue,
-        widgets: nextValue.widgets,
-      }, submit)
+      onBulkChange(
+        {
+          [name]: nextValue,
+          widgets: nextValue.widgets,
+        },
+        submit
+      )
       return
     }
 
@@ -409,14 +524,36 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
   }
 
   normalizeWidgetForOutput(widget: WidgetInstance): WidgetInstance {
-    const viewName = widget.config?.viewName
-    if (typeof viewName !== 'string' || viewName.trim() === '') {
+    const chartName = widget.config?.chartName
+    if (typeof chartName !== 'string' || chartName.trim() === '') {
       return widget
     }
     return {
       ...widget,
-      viewName: viewName.trim(),
+      chartName: chartName.trim(),
     }
+  }
+
+  toBusinessModelWidget(widget: WidgetInstance): WidgetInstance {
+    const persistedWidget: any = { ...widget }
+    delete persistedWidget.schemaTpl
+    delete persistedWidget.styleConfig
+
+    const persistedConfig: Record<string, any> = {
+      ...(widget.styleConfig || {}),
+      ...(widget.config || {}),
+    }
+    delete persistedConfig.chartName
+    delete persistedConfig.schema
+    persistedWidget.config = persistedConfig
+
+    const chartName = widget.config?.chartName ?? widget.chartName
+    if (typeof chartName === 'string' && chartName.trim() !== '') {
+      persistedWidget.chartName = chartName.trim()
+    } else {
+      delete persistedWidget.chartName
+    }
+    return persistedWidget
   }
 
   // 生成唯一标识
@@ -448,44 +585,79 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
   }
 
   onDragStop(layout: any, oldItem: any, layoutItem: any) {
-    const newWidgets = this.state.widgets.map((widget) => {
-      if (widget.id === layoutItem.i) {
+    this.setState((state) => ({
+      widgets: state.widgets.map((widget) => {
+        if (widget.id === layoutItem.i) {
+          return {
+            ...widget,
+            position: {
+              x: layoutItem.x,
+              y: layoutItem.y,
+            },
+            size: {
+              cols: layoutItem.w,
+              rows: layoutItem.h,
+            },
+          }
+        }
+        return widget
+      }),
+    }))
+  }
+
+  onBreakpointChange = (breakpoint: string) => {
+    this.setState({ activeBreakpoint: breakpoint })
+  }
+
+  onLayoutChange = (layout: any[]) => {
+    if (
+      !this.props.persistAsFields ||
+      !this.state.isEditing ||
+      this.state.activeBreakpoint !== 'md' ||
+      !Array.isArray(layout) ||
+      !layout.length
+    ) {
+      return
+    }
+    this.setState((state) => {
+      const layoutById = new Map(layout.map((item) => [item.i, item]))
+      const nextWidgets = state.widgets.map((widget) => {
+        const layoutItem = layoutById.get(widget.id)
+        if (!layoutItem) {
+          return widget
+        }
         return {
           ...widget,
-          position: {
-            x: layoutItem.x,
-            y: layoutItem.y,
-          },
-          size: {
-            cols: layoutItem.w,
-            rows: layoutItem.h,
-          },
+          position: { x: layoutItem.x, y: layoutItem.y },
+          size: { cols: layoutItem.w, rows: layoutItem.h },
         }
+      })
+      if (isEqual(nextWidgets, state.widgets)) {
+        return null
       }
-      return widget
+      return { widgets: nextWidgets }
     })
-    this.setState({ widgets: newWidgets })
   }
 
   onResizeStop(layout: any, oldItem: any, layoutItem: any) {
-    const newWidgets = this.state.widgets.map((widget) => {
-      if (widget.id === layoutItem.i) {
-        return {
-          ...widget,
-          position: {
-            x: layoutItem.x,
-            y: layoutItem.y,
-          },
-          size: {
-            cols: layoutItem.w,
-            rows: layoutItem.h,
-          },
+    this.setState((state) => ({
+      widgets: state.widgets.map((widget) => {
+        if (widget.id === layoutItem.i) {
+          return {
+            ...widget,
+            position: {
+              x: layoutItem.x,
+              y: layoutItem.y,
+            },
+            size: {
+              cols: layoutItem.w,
+              rows: layoutItem.h,
+            },
+          }
         }
-      }
-      return widget
-    })
-
-    this.setState({ widgets: newWidgets })
+        return widget
+      }),
+    }))
   }
 
   // 拖拽开始时设置placeholder
@@ -509,7 +681,6 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
 
   // 渲染单个小组件的内容
   renderWidgetContent(widget: WidgetInstance, widgetDef?: WidgetDefinition) {
-    const { isEditing } = this.state
     const {
       render,
       widgetClassName,
@@ -539,18 +710,24 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
   // 渲染所有小组件
   renderWidgets() {
     const { isEditing, widgets } = this.state
-    const { classnames, widgetWrapperClassName } = this.props
+    const { classnames, widgetWrapperClassName, cols } = this.props
+    const gridCols = cols || { md: this.state.layout.cols, xs: 1 }
+    const availableCols = gridCols[this.state.activeBreakpoint] ?? this.state.layout.cols
 
     return widgets.map((widget) => {
       const widgetDef = this.getWidgetDefinition(widget.widgetName)
       const widgetContent = this.renderWidgetContent(widget, widgetDef)
-      const layoutConfig = getWidgetLayoutConfig(widget, widgetDef)
+      const layoutConfig = getWidgetLayoutConfig(widget, widgetDef, availableCols)
 
       return (
         <div
           key={widget.id}
           data-grid={layoutConfig}
-          className={classnames('widget-wrapper', widgetWrapperClassName)}>
+          className={classnames(
+            'widget-wrapper',
+            { 'widget-wrapper--editing': isEditing },
+            widgetWrapperClassName
+          )}>
           {isEditing ? (
             <WidgetWrapper
               widget={widget}
@@ -586,6 +763,7 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
       <DashboardEditToolbar
         editable={editable ?? true}
         isEditing={isEditing}
+        widgetCount={this.state.widgets.length}
         widgetDefinitions={widgetDefinitions}
         isDefinitionsDrawerOpen={isDefinitionsDrawerOpen}
         categoriesCollapsed={categoriesCollapsed}
@@ -623,18 +801,19 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
       className,
       data,
     } = this.props
-    const { isEditing, widgets, rowHeight, droppingItem, widgetDefinitions } = this.state
+    const { isEditing, widgets, layout, activeBreakpoint, droppingItem } = this.state
+    const gridCols = cols || { md: layout.cols, xs: 1 }
+    const isCanonicalLayout = !this.props.persistAsFields || activeBreakpoint === 'md'
+    const isDraggable = isEditing && isCanonicalLayout && layout.draggable
+    const isResizable = isEditing && isCanonicalLayout && layout.resizable
+    const isDroppable = isEditing && isCanonicalLayout
 
     // 如果有 widgets 需要 definition 但还没加载完成，显示加载状态
     // 注意：有内嵌 schemaTpl 的 widget 不需要等待 definition 加载
     if (this.hasWidgetsWaitingForDefinitions()) {
       return (
         <div className={cx('dashboard-grid', 'dashboard-grid--empty', className)}>
-          <DashboardEmptyStateSurface
-            loading
-            render={render}
-            placeholderSchema="<空>"
-          />
+          <DashboardEmptyStateSurface loading render={render} placeholderSchema="<空>" />
         </div>
       )
     }
@@ -666,19 +845,21 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
       return (
         <ResponsiveGridLayout
           className={cx('dashboard-grid', className)}
-          cols={cols || { md: 24, xs: 1 }}
+          cols={gridCols}
           breakpoints={breakpoints || { md: 992, xs: 0 }}
-          rowHeight={rowHeight}
+          rowHeight={layout.rowHeight}
           compactType={'vertical'}
           onDrop={this.onDrop.bind(this)}
           onResizeStop={this.onResizeStop.bind(this)}
           onDragStop={this.onDragStop.bind(this)}
+          onLayoutChange={this.onLayoutChange}
+          onBreakpointChange={this.onBreakpointChange}
           measureBeforeMount={false}
-          isDroppable={isEditing}
+          isDroppable={isDroppable}
           droppingItem={droppingItem}
           height={500}
-          isResizable={isEditing}
-          isDraggable={isEditing}
+          isResizable={isResizable}
+          isDraggable={isDraggable}
           draggableHandle=".draggable"
         />
       )
@@ -687,19 +868,21 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
     return (
       <ResponsiveGridLayout
         className={cx('dashboard-grid', className)}
-        cols={cols || { md: 24, xs: 1 }}
+        cols={gridCols}
         breakpoints={breakpoints || { md: 992, xs: 0 }}
-        rowHeight={rowHeight}
+        rowHeight={layout.rowHeight}
         compactType={'vertical'}
         onDrop={this.onDrop.bind(this)}
         onResizeStop={this.onResizeStop.bind(this)}
         onDragStop={this.onDragStop.bind(this)}
+        onLayoutChange={this.onLayoutChange}
+        onBreakpointChange={this.onBreakpointChange}
         measureBeforeMount={false}
-        isDroppable={isEditing}
+        isDroppable={isDroppable}
         droppingItem={droppingItem}
         height={500}
-        isResizable={isEditing}
-        isDraggable={isEditing}
+        isResizable={isResizable}
+        isDraggable={isDraggable}
         draggableHandle=".draggable">
         {this.renderWidgets()}
       </ResponsiveGridLayout>
@@ -709,9 +892,21 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
   render() {
     const { wrapperClassName, classnames: cx } = this.props
     return (
-      <div className={cx('dashboard-wrapper', wrapperClassName)}>
+      <div className={cx(
+        'dashboard-wrapper',
+        { 'dashboard-wrapper--editing': this.state.isEditing },
+        wrapperClassName
+      )}>
         {this.renderEditButtons()}
-        {this.renderDashboardContent()}
+        <div className="dashboard-canvas">
+          {this.renderDashboardContent()}
+          {this.state.isEditing && !this.state.widgets.length && (
+            <div className="dashboard-canvas-empty" aria-hidden="true">
+              <span>从组件列表拖入内容</span>
+              <span>在画布中调整位置与大小</span>
+            </div>
+          )}
+        </div>
       </div>
     )
   }
@@ -720,4 +915,5 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
 FormItem({
   type: 'dashboard',
   autoVar: false,
+  detectProps: ['data'],
 })(Dashboard)

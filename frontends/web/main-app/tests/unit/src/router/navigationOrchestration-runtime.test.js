@@ -7,10 +7,15 @@ const {
   tabs,
   openMenuAfterLogin,
   resolvePostLoginFallbackPath,
-  clearStatisticsStudioDirty,
-  getStatisticsStudioLeaveMessage,
-  installStatisticsStudioBeforeUnloadGuard,
-  shouldConfirmStatisticsStudioRouteLeave,
+  clearStatisticsDatasetEditorDirty,
+  getStatisticsDatasetEditorLeaveMessage,
+  installStatisticsDatasetEditorBeforeUnloadGuard,
+  shouldConfirmStatisticsDatasetEditorRouteLeave,
+  clearStatisticsChartEditorDirty,
+  getStatisticsChartEditorLeaveMessage,
+  installStatisticsChartEditorBeforeUnloadGuard,
+  installStatisticsChartEditorEventBridge,
+  shouldConfirmStatisticsChartEditorRouteLeave,
 } = vi.hoisted(() => ({
   store: {
     getters: {},
@@ -26,10 +31,15 @@ const {
   },
   openMenuAfterLogin: vi.fn(),
   resolvePostLoginFallbackPath: vi.fn(),
-  clearStatisticsStudioDirty: vi.fn(),
-  getStatisticsStudioLeaveMessage: vi.fn(() => 'leave?'),
-  installStatisticsStudioBeforeUnloadGuard: vi.fn(),
-  shouldConfirmStatisticsStudioRouteLeave: vi.fn(),
+  clearStatisticsDatasetEditorDirty: vi.fn(),
+  getStatisticsDatasetEditorLeaveMessage: vi.fn(() => 'leave?'),
+  installStatisticsDatasetEditorBeforeUnloadGuard: vi.fn(),
+  shouldConfirmStatisticsDatasetEditorRouteLeave: vi.fn(),
+  clearStatisticsChartEditorDirty: vi.fn(),
+  getStatisticsChartEditorLeaveMessage: vi.fn(() => 'leave chart?'),
+  installStatisticsChartEditorBeforeUnloadGuard: vi.fn(),
+  installStatisticsChartEditorEventBridge: vi.fn(),
+  shouldConfirmStatisticsChartEditorRouteLeave: vi.fn(),
 }))
 
 vi.mock('@/store/storeFacade', () => ({
@@ -56,11 +66,19 @@ vi.mock('@/common/menus/post-login', () => ({
   resolvePostLoginFallbackPath,
 }))
 
-vi.mock('@/utils/statisticsStudioDirtyGuard', () => ({
-  clearStatisticsStudioDirty,
-  getStatisticsStudioLeaveMessage,
-  installStatisticsStudioBeforeUnloadGuard,
-  shouldConfirmStatisticsStudioRouteLeave,
+vi.mock('@/utils/statisticsDatasetEditorDirtyGuard', () => ({
+  clearStatisticsDatasetEditorDirty,
+  getStatisticsDatasetEditorLeaveMessage,
+  installStatisticsDatasetEditorBeforeUnloadGuard,
+  shouldConfirmStatisticsDatasetEditorRouteLeave,
+}))
+
+vi.mock('@/utils/statisticsChartEditorDirtyGuard', () => ({
+  clearStatisticsChartEditorDirty,
+  getStatisticsChartEditorLeaveMessage,
+  installStatisticsChartEditorBeforeUnloadGuard,
+  installStatisticsChartEditorEventBridge,
+  shouldConfirmStatisticsChartEditorRouteLeave,
 }))
 
 import { createNavigationExecutor } from '../../../../src/router/navigationExecution.ts'
@@ -73,7 +91,8 @@ function createRuntimeExecutor() {
     openOrSwitchTab: (fullPath, options) => tabs.openOrSwitchTab(fullPath, options),
     openRootMenu: () => openMenuAfterLogin(),
     switchTab: (activeTabId, options) => tabs.switchTab(activeTabId, options),
-    updateTab: (activeTabId, fullPath, options) => tabs.updateTab(activeTabId, fullPath, options),
+    updateTab: (activeTabId, fullPath, options) =>
+      tabs.updateTab(activeTabId, fullPath, options),
   })
 }
 
@@ -112,12 +131,19 @@ beforeEach(() => {
   tabs.openOrSwitchTab.mockReset()
   openMenuAfterLogin.mockReset()
   resolvePostLoginFallbackPath.mockReset()
-  clearStatisticsStudioDirty.mockReset()
-  getStatisticsStudioLeaveMessage.mockReset()
-  getStatisticsStudioLeaveMessage.mockReturnValue('leave?')
-  installStatisticsStudioBeforeUnloadGuard.mockReset()
-  shouldConfirmStatisticsStudioRouteLeave.mockReset()
-  shouldConfirmStatisticsStudioRouteLeave.mockReturnValue(false)
+  clearStatisticsDatasetEditorDirty.mockReset()
+  getStatisticsDatasetEditorLeaveMessage.mockReset()
+  getStatisticsDatasetEditorLeaveMessage.mockReturnValue('leave?')
+  installStatisticsDatasetEditorBeforeUnloadGuard.mockReset()
+  shouldConfirmStatisticsDatasetEditorRouteLeave.mockReset()
+  shouldConfirmStatisticsDatasetEditorRouteLeave.mockReturnValue(false)
+  clearStatisticsChartEditorDirty.mockReset()
+  getStatisticsChartEditorLeaveMessage.mockReset()
+  getStatisticsChartEditorLeaveMessage.mockReturnValue('leave chart?')
+  installStatisticsChartEditorBeforeUnloadGuard.mockReset()
+  installStatisticsChartEditorEventBridge.mockReset()
+  shouldConfirmStatisticsChartEditorRouteLeave.mockReset()
+  shouldConfirmStatisticsChartEditorRouteLeave.mockReturnValue(false)
   getBootstrapMode.mockReturnValue('host')
   isExternal.mockReturnValue(false)
 })
@@ -273,7 +299,7 @@ test('guard-driven tab execution disables location sync while allowing navigatio
 })
 
 test('statistics dirty guard can abort navigation before route decisions run', async () => {
-  shouldConfirmStatisticsStudioRouteLeave.mockReturnValue(true)
+  shouldConfirmStatisticsDatasetEditorRouteLeave.mockReturnValue(true)
   globalThis.window.confirm = vi.fn(() => false)
   const next = vi.fn()
   const updateDocumentTitle = vi.fn()
@@ -292,4 +318,35 @@ test('statistics dirty guard can abort navigation before route decisions run', a
   )
 
   expect(next).toHaveBeenCalledWith(false)
+})
+
+test('chart dirty guard uses chart confirmation and clears chart state after approval', async () => {
+  shouldConfirmStatisticsChartEditorRouteLeave.mockReturnValue(true)
+  globalThis.window.confirm = vi.fn(() => true)
+  const next = vi.fn()
+  const guard = createGuard(vi.fn(), () => ({
+    isLogin: true,
+    whiteList: [],
+    preventTabOperation: false,
+    routeName: 'chart-list',
+    activeTabId: '',
+    tabsList: [],
+    routeTitle: '图表',
+  }))
+
+  await guard(
+    {
+      path: '/dev/demo/chart',
+      fullPath: '/dev/demo/chart',
+      name: 'chart-list',
+      meta: {},
+    },
+    { path: '/dev/demo/chart/demo.sales', fullPath: '/dev/demo/chart/demo.sales' },
+    next
+  )
+
+  expect(globalThis.window.confirm).toHaveBeenCalledWith('leave chart?')
+  expect(clearStatisticsChartEditorDirty).toHaveBeenCalledWith(
+    '/dev/demo/chart/demo.sales'
+  )
 })

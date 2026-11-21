@@ -1,0 +1,27 @@
+.statistics-dataset-access-title {
+  margin: 16px 0 12px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.statistics-dataset-authorization {
+  margin-bottom: 24px;
+
+  dt {
+    margin-top: 12px;
+    color: var(--color-text-secondary, #687386);
+    font-weight: 400;
+  }
+
+  dd {
+    margin: 4px 0 12px;
+  }
+
+  code {
+    display: block;
+    overflow-wrap: anywhere;
+    margin-top: 4px;
+    color: var(--color-text-secondary, #687386);
+    background: transparent;
+  }
+}

@@ -19,6 +19,15 @@ export interface WidgetConfig {
   header?: SchemaNode
   showHeader?: boolean
   showFooter?: boolean
+  showBorder?: boolean
+  border?: WidgetStyleConfig['border']
+  showRadius?: boolean
+  borderRadius?: WidgetStyleConfig['borderRadius']
+  showShadow?: boolean
+  boxShadow?: string
+  bodyPadding?: string
+  backgroundColor?: string
+  headerBackgroundColor?: string
   [key: string]: any
 }
 
@@ -142,8 +151,8 @@ export interface WidgetInstance {
   /** 引用的小组件定义名 */
   widgetName: string
 
-  /** 关联的 Report View / Query View 名称，作为业务模型持久化合同字段 */
-  viewName?: string
+  /** 关联的 Chart 名称，作为业务模型持久化合同字段 */
+  chartName?: string
 
   /** 在画布中的位置与尺寸 */
   position: GridPosition
@@ -216,28 +225,45 @@ export function createWidgetSchema(
   widgetInstance: WidgetInstance,
   widgetDefinition?: WidgetDefinition
 ): SchemaNode | null {
+  const chartName = widgetInstance.config?.chartName ?? widgetInstance.chartName
+  if (
+    widgetDefinition?.name === 'chart' &&
+    (typeof chartName !== 'string' || chartName.trim() === '')
+  ) {
+    return widgetDefinition.thumbSchema ?? null
+  }
+
   const schemaTpl = widgetInstance.schemaTpl ?? widgetDefinition?.schemaTpl ?? ''
-  const schema = createSchema(
-    schemaTpl,
-    widgetInstance.config ?? widgetDefinition?.defaultConfig ?? {}
-  )
+  const config = {
+    ...(widgetDefinition?.defaultConfig ?? {}),
+    ...(widgetInstance.config ?? {}),
+    chartName: widgetInstance.config?.chartName ?? widgetInstance.chartName,
+  }
+  const schema = createSchema(schemaTpl, config)
   return schema
 }
 
 // 将 WidgetInstance 转换为 react-grid-layout 需要的格式
 export function getWidgetLayoutConfig(
   widget: WidgetInstance,
-  widgetDef?: WidgetDefinition
+  widgetDef?: WidgetDefinition,
+  availableCols?: number
 ) {
+  const requestedWidth = widget.size?.cols ?? widgetDef?.defaultSize?.cols ?? 6
+  const minimumWidth = widgetDef?.sizeConstraints.min.cols || widget.size.cols || 6
+  const maximumWidth = availableCols && availableCols > 0 ? availableCols : undefined
+  const requestedMaximumWidth = widgetDef?.sizeConstraints.max.cols || 24
   return {
     i: widget.id,
     x: widget.position?.x ?? 0,
     y: widget.position?.y ?? 0,
-    w: widget.size?.cols ?? widgetDef?.defaultSize?.cols ?? 6,
+    w: maximumWidth ? Math.min(requestedWidth, maximumWidth) : requestedWidth,
     h: widget.size?.rows ?? widgetDef?.defaultSize?.rows ?? 10,
-    minW: widgetDef?.sizeConstraints.min.cols || widget.size.cols || 6,
+    minW: maximumWidth ? Math.min(minimumWidth, maximumWidth) : minimumWidth,
     minH: widgetDef?.sizeConstraints.min.rows || widget.size.rows || 10,
-    maxW: widgetDef?.sizeConstraints.max.cols || 24,
+    maxW: maximumWidth
+      ? Math.min(requestedMaximumWidth, maximumWidth)
+      : requestedMaximumWidth,
     maxH: widgetDef?.sizeConstraints.max.rows || 24,
   }
 }

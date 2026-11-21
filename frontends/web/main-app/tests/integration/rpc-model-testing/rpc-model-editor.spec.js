@@ -19,6 +19,188 @@ test.beforeEach(async ({ page }) => {
   await page.getByRole('button', { name: '编辑接口' }).click()
   await expect(page.locator('input[name="title"]')).toHaveValue('示例接口')
 })
+
+test('group can use an existing path, create a path and clear it through normal save', async ({
+  page,
+}) => {
+  const group = page.locator('input[name="group"]')
+  await group.fill('钉钉')
+  await page.getByText('钉钉/通讯录', { exact: true }).last().click()
+  await footer(page).getByRole('button', { name: '保存', exact: true }).click()
+  await expect
+    .poll(async () => (await calls(page, '/rpc-model/example')).at(-1)?.data?.group)
+    .toBe('钉钉/通讯录')
+  await group.fill('业务/订单')
+  await footer(page).getByRole('button', { name: '保存', exact: true }).click()
+  await expect
+    .poll(async () => (await calls(page, '/rpc-model/example')).at(-1)?.data?.group)
+    .toBe('业务/订单')
+  await group.fill('')
+  await footer(page).getByRole('button', { name: '保存', exact: true }).click()
+  await expect
+    .poll(async () => (await calls(page, '/rpc-model/example')).at(-1)?.data?.group)
+    .toBe('')
+})
+
+test('RPC-G03: development and runtime lists use a group tree beside searchable model rows', async ({
+  page,
+}) => {
+  await page.goto(`${harness.url}?view=groups`)
+  for (const selector of ['.dev-models', '.runtime-models']) {
+    await page.goto(
+      `${harness.url}?view=${selector === '.dev-models' ? 'dev-list' : 'runtime-list'}`
+    )
+    const browser = page.locator(selector)
+    const tree = browser.locator('.rpc-model-browser__aside')
+    const list = browser.locator('.rpc-model-browser__list')
+    await expect(list.getByText('旧接口', { exact: true })).toBeVisible()
+    const treeBounds = await tree.boundingBox()
+    const listBounds = await list.boundingBox()
+    expect(treeBounds.x + treeBounds.width).toBeLessThanOrEqual(listBounds.x)
+    await tree.getByText('钉钉', { exact: true }).click()
+    await expect(list.getByText('旧接口', { exact: true })).toHaveCount(0)
+    await expect(list.getByText('发送消息', { exact: true })).toBeVisible()
+    await tree.getByText('通讯录', { exact: true }).click()
+    await expect(list.getByText('发送消息', { exact: true })).toHaveCount(0)
+    await expect(list.getByText('读取成员', { exact: true })).toBeVisible()
+    await tree.locator('input[name="__rpcKeyword"]').fill('department')
+    await expect(list.getByText('读取成员', { exact: true })).toHaveCount(0)
+    await expect(list.getByText('读取部门', { exact: true })).toBeVisible()
+    await tree.locator('input[name="__rpcKeyword"]').fill('不存在')
+    await expect(list.getByText('读取部门', { exact: true })).toHaveCount(0)
+    await expect(tree.getByText('消息', { exact: true })).toBeVisible()
+    await tree.locator('input[name="__rpcKeyword"]').fill('')
+    await tree.getByText('未分组', { exact: true }).click()
+    await expect(list.getByText('旧接口', { exact: true })).toBeVisible()
+    await expect(list.getByText('读取成员', { exact: true })).toHaveCount(0)
+    await tree.getByText('全部模型', { exact: true }).click()
+    await expect(list.getByText('读取成员', { exact: true })).toBeVisible()
+    await expect(list.getByText('旧接口', { exact: true })).toBeVisible()
+    await page.screenshot({
+      path: path.resolve(
+        __dirname,
+        `../../../../../../tmp/testing-evidence/rpc-model-browser/${selector.slice(1)}.png`
+      ),
+      fullPage: true,
+    })
+  }
+})
+
+test('RPC-G04: the picker uses a group tree and list, confirms model names and cancels without changing them', async ({
+  page,
+}) => {
+  await page.goto(`${harness.url}?view=picker`)
+  const picker = page.locator('.cxd-Picker')
+  const saved = page.locator('.cxd-Form-item').filter({ hasText: '实际模型名称' })
+  await picker.locator('.cxd-Picker-btn').click()
+  const modal = page.locator('.cxd-Modal')
+  const tree = modal.locator('.rpc-model-browser__aside')
+  const list = modal.locator('.rpc-model-browser__list')
+  await tree.getByText('钉钉', { exact: true }).click()
+  await expect(saved).not.toContainText('group:')
+  await tree.getByText('通讯录', { exact: true }).click()
+  await expect(list.getByText('发送消息', { exact: true })).toHaveCount(0)
+  await tree.locator('input[name="__rpcKeyword"]').fill('MEMBER')
+  await expect(list.getByText('读取部门', { exact: true })).toHaveCount(0)
+  await list.getByRole('row').filter({ hasText: '读取成员' }).click()
+  await page.screenshot({
+    path: path.resolve(
+      __dirname,
+      '../../../../../../tmp/testing-evidence/rpc-model-browser/picker.png'
+    ),
+    fullPage: true,
+  })
+  await modal.getByRole('button', { name: '确认', exact: true }).click()
+  await expect(saved).toContainText('member')
+  await expect(picker).toContainText('读取成员')
+  await picker.locator('.cxd-Picker-btn').click()
+  await tree.getByText('未分组', { exact: true }).click()
+  await list.getByRole('row').filter({ hasText: '旧接口' }).click()
+  await modal.getByRole('button', { name: '取消', exact: true }).click()
+  await expect(saved).toContainText('member')
+  await picker.locator('.cxd-Picker-btn').click()
+  await tree.getByText('全部模型', { exact: true }).click()
+  await tree.locator('input[name="__rpcKeyword"]').fill('legacy')
+  await expect(list.getByText('读取成员', { exact: true })).toHaveCount(0)
+  await list.getByRole('row').filter({ hasText: '旧接口' }).click()
+  await modal.getByRole('button', { name: '确认', exact: true }).click()
+  await expect(saved).toContainText('legacy')
+  await expect(picker).toContainText('旧接口')
+})
+
+test('RPC-G05: existing model values reload labels and empty collections keep usable group navigation', async ({
+  page,
+}) => {
+  await page.goto(`${harness.url}?view=groups&selected=member`)
+  await expect(page.locator('.cxd-Picker')).toContainText('读取成员')
+  await page.goto(`${harness.url}?view=groups&empty=true`)
+  for (const selector of ['.dev-models', '.runtime-models']) {
+    const browser = page.locator(selector)
+    await expect(browser.getByText('全部模型', { exact: true })).toBeVisible()
+    await browser
+      .locator('.rpc-model-browser__aside')
+      .getByText('未分组', { exact: true })
+      .click()
+    await expect(
+      browser
+        .locator('.rpc-model-browser__list')
+        .getByText('暂无匹配的 RPC 模型', { exact: true })
+    ).toBeVisible()
+  }
+  await page.locator('.cxd-Picker-btn').click()
+  await expect(
+    page.locator('.cxd-Modal').getByText('全部模型', { exact: true })
+  ).toBeVisible()
+  await page
+    .locator('.cxd-Modal')
+    .getByRole('button', { name: '取消', exact: true })
+    .click()
+})
+test('RPC-G06: refresh updates the full group tree across pagination and keeps a narrow two-pane layout', async ({
+  page,
+}) => {
+  await page.goto(`${harness.url}?view=dev-list`)
+  await page.evaluate(() => {
+    window.__rpcRows = [
+      ...window.__rpcRows,
+      ...Array.from({ length: 11 }, (_, index) => ({
+        name: `archive-${index}`,
+        title: `历史接口 ${index}`,
+        group: '外部/历史',
+      })),
+    ]
+  })
+  await page.getByRole('button', { name: '刷新', exact: true }).click()
+  const tree = page.locator('.rpc-model-browser__aside')
+  const list = page.locator('.rpc-model-browser__list')
+  await tree.getByText('历史', { exact: true }).click()
+  await expect(list.getByRole('row').filter({ hasText: '历史接口' })).toHaveCount(10)
+  await list.locator('.cxd-Pagination').getByText('2', { exact: true }).click()
+  await expect(list.getByRole('row').filter({ hasText: '历史接口' })).toHaveCount(1)
+  await expect(tree.getByText('通讯录', { exact: true })).toBeVisible()
+  await tree.getByText('通讯录', { exact: true }).click()
+  await expect(list.getByText('读取成员', { exact: true })).toBeVisible()
+  await page.setViewportSize({ width: 390, height: 844 })
+  const treeBounds = await tree.boundingBox()
+  const listBounds = await list.boundingBox()
+  expect(treeBounds.x + treeBounds.width).toBeLessThanOrEqual(listBounds.x)
+  const groupLabel = tree.getByText('通讯录', { exact: true })
+  expect(
+    await groupLabel.evaluate((element) => element.scrollWidth <= element.clientWidth)
+  ).toBe(true)
+  expect((await tree.locator('label').first().boundingBox()).height).toBeLessThan(40)
+  expect(
+    await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)
+  ).toBe(true)
+  await page.screenshot({
+    path: path.resolve(
+      __dirname,
+      '../../../../../../tmp/testing-evidence/rpc-model-browser/narrow-list.png'
+    ),
+    fullPage: true,
+  })
+})
+
 test.afterEach(() => expect(errors).toEqual([]))
 const footer = (page) => page.locator('.cxd-Drawer-footer')
 const calls = (page, suffix) =>

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Drawer, toast } from 'amis'
+import { Button, Drawer, Icon, toast } from 'amis'
 import type { Api, RendererProps } from 'amis'
 import type { WidgetDefinition } from './common'
 import { WidgetDefinitionPanel } from './WidgetDefinitionPanel'
@@ -8,6 +8,7 @@ import { openDialog } from '#ouroboros-host/common/modal'
 export interface DashboardEditToolbarProps {
   editable: boolean
   isEditing: boolean
+  widgetCount: number
   widgetDefinitions: WidgetDefinition[]
   isDefinitionsDrawerOpen: boolean
   categoriesCollapsed: Record<string, boolean>
@@ -82,6 +83,7 @@ export class DashboardEditToolbar extends React.Component<DashboardEditToolbarPr
     const {
       editable,
       isEditing,
+      widgetCount,
       widgetDefinitions,
       isDefinitionsDrawerOpen,
       categoriesCollapsed,
@@ -103,14 +105,18 @@ export class DashboardEditToolbar extends React.Component<DashboardEditToolbarPr
 
     if (!isEditing) {
       return (
-        <div className="toolbar-box">
-          <div className="hover-area"></div>
+        <div className="dashboard-edit-toolbar">
+          <div className="dashboard-edit-summary">
+            <strong>画布</strong>
+            <span>{widgetCount} 个组件</span>
+          </div>
           <Button
-            level="link"
+            level="default"
             classPrefix="cxd-"
             onClick={onEditClick}
-            className="mr-2 edit-button">
-            开始编辑
+            className="dashboard-edit-start"
+          >
+            <Icon icon="fa fa-pencil" /> 编辑布局
           </Button>
         </div>
       )
@@ -118,29 +124,32 @@ export class DashboardEditToolbar extends React.Component<DashboardEditToolbarPr
 
     return (
       <>
-        <div className="edit-operation">
-          <Button onClick={onCancelEdit} disabled={!isEditing} className="mr-2">
-            取消
-          </Button>
-          <Button
-            level="primary"
-            onClick={onConfirmEdit}
-            disabled={!isEditing}
-            className="mr-2">
-            确定
-          </Button>
-          <Button level="enhance" onClick={onOpenDrawer} disabled={!isEditing}>
-            选择栏目
-          </Button>
-          {allowLoadTemplate && (
-            <Button
-              level="enhance"
-              onClick={this.handleLoadTemplateClick}
-              disabled={!isEditing}
-              className="ml-2">
-              加载模板
+        <div className="dashboard-edit-toolbar">
+          <div className="dashboard-edit-summary">
+            <strong>编辑画布</strong>
+            <span>拖动组件调整位置，拖拽边角调整大小</span>
+          </div>
+          <div className="dashboard-edit-actions">
+            <Button level="default" onClick={onOpenDrawer}>
+              <Icon icon="fa fa-plus" /> 添加组件
             </Button>
-          )}
+            <Button onClick={onCancelEdit} disabled={!isEditing}>
+              取消
+            </Button>
+            <Button level="primary" onClick={onConfirmEdit} disabled={!isEditing}>
+              完成布局
+            </Button>
+            {allowLoadTemplate && (
+              <Button
+                level="enhance"
+                onClick={this.handleLoadTemplateClick}
+                disabled={!isEditing}
+                className="ml-2"
+              >
+                加载模板
+              </Button>
+            )}
+          </div>
         </div>
         <Drawer
           showCloseButton
@@ -149,11 +158,13 @@ export class DashboardEditToolbar extends React.Component<DashboardEditToolbarPr
           overlay={false}
           position="right"
           show={isDefinitionsDrawerOpen}
-          onHide={onCloseDrawer}>
+          onHide={onCloseDrawer}
+        >
           <div className={cx('Drawer-header')}>
-            <div className={cx('Drawer-title')}>组件列表</div>
+            <div className={cx('Drawer-title')}>添加组件</div>
           </div>
-          <div className={cx('Drawer-body')}>
+          <div className={cx('Drawer-body', 'dashboard-component-library')}>
+            <p className="dashboard-library-hint">将组件拖入画布，再配置内容与数据。</p>
             {!widgetDefinitions || !widgetDefinitions.length ? (
               render('empty-component', {
                 type: 'tpl',

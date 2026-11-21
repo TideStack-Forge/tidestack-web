@@ -1,0 +1,823 @@
+{
+  "name": "/dev/{appName}/business-model",
+  "schema": {
+    "type": "page",
+    "id": "businessModelPage",
+    "className": "business-model-page ${moduleTreeVisible === false ? 'is-module-tree-hidden' : ''}",
+    "title": "业务模型",
+    "definitions": {
+      "addModelDialog": {
+        "type": "dialog",
+        "title": "新建业务模型",
+        "size": "md",
+        "url": "/dev/${appName}/business-model/add",
+        "closeOnEsc": false,
+        "showErrorMsg": true,
+        "showCloseButton": true,
+        "showLoading": true
+      },
+      "renameModelDialog": {
+        "type": "dialog",
+        "title": "请输入新的模型名",
+        "url": "/dev/${appName}/business-model/rename"
+      },
+      "changeNamespaceDialog": {
+        "type": "dialog",
+        "title": "请选择新的模型位置",
+        "url": "/dev/${appName}/business-model/move"
+      },
+      "showModelDetailDialog": {
+        "type": "dialog",
+        "title": "查看业务模型「${title}」",
+        "id": "showModelDetailDialog",
+        "size": "lg",
+        "url": "/dev/${appName}/business-model/detail",
+        "closeOnEsc": true,
+        "closeOnOutside": false
+      },
+      "showModelChangeLogDrawer": {
+        "type": "drawer",
+        "title": "查看业务模型「${title}」的变更记录",
+        "url": "/dev/${appName}/business-model/change-log",
+        "size": "md",
+        "resizable": true,
+        "closeOnEsc": true,
+        "closeOnOutside": true
+      },
+      "showValidationErrorsDialog": {
+        "type": "dialog",
+        "title": "业务模型「${title}」的后端校验错误",
+        "size": "md",
+        "closeOnEsc": true,
+        "closeOnOutside": true,
+        "body": [
+          {
+            "type": "alert",
+            "level": "warning",
+            "showIcon": true,
+            "className": "mb-3",
+            "body": "${validationSummary || '当前业务模型存在后端校验错误'}"
+          },
+          {
+            "type": "each",
+            "name": "validationDiagnostics",
+            "visibleOn": "${validationDiagnostics && validationDiagnostics.length}",
+            "items": {
+              "type": "container",
+              "className": "border rounded-sm p-3 mb-2 bg-white",
+              "body": [
+                {
+                  "type": "tpl",
+                  "tpl": "${item.message}"
+                },
+                {
+                  "type": "tpl",
+                  "className": "text-muted text-xs mt-1",
+                  "tpl": "范围：${item.scope || 'model'}；类型：${item.diagnosticKind || 'unknown_diagnostic'}"
+                }
+              ]
+            }
+          },
+          {
+            "type": "each",
+            "name": "validationErrors",
+            "visibleOn": "${!(validationDiagnostics && validationDiagnostics.length)}",
+            "items": {
+              "type": "container",
+              "className": "border rounded-sm p-3 mb-2 bg-white",
+              "body": [
+                {
+                  "type": "tpl",
+                  "tpl": "${item}"
+                }
+              ]
+            }
+          }
+        ],
+        "actions": [
+          {
+            "type": "button",
+            "label": "关闭",
+            "actionType": "close"
+          }
+        ]
+      },
+      "changeLogList": {
+        "type": "crud",
+        "loadDataOnce": true,
+        "api": {
+          "method": "get",
+          "url": "/api/dev/${appName}/business-model/${fullName}/change-log"
+        },
+        "columns": [
+          {
+            "name": "time",
+            "type": "date",
+            "fromNow": true,
+            "label": "时间",
+            "popOver": {
+              "trigger": "hover",
+              "position": "left-top-left-bottom",
+              "showIcon": false,
+              "body": "${time | date:YYYY-MM-DD HH\\:mm\\:ss:}"
+            }
+          },
+          {
+            "name": "message",
+            "label": "提交信息"
+          },
+          {
+            "name": "authorName",
+            "label": "作者"
+          }
+        ],
+        "perPage": 50
+      },
+      "editModelButton": {
+        "type": "button",
+        "label": "编辑",
+        "icon": "fa fa-edit",
+        "disabledOn": "${isLocked && lockUser != SystemContext.user.userIdentity}",
+        "tooltipPlacement": "top",
+        "disabledTip": "该模型正在被 ${lockUserName} 编辑",
+        "onEvent": {
+          "click": {
+            "actions": [
+              {
+                "actionType": "ajax",
+                "args": {
+                  "api": {
+                    "method": "post",
+                    "url": "/api/dev/${appName}/business-model/${fullName}/lock"
+                  }
+                }
+              },
+              {
+                "actionType": "openOrSwitchTab",
+                "expression": "responseResult.responseStatus == 0",
+                "args": {
+                  "title": "编辑业务模型「${title}」",
+                  "url": "/dev/${appName}/business-model/${fullName}",
+                  "reloadOnReceive": true
+                }
+              },
+              {
+                "actionType": "reload",
+                "componentName": "modelList"
+              }
+            ]
+          }
+        }
+      },
+      "addModuleDialog": {
+        "type": "dialog",
+        "title": "新建模块",
+        "url": "/dev/${appName}/business-model/module-tree/add"
+      },
+      "editModuleDialog": {
+        "type": "dialog",
+        "title": "编辑模块「${title}」",
+        "url": "/dev/${appName}/business-model/module-tree/edit"
+      },
+      "modelBasicInfo": {
+        "type": "service",
+        "api": {
+          "method": "get",
+          "url": "/api/dev/${appName}/business-model/${fullName}/meta",
+          "responseData": {
+            "&": "$model",
+            "creationTime": "$creationTime",
+            "lastModifiedTime": "$lastModifiedTime",
+            "lastCommittedTime": "$lastCommittedTime",
+            "isLocked": "$isLocked",
+            "lockUser": "$lockUser",
+            "lockUserName": "$lockUserName",
+            "isChanged": "$isChanged",
+            "size": "${ size | bytes }"
+          }
+        },
+        "body": {
+          "type": "property",
+          "items": [
+            {
+              "label": "模型标题",
+              "content": "${ title }"
+            },
+            {
+              "label": "字段数量",
+              "content": "${ fieldsCount }"
+            },
+            {
+              "label": "文件大小",
+              "content": {
+                "type": "tpl",
+                "tpl": "${ size }"
+              }
+            },
+            {
+              "label": "模型全名",
+              "content": "${ fullName }"
+            },
+            {
+              "label": "模型名",
+              "content": "${ name }"
+            },
+            {
+              "label": "模型位置",
+              "content": "${ namespace ? namespace : '<根>' }"
+            },
+            {
+              "label": "模型描述",
+              "content": "${ description }",
+              "span": 3
+            },
+            {
+              "label": "创建时间",
+              "content": "${ creationTime | date:YYYY-MM-DD HH\\:mm\\:ss: }"
+            },
+            {
+              "label": "最后提交时间",
+              "content": "${ lastCommittedTime | date:YYYY-MM-DD HH\\:mm\\:ss: }"
+            },
+            {
+              "label": "修改时间",
+              "content": "${ lastModifiedTime | date:YYYY-MM-DD HH\\:mm\\:ss: }"
+            },
+            {
+              "label": "是否已锁定",
+              "content": "${ isLocked ? '是' : '否' }"
+            },
+            {
+              "label": "存在未提交变更",
+              "content": "${ isChanged ? '是' : '否' }"
+            },
+            {
+              "label": "锁定人",
+              "content": "${ lockUserName ? lockUserName : '<无>' }"
+            }
+          ]
+        }
+      },
+      "modelBundlePanel": {
+        "type": "amis-schema",
+        "schemaId": "/dev/{appName}/business-model/model-bundle"
+      }
+    },
+    "aside": [
+      {
+        "size": "sm",
+        "style": {
+          "display": "block",
+          "position": "static"
+        },
+        "wrapperBody": false,
+        "isFixedHeight": false,
+        "type": "container",
+        "body": [
+          {
+            "style": {
+              "flexWrap": "nowrap",
+              "display": "flex",
+              "position": "static"
+            },
+            "className": "mb-1",
+            "wrapperBody": false,
+            "isFixedHeight": false,
+            "type": "container",
+            "body": [
+              {
+                "actionType": "drawer",
+                "drawer": {
+                  "type": "drawer",
+                  "position": "left",
+                  "title": "管理模块树",
+                  "url": "/dev/${appName}/business-model/module-tree/list",
+                  "actions": [
+                    {
+                      "type": "action",
+                      "actionType": "confirm",
+                      "label": "确定",
+                      "level": "primary"
+                    }
+                  ],
+                  "size": "lg",
+                  "closeOnEsc": false,
+                  "showErrorMsg": true,
+                  "showCloseButton": false,
+                  "showLoading": true,
+                  "resizable": true
+                },
+                "reload": "moduleTree",
+                "block": true,
+                "label": "管理模块树",
+                "type": "button"
+              },
+              {
+                "actionType": "reload",
+                "icon": "fa fa-refresh",
+                "className": "ml-1",
+                "type": "button",
+                "target": "moduleTree"
+              }
+            ],
+            "isFixedWidth": false
+          },
+          {
+            "type": "input-tree",
+            "name": "moduleTree",
+            "label": "",
+            "enableNodePath": false,
+            "hideRoot": true,
+            "multiple": false,
+            "source": {
+              "method": "get",
+              "url": "/api/dev/${appName}/business-model/module-tree",
+              "responseData": {
+                "items": [
+                  {
+                    "fullName": "",
+                    "icon": "home",
+                    "name": "",
+                    "title": "全部模型",
+                    "children": "$items"
+                  }
+                ]
+              }
+            },
+            "valueField": "fullName",
+            "labelField": "title",
+            "showIcon": true,
+            "initiallyOpen": true,
+            "heightAuto": true,
+            "onEvent": {
+              "change": {
+                "actions": [
+                  {
+                    "actionType": "reload",
+                    "componentName": "modelList",
+                    "args": {
+                      "resetPage": true
+                    },
+                    "dataMergeMode": "merge",
+                    "data": {
+                      "module": "${event.data.value}"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        ],
+        "isFixedWidth": false
+      }
+    ],
+    "toolbar": [
+      {
+        "type": "button",
+        "align": "right",
+        "actionType": "dialog",
+        "label": "新建",
+        "level": "primary",
+        "icon": "fa fa-plus",
+        "dialog": {
+          "$ref": "addModelDialog",
+          "data": {
+            "appName": "${appName}",
+            "module": "${moduleTree}"
+          }
+        }
+      }
+    ],
+    "body": [
+      {
+        "type": "tabs",
+        "className": "business-model-views h-full",
+        "activeKey": "${view === 'visual-modeling' ? 1 : 0}",
+        "tabsMode": "line",
+        "tabs": [
+          {
+            "title": "模型列表",
+            "body": {
+              "type": "crud",
+              "name": "modelList",
+              "id": "modelList",
+              "api": {
+                "method": "get",
+                "data": {
+                  "module": "$module",
+                  "keyword": "$keyword",
+                  "includeValidationSnapshot": true
+                },
+                "messages": {},
+                "url": "/api/dev/${appName}/business-model",
+                "responseData": {
+                  "items": {
+                    "$items": {
+                      "&": "$model.businessModel",
+                      "validationState": "$model.validationSnapshot.validationState",
+                      "validationSummary": "$model.validationSnapshot.validationSummary",
+                      "validationDiagnostics": "$model.validationSnapshot.validationDiagnostics",
+                      "validationErrors": "$model.validationSnapshot.validationErrors",
+                      "lastValidatedTime": "$model.validationSnapshot.lastValidatedTime",
+                      "creationTime": "$creationTime",
+                      "lastModifiedTime": "$lastModifiedTime",
+                      "lastCommittedTime": "$lastCommittedTime",
+                      "isLocked": "$isLocked",
+                      "lockUser": "$lockUser",
+                      "lockUserName": "$lockUserName",
+                      "isChanged": "$isChanged",
+                      "lockState": "$lockState",
+                      "versionState": "$versionState",
+                      "size": "${ size | bytes }"
+                    }
+                  }
+                }
+              },
+              "filter": {
+                "title": "",
+                "wrapWithPanel": false,
+                "body": [
+                  {
+                    "name": "keyword",
+                    "label": "",
+                    "type": "input-text",
+                    "size": "lg",
+                    "placeholder": "请输入关键字",
+                    "addOn": {
+                      "type": "action",
+                      "actionType": "submit",
+                      "icon": "fa fa-search",
+                      "label": "过滤"
+                    }
+                  },
+                  {
+                    "name": "module",
+                    "type": "hidden"
+                  }
+                ],
+                "className": "mb-3"
+              },
+              "headerToolbar": [
+                "reload",
+                {
+                  "type": "tpl",
+                  "align": "right",
+                  "tpl": "<span class='text-secondary'>${ module ? '命名空间: <span class=\\'text-black\\'>' + module + '</span>，' : '' }共 ${total} 个模型</span>"
+                }
+              ],
+              "rowClassNameExpr": "${isLocked ? lockUser != SystemContext.user.userIdentity ? 'bg-red-50' : 'bg-green-50' : ''}",
+              "columns": [
+                {
+                  "type": "container",
+                  "name": "fullName",
+                  "label": "模型",
+                  "bodyClassName": "flex items-center",
+                  "body": [
+                    {
+                      "type": "icon",
+                      "icon": "${icon || 'fa fa-file-o'}",
+                      "vendor": "",
+                      "className": "w-11 mr-3 text-center text-3xl text-secondary"
+                    },
+                    {
+                      "type": "container",
+                      "body": [
+                        {
+                          "type": "container",
+                          "bodyClassName": "flex flex-row",
+                          "body": [
+                            {
+                              "type": "tpl",
+                              "tpl": "${title}${((validationDiagnostics && validationDiagnostics.length) || (validationErrors && validationErrors.length) || validationSummary) ? '&nbsp;<i class=\"text-warning ml-2\">(存在校验错误)</i>' : ''}${!isEnabled ? '&nbsp;<i class=\"text-gray-400 ml-2\">(未启用)</i>' : ''}",
+                              "hiddenOn": "${ isChanged }"
+                            },
+                            {
+                              "type": "tooltip-wrapper",
+                              "content": "存在未提交的修改",
+                              "body": "${title}&nbsp;* ${((validationDiagnostics && validationDiagnostics.length) || (validationErrors && validationErrors.length) || validationSummary) ? '&nbsp;<i class=\"text-warning ml-2\">(存在校验错误)</i>' : ''}${!isEnabled ? '&nbsp;<i class=\"text-gray-400 ml-2\">(未启用)</i>' : ''}",
+                              "className": "font-bold italic",
+                              "visibleOn": "${ isChanged }"
+                            },
+                            {
+                              "type": "tooltip-wrapper",
+                              "title": "存在后端校验错误",
+                              "content": "${validationSummary}",
+                              "body": {
+                                "type": "icon",
+                                "icon": "fa fa-triangle-exclamation ml-1",
+                                "className": "text-warning",
+                                "vendor": ""
+                              },
+                              "visibleOn": "${(validationDiagnostics && validationDiagnostics.length) || (validationErrors && validationErrors.length) || validationSummary}"
+                            },
+                            {
+                              "type": "tooltip-wrapper",
+                              "title": "${lockUser == SystemContext.user.userIdentity ? '' : '模型已被锁定'}",
+                              "content": "${lockUser == SystemContext.user.userIdentity ? '你正在编辑该模型' : '该模型正在被 ' + lockUserName + ' 编辑'}",
+                              "body": {
+                                "type": "icon",
+                                "icon": "fa fa-lock ml-1",
+                                "className": {
+                                  "text-danger": "${ lockUser != SystemContext.user.userIdentity }",
+                                  "text-success": "${ lockUser == SystemContext.user.userIdentity }"
+                                },
+                                "vendor": ""
+                              },
+                              "visibleOn": "${isLocked}"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "tpl",
+                          "className": "text-secondary",
+                          "tpl": "<i class='text-gray-400'>${ (namespace && namespace !== module) ? namespace + '.' : ''}</i>${name}"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "name": "order",
+                  "label": "顺序"
+                },
+                {
+                  "name": "fieldsCount",
+                  "label": "业务属性"
+                },
+                {
+                  "name": "size",
+                  "label": "文件大小"
+                },
+                {
+                  "type": "tooltip-wrapper",
+                  "name": "lastModifiedTime",
+                  "label": "修改时间",
+                  "content": "${lastModifiedTime | toDate | date: YYYY-MM-DD HH\\:mm\\:ss}",
+                  "body": {
+                    "type": "date",
+                    "name": "lastModifiedTime",
+                    "fromNow": true
+                  }
+                },
+                {
+                  "type": "operation",
+                  "label": "操作",
+                  "width": 130,
+                  "buttons": [
+                    {
+                      "$ref": "editModelButton",
+                      "level": "primary",
+                      "hiddenOn": "${lockUser == SystemContext.user.userIdentity}"
+                    },
+                    {
+                      "type": "button-group",
+                      "buttons": [
+                        {
+                          "$ref": "editModelButton",
+                          "label": false,
+                          "level": "success",
+                          "tooltip": "继续编辑"
+                        },
+                        {
+                          "type": "button",
+                          "actionType": "ajax",
+                          "label": false,
+                          "icon": "fa fa-undo",
+                          "level": "warning",
+                          "tooltipPlacement": "top",
+                          "tooltip": "放弃变更并解锁",
+                          "api": {
+                            "method": "post",
+                            "url": "/api/dev/${appName}/business-model/${fullName}/rollback"
+                          },
+                          "confirmText": "确认要放弃变更吗？该操作无法撤销！"
+                        }
+                      ],
+                      "visibleOn": "${lockUser == SystemContext.user.userIdentity}"
+                    },
+                    {
+                      "type": "dropdown-button",
+                      "label": "",
+                      "icon": "fa fa-ellipsis-v text-secondary hover:text-primary",
+                      "align": "right",
+                      "buttons": [
+                        {
+                          "type": "button",
+                          "actionType": "dialog",
+                          "label": "重命名",
+                          "icon": "fa-solid fa-i-cursor text-center w-4 mr-2",
+                          "disabledOn": "isLocked",
+                          "tooltipPlacement": "left",
+                          "disabledTip": "该模型正在编辑中，无法重命名",
+                          "dialog": {
+                            "$ref": "renameModelDialog",
+                            "data": {
+                              "appName": "${appName}",
+                              "fullName": "${fullName}",
+                              "name": "${name}"
+                            }
+                          }
+                        },
+                        {
+                          "type": "button",
+                          "label": "移动模型",
+                          "actionType": "dialog",
+                          "icon": "fa-solid fa-folder-tree text-center w-4 mr-2",
+                          "disabledOn": "isLocked",
+                          "tooltipPlacement": "left",
+                          "disabledTip": "该模型正在编辑中，无法移动",
+                          "dialog": {
+                            "$ref": "changeNamespaceDialog",
+                            "data": {
+                              "appName": "${appName}",
+                              "fullName": "${fullName}",
+                              "namespace": "${namespace}"
+                            }
+                          }
+                        },
+                        {
+                          "type": "button",
+                          "label": "立即编辑",
+                          "icon": "fa fa-edit text-center w-4 mr-2",
+                          "level": "link",
+                          "disabledOn": "${isLocked && lockUser != SystemContext.user.userIdentity}",
+                          "tooltipPlacement": "left",
+                          "disabledTip": "该模型正在被 ${lockUserName} 编辑",
+                          "onEvent": {
+                            "click": {
+                              "actions": [
+                                {
+                                  "actionType": "ajax",
+                                  "args": {
+                                    "api": {
+                                      "method": "post",
+                                      "url": "/api/dev/${appName}/business-model/${fullName}/lock"
+                                    }
+                                  }
+                                },
+                                {
+                                  "actionType": "dialog",
+                                  "expression": "responseResult.responseStatus == 0",
+                                  "args": {
+                                    "dialog": {
+                                      "type": "dialog",
+                                      "title": "编辑业务模型「${title}」",
+                                      "name": "edit-business-model-dialog",
+                                      "size": "full",
+                                      "url": "/dev/${appName}/business-model/edit",
+                                      "showLoading": true,
+                                      "closeOnEsc": false,
+                                      "showErrorMsg": true,
+                                      "showCloseButton": true
+                                    }
+                                  }
+                                },
+                                {
+                                  "actionType": "reload",
+                                  "componentName": "modelList"
+                                }
+                              ]
+                            }
+                          }
+                        },
+                        {
+                          "type": "button",
+                          "actionType": "dialog",
+                          "label": "查看校验错误",
+                          "icon": "fa fa-triangle-exclamation text-warning text-center w-4 mr-2",
+                          "visibleOn": "${(validationDiagnostics && validationDiagnostics.length) || (validationErrors && validationErrors.length) || validationSummary}",
+                          "dialog": {
+                            "$ref": "showValidationErrorsDialog"
+                          }
+                        },
+                        {
+                          "type": "button",
+                          "actionType": "drawer",
+                          "label": "查看变更记录",
+                          "icon": "fa-solid fa-history text-center w-4 mr-2",
+                          "drawer": {
+                            "$ref": "showModelChangeLogDrawer"
+                          }
+                        },
+                        {
+                          "type": "button",
+                          "actionType": "ajax",
+                          "icon": "fa fa-trash text-danger text-center w-4 mr-2",
+                          "className": "hover:text-danger",
+                          "confirmText": "确定要删除「${title}」？",
+                          "label": "删除",
+                          "disabledOn": "${ isLocked }",
+                          "disabledTip": "该模型正在编辑中，无法删除",
+                          "api": {
+                            "method": "delete",
+                            "url": "/api/dev/${appName}/business-model/${fullName}"
+                          },
+                          "messages": {
+                            "success": "模型已成功删除"
+                          }
+                        }
+                      ],
+                      "hideCaret": true,
+                      "closeOnClick": true,
+                      "className": "ml-2",
+                      "menuClassName": "shadow-md"
+                    }
+                  ]
+                }
+              ],
+              "itemAction": {
+                "type": "action",
+                "actionType": "dialog",
+                "dialog": {
+                  "$ref": "showModelDetailDialog",
+                  "data": {
+                    "appName": "${appName}",
+                    "title": "${title}",
+                    "fullName": "${fullName}",
+                    "businessModelFullName": "${fullName}",
+                    "readOnly": true
+                  }
+                }
+              },
+              "footerToolbar": [
+                "statistics",
+                "pagination",
+                "switch-per-page"
+              ],
+              "perPageAvailable": [
+                10,
+                20,
+                50
+              ],
+              "perPage": 20,
+              "primaryField": "fullName",
+              "syncLocation": false,
+              "affixHeader": false,
+              "loadDataOnce": true
+            }
+          },
+          {
+            "title": "可视化建模",
+            "body": {
+              "type": "business-model-graph",
+              "api": {
+                "method": "get",
+                "url": "/api/dev/${appName}/business-model/graph"
+              },
+              "data": {
+                "appName": "${appName}",
+                "module": "${moduleTree}",
+                "moduleTreeVisible": "${moduleTreeVisible !== false}",
+                "userIdentity": "${SystemContext.user.userIdentity}"
+              },
+              "onEvent": {
+                "moduleTreeToggle": {
+                  "actions": [
+                    {
+                      "actionType": "setValue",
+                      "componentId": "businessModelPage",
+                      "args": {
+                        "value": {
+                          "moduleTreeVisible": "${event.data.visible}"
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              "id": "businessModelGraph",
+              "name": "businessModelGraph",
+              "module": "${moduleTree}",
+              "userIdentity": "${SystemContext.user.userIdentity}"
+            }
+          }
+        ],
+        "mountOnEnter": true,
+        "unmountOnExit": false
+      }
+    ],
+    "asideMaxWidth": 500,
+    "asideMinWidth": 200,
+    "asideResizor": true,
+    "asideClassName": "w-60",
+    "css": {
+      ".is-checked": {
+        "background-color": "var(--select-tree-active-bg-color)"
+      },
+      ".cxd-Tree-itemLabel:hover": {
+        "background-color": "var(--Tree-item-onHover-bg-pure)"
+      },
+      ".cxd-Tree-itemLabel.is-checked:hover": {
+        "background-color": "var(--select-tree-active-bg-color)"
+      },
+      ".cxd-Modal--full .editor-full-height": {
+        "height": "100%",
+        "max-height": "calc(100% - 24px)"
+      },
+      ".cxd-Modal--lg .editor-full-height2": {
+        "height": "100%",
+        "max-height": "calc(80vh - 120px)"
+      }
+    }
+  }
+}

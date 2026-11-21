@@ -454,9 +454,9 @@ export class BusinessBehaviorCatalog extends React.Component<Props, State> {
             {catalog.subscriptions
               .filter(
                 (subscription) =>
-                  subscription.sourceEventModelFullName?.toLowerCase() ===
+                  subscription.sourceEvent?.modelFullName?.toLowerCase() ===
                     catalog.modelFullName.toLowerCase() &&
-                  subscription.sourceEventName?.toLowerCase() ===
+                  subscription.sourceEvent?.eventName?.toLowerCase() ===
                     selected.name.toLowerCase()
               )
               .map((subscription) => (
@@ -477,7 +477,7 @@ export class BusinessBehaviorCatalog extends React.Component<Props, State> {
               this.state.published?.consumers
                 .filter(
                   (consumer) =>
-                    consumer.subscription.sourceEventName?.toLowerCase() ===
+                    consumer.subscription.sourceEvent?.eventName?.toLowerCase() ===
                     selected.name.toLowerCase()
                 )
                 .map((consumer, index) => (

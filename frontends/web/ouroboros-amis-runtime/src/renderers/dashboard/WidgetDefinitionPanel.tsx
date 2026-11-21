@@ -41,10 +41,14 @@ export class WidgetDefinitionPanel extends React.Component<WidgetDefinitionPanel
           const widgetDefinitions = groupedData[key]
           return (
             <div className="widget-definitions-panel" key={key}>
-              <div className="widget-category-title" onClick={() => onToggleCollapse(key)}>
-                <p>{key}</p>
-                <i className={`fas fa-chevron-down ${collapsed ? '' : 'rotate'}`}></i>
-              </div>
+              <button
+                type="button"
+                className="widget-category-title"
+                aria-expanded={!collapsed}
+                onClick={() => onToggleCollapse(key)}>
+                <span>{key}</span>
+                <i aria-hidden="true" className={`fas fa-chevron-down ${collapsed ? '' : 'rotate'}`}></i>
+              </button>
               <div
                 className={`widget-definitions-container ${collapsed ? 'collapsed' : 'expanded'}`}>
                 {widgetDefinitions.map((def: WidgetDefinition) => (
@@ -58,7 +62,10 @@ export class WidgetDefinitionPanel extends React.Component<WidgetDefinitionPanel
                       type: 'widget-definition',
                       definition: def,
                     })}
-                    <div className="widget-definition-item__title">{def.title}</div>
+                    <div className="widget-definition-item__title">
+                      <strong>{def.title}</strong>
+                      <span>{def.description}</span>
+                    </div>
                   </div>
                 ))}
               </div>

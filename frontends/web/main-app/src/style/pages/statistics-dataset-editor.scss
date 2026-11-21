@@ -1,0 +1,42 @@
+.statistics-dataset-editor-info {
+  margin-bottom: 32px;
+
+  .statistics-dataset-editor-info-fields {
+    display: grid;
+    row-gap: 16px;
+  }
+
+  .cxd-Grid {
+    row-gap: 16px;
+  }
+}
+
+.statistics-dataset-metadata-tabs {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+
+  .cxd-Tabs-content,
+  .cxd-Tabs-pane,
+  .cxd-Form-item,
+  .cxd-Form-control {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .cxd-Table {
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .cxd-Table-content {
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .cxd-Table-table {
+    min-width: max-content;
+  }
+}

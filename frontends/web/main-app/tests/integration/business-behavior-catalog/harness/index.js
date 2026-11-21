@@ -2,6 +2,11 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { renderAmisSchema } from '@/components/amis/AmisComponent'
 import '@/style/index.scss'
+import { configureRouter } from '@/router/engines/routerEngine'
+configureRouter({
+  readTopology: () => [{ path: '/:page', name: 'behavior-harness', meta: {} }],
+  install: (router) => router.beforeEach((_to, _from, next) => next()),
+})
 window.React = React
 window.ReactDOM = ReactDOM
 

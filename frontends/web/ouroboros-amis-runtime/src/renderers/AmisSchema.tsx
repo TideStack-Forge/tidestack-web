@@ -7,7 +7,7 @@ import {
   dataMapping,
   buildApi,
 } from 'amis'
-import { debounce, isEqual, merge } from 'lodash'
+import { debounce, isEqual, merge, type DebouncedFunc } from 'lodash'
 import React from 'react'
 import { processAmisSchema } from '#ouroboros-host/common/i18n/amis'
 import { EventBus } from '#ouroboros-host/common/eventBus'
@@ -35,17 +35,20 @@ interface AmisSchemaProps extends Schema {
 export default class AmisSchema extends React.Component<AmisSchemaProps, any> {
   static contextType = ScopedContext
   fetcher: any
-  latestSchemaId: string | null = null
+  latestSchemaRequestKey: string | null = null
+  latestSchemaPromise: Promise<any> | null = null
+  schemaRequestSequence = 0
   latestRawSchema: any = null
   latestApi: any = null
   localeChangeHandler?: () => void
+  refreshSchema: DebouncedFunc<() => void>
 
   constructor(props: any, context: IScopedContext) {
     super(props)
     this.context = context
     this.fetcher = props.env.fetcher
     this.state = { schema: null }
-    this.refreshSchema = debounce(this.refreshSchema.bind(this), 100)
+    this.refreshSchema = debounce(this.resolveSchema.bind(this), 100)
   }
 
   componentDidMount() {
@@ -63,6 +66,8 @@ export default class AmisSchema extends React.Component<AmisSchemaProps, any> {
   }
 
   componentWillUnmount() {
+    this.refreshSchema.cancel()
+    this.schemaRequestSequence++
     // 取消监听
     if (this.localeChangeHandler) {
       EventBus.unsubscribe('locale-changed', this.localeChangeHandler)
@@ -73,12 +78,14 @@ export default class AmisSchema extends React.Component<AmisSchemaProps, any> {
     return this.props.schemaId || (this.props as any).data?.__schemaId || undefined
   }
 
-  refreshSchema() {
+  private resolveSchema() {
     const { schemaId, source, autoRemapping, data = {}, schema = {} } = this.props
     const schemaDeferred = new Deferred()
+    let requestSequence = this.schemaRequestSequence
 
     // 缓存原始 schema，检查更新渲染 schema
     schemaDeferred.promise.then((schema: any) => {
+      if (requestSequence !== this.schemaRequestSequence) return
       this.latestRawSchema = schema
       if (autoRemapping === true) {
         schema = dataMapping(schema, this.props.data)
@@ -111,11 +118,15 @@ export default class AmisSchema extends React.Component<AmisSchemaProps, any> {
       const finalSchemaId = schemaId.includes('$')
         ? dataMapping(schemaId, data)
         : schemaId
-      if (finalSchemaId === this.latestSchemaId) {
-        schemaDeferred.resolve(this.latestRawSchema)
-      } else if (typeof finalSchemaId === 'string') {
-        this.latestSchemaId = finalSchemaId
-        this.fetchSchemaById(finalSchemaId).then(schemaDeferred.resolve)
+      if (typeof finalSchemaId === 'string') {
+        const schemaContext = this.getSchemaContext()
+        const requestKey = JSON.stringify([finalSchemaId, schemaContext])
+        if (requestKey !== this.latestSchemaRequestKey) {
+          this.latestSchemaRequestKey = requestKey
+          requestSequence = ++this.schemaRequestSequence
+          this.latestSchemaPromise = this.fetchSchemaById(finalSchemaId, schemaContext)
+        }
+        schemaDeferred.resolve(this.latestSchemaPromise)
       }
       return
     }
@@ -221,7 +232,7 @@ export default class AmisSchema extends React.Component<AmisSchemaProps, any> {
     return render('', finalSchema, { ...restProps, context: this.context })
   }
 
-  async fetchSchemaById(schemaId: string) {
+  private getSchemaContext() {
     const runtimeData = (this.props as any).data || {}
     const schemaContext = {
       appName: runtimeData.appName,
@@ -233,6 +244,10 @@ export default class AmisSchema extends React.Component<AmisSchemaProps, any> {
         delete (schemaContext as any)[key]
       }
     })
+    return schemaContext
+  }
+
+  async fetchSchemaById(schemaId: string, schemaContext = this.getSchemaContext()) {
     return await this.fetchSchemaByApi({
       method: 'get',
       url: '/api/ui-schema',

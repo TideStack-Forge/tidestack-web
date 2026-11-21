@@ -164,14 +164,7 @@ test('script shortcut previews formal resources, cancels without writes, then up
 test('subscription enablement preserves missing defaults and edits only the original definition', async ({
   page,
 }) => {
-  const subscription = {
-    name: 'notify',
-    listenerName: 'noticeListener',
-    sourceEventModelFullName: 'sales.Order',
-    sourceEventName: 'approved',
-    executionPrincipalRef: 'notice-user',
-    future: { keep: true },
-  }
+  const subscription = { name: 'notify', future: { keep: true }, sourceEvent: { modelFullName: 'sales.Order', eventName: 'approved' }, target: { kind: 'listener', listenerName: 'noticeListener' }, executionMode: 'AFTER_COMMIT_TRANSACTIONAL' }
   await mount(page, { eventSubscriptions: [subscription] })
   await page.getByRole('button', { name: '事件订阅', exact: true }).click()
   await page.getByRole('button', { name: /notify notify/ }).click()

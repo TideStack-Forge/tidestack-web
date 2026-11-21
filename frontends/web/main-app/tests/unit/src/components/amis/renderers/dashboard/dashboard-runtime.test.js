@@ -126,7 +126,8 @@ function loadDashboardModule() {
       }
       if (request === './WidgetEditableWrapper') {
         return {
-          WidgetWrapper: ({ children }) => React.createElement('widget-wrapper', null, children),
+          WidgetWrapper: ({ children }) =>
+            React.createElement('widget-wrapper', null, children),
         }
       }
       if (request === './DashboardEditToolbar') {
@@ -224,8 +225,14 @@ test('DashboardEmptyStateSurface keeps loading spinner and indicator/content lay
     indicatorElement.props.children[0].props.className,
     'empty-placeholder-indicator user-dashboard-empty-tail'
   )
-  assert.equal(indicatorElement.props.children[1].props.className, 'empty-placeholder-content')
-  assert.equal(indicatorElement.props.children[1].props.children.props.className, 'empty-placeholder-stack')
+  assert.equal(
+    indicatorElement.props.children[1].props.className,
+    'empty-placeholder-content'
+  )
+  assert.equal(
+    indicatorElement.props.children[1].props.children.props.className,
+    'empty-placeholder-stack'
+  )
   assert.equal(
     indicatorElement.props.children[1].props.children.props.children[0].props.className,
     'empty-placeholder-image'
@@ -282,10 +289,7 @@ test('empty dashboard injects editable placeholder helper data and keeps default
   assert.deepEqual(emptyStateElement.props.placeholderImage, {
     className: 'user-dashboard-empty-state__art',
   })
-  assert.equal(
-    emptyStateElement.props.placeholderData.dashboardEmptyState,
-    true
-  )
+  assert.equal(emptyStateElement.props.placeholderData.dashboardEmptyState, true)
   assert.match(
     emptyStateElement.props.placeholderData.dashboardComponentName,
     /^dashboard/
@@ -317,8 +321,7 @@ test('placeholder image uses default asset when omitted and can be explicitly di
     render: (name, schema) => ({ name, schema }),
     placeholderSchema: { type: 'tpl', tpl: 'hello' },
   })
-  const defaultImage =
-    defaultImageTree.props.children.props.children.props.children[0]
+  const defaultImage = defaultImageTree.props.children.props.children.props.children[0]
 
   assert.equal(defaultImage.type, 'img')
   assert.equal(defaultImage.props.className, 'empty-placeholder-image')
@@ -357,7 +360,50 @@ test('empty dashboard switches from static empty-state surface to droppable grid
   assert.equal(editingTree.props.isDroppable, true)
 })
 
-test('dashboard output normalizes report-view config viewName to top-level widget field', () => {
+test('dashboard output persists chart references and formal config only', () => {
+  let emittedValue
+  const { instance } = createDashboardInstance({
+    persistAsFields: true,
+    onChange: (value) => {
+      emittedValue = value
+    },
+  })
+  instance.state.widgetDefinitions = [
+    {
+      name: 'chart',
+      schemaTpl: {
+        type: 'chart-runtime',
+        chartName: '#{chartName}',
+      },
+    },
+  ]
+  instance.state.widgets = [
+    {
+      id: 'widget-1',
+      widgetName: 'chart',
+      position: { x: 0, y: 0 },
+      size: { cols: 12, rows: 10 },
+      config: {
+        title: 'Sales',
+        chartName: ' demo.salesChart ',
+      },
+      styleConfig: { showBorder: true, bodyPadding: '16px' },
+    },
+  ]
+
+  instance.notifyChange()
+
+  assert.equal(emittedValue.widgets[0].chartName, 'demo.salesChart')
+  assert.equal(emittedValue.widgets[0].config.chartName, undefined)
+  assert.equal(emittedValue.widgets[0].config.schema, undefined)
+  assert.equal(emittedValue.widgets[0].config.showBorder, true)
+  assert.equal(emittedValue.widgets[0].config.bodyPadding, '16px')
+  assert.equal(emittedValue.widgets[0].schemaTpl, undefined)
+  assert.equal(emittedValue.widgets[0].styleConfig, undefined)
+  assert.equal(emittedValue.layout.cols, 24)
+})
+
+test('shared dashboard keeps its existing value shape outside business-model mode', () => {
   let emittedValue
   const { instance } = createDashboardInstance({
     embedSchemaTpl: true,
@@ -367,58 +413,54 @@ test('dashboard output normalizes report-view config viewName to top-level widge
   })
   instance.state.widgetDefinitions = [
     {
-      name: 'report-view',
-      schemaTpl: {
-        type: 'report-view-runtime',
-        viewName: '#{viewName}',
-      },
+      name: 'summary',
+      schemaTpl: { type: 'tpl', tpl: '${title}' },
     },
   ]
   instance.state.widgets = [
     {
-      id: 'widget-1',
-      widgetName: 'report-view',
+      id: 'summary-1',
+      widgetName: 'summary',
       position: { x: 0, y: 0 },
-      size: { cols: 12, rows: 10 },
-      config: {
-        title: 'Sales',
-        viewName: ' demo.salesReport ',
-      },
+      size: { cols: 6, rows: 4 },
+      config: { title: 'Summary' },
+      styleConfig: { showBorder: true },
     },
   ]
 
   instance.notifyChange()
 
-  assert.equal(emittedValue.widgets[0].viewName, 'demo.salesReport')
-  assert.equal(emittedValue.widgets[0].config.viewName, ' demo.salesReport ')
+  assert.equal(emittedValue.layout, undefined)
+  assert.equal(emittedValue.widgets[0].styleConfig.showBorder, true)
   assert.deepEqual(emittedValue.widgets[0].config.schema, {
-    type: 'report-view-runtime',
-    viewName: '#{viewName}',
+    type: 'tpl',
+    tpl: '${title}',
   })
+  assert.equal(instance.state.layout.rowHeight, 10)
 })
 
-test('dashboard editor roundtrip preserves report-view selection, layout, and business-model save shape', () => {
+test('dashboard editor roundtrip preserves chart selection, layout, and business-model save shape', () => {
   let savedValue
-  const reportViewDefinition = {
-    name: 'report-view',
-    title: '报表视图',
+  const chartDefinition = {
+    name: 'chart',
+    title: '图表',
     defaultSize: { rows: 10, cols: 12 },
     defaultConfig: {
-      title: '报表视图',
+      title: '图表',
       showHeader: true,
     },
     schemaTpl: {
-      type: 'report-view-runtime',
-      viewName: '#{viewName}',
+      type: 'chart-runtime',
+      chartName: '#{chartName}',
     },
   }
   const { instance } = createDashboardInstance({
-    embedSchemaTpl: true,
+    persistAsFields: true,
     onChange: (value) => {
       savedValue = value
     },
   })
-  instance.state.widgetDefinitions = [reportViewDefinition]
+  instance.state.widgetDefinitions = [chartDefinition]
 
   instance.handleEditClick()
   instance.onDrop(
@@ -426,7 +468,7 @@ test('dashboard editor roundtrip preserves report-view selection, layout, and bu
     { x: 2, y: 3, w: 12, h: 10 },
     {
       dataTransfer: {
-        getData: () => 'report-view',
+        getData: () => 'chart',
       },
     }
   )
@@ -440,7 +482,7 @@ test('dashboard editor roundtrip preserves report-view selection, layout, and bu
     ...droppedWidget,
     config: {
       ...droppedWidget.config,
-      viewName: ' demo.sales-metric ',
+      chartName: ' demo.sales-metric ',
       title: 'Sales Metric',
     },
   })
@@ -455,25 +497,250 @@ test('dashboard editor roundtrip preserves report-view selection, layout, and bu
 
   assert.equal(instance.state.isEditing, false)
   assert.equal(savedValue.widgets.length, 1)
-  assert.equal(savedValue.widgets[0].widgetName, 'report-view')
-  assert.equal(savedValue.widgets[0].viewName, 'demo.sales-metric')
-  assert.equal(savedValue.widgets[0].config.viewName, ' demo.sales-metric ')
+  assert.equal(savedValue.widgets[0].widgetName, 'chart')
+  assert.equal(savedValue.widgets[0].chartName, 'demo.sales-metric')
+  assert.equal(savedValue.widgets[0].config.chartName, undefined)
   assert.equal(savedValue.widgets[0].config.title, 'Sales Metric')
   assert.equal(savedValue.widgets[0].position.x, 5)
   assert.equal(savedValue.widgets[0].position.y, 7)
   assert.equal(savedValue.widgets[0].size.cols, 14)
   assert.equal(savedValue.widgets[0].size.rows, 12)
-  assert.deepEqual(savedValue.widgets[0].config.schema, reportViewDefinition.schemaTpl)
+  assert.equal(savedValue.widgets[0].config.schema, undefined)
 
   const reloaded = createDashboardInstance({
+    persistAsFields: true,
     value: savedValue,
   })
   assert.equal(reloaded.instance.state.widgets.length, 1)
-  assert.equal(reloaded.instance.state.widgets[0].viewName, 'demo.sales-metric')
+  assert.equal(reloaded.instance.state.widgets[0].chartName, 'demo.sales-metric')
   assert.equal(reloaded.instance.state.widgets[0].position.x, 5)
   assert.equal(reloaded.instance.state.widgets[0].position.y, 7)
   assert.equal(reloaded.instance.state.widgets[0].size.cols, 14)
   assert.equal(reloaded.instance.state.widgets[0].size.rows, 12)
+})
+
+test('dashboard runtime adopts widgets when the page init API updates the data domain', () => {
+  const { instance } = createDashboardInstance({
+    persistAsFields: true,
+    data: {},
+  })
+  const previousProps = instance.props
+  const previousState = { ...instance.state }
+
+  instance.props = {
+    ...instance.props,
+    data: {
+      widgets: [
+        {
+          id: 'widget-1',
+          widgetName: 'chart',
+          chartName: 'demo.sales',
+          position: { x: 0, y: 0 },
+          size: { cols: 12, rows: 10 },
+          config: { title: 'Sales' },
+        },
+      ],
+      layout: { cols: 24, rowHeight: 30, draggable: true, resizable: true },
+    },
+  }
+
+  instance.componentDidUpdate(previousProps, previousState)
+
+  assert.equal(instance.state.widgets.length, 1)
+  assert.equal(instance.state.widgets[0].chartName, 'demo.sales')
+  assert.equal(instance.state.layout.rowHeight, 30)
+})
+
+test('dashboard chart reconfiguration replaces the persisted chart reference', () => {
+  let savedValue
+  const { instance } = createDashboardInstance({
+    persistAsFields: true,
+    value: {
+      widgets: [
+        {
+          id: 'widget-1',
+          widgetName: 'chart',
+          chartName: 'demo.old-chart',
+          position: { x: 0, y: 0 },
+          size: { cols: 12, rows: 10 },
+          config: { title: 'Old chart' },
+        },
+      ],
+    },
+    onChange: (value) => {
+      savedValue = value
+    },
+  })
+
+  instance.handleEditClick()
+  instance.handleUpdateWidget({
+    ...instance.state.widgets[0],
+    config: {
+      ...instance.state.widgets[0].config,
+      chartName: 'demo.new-chart',
+    },
+  })
+  instance.handleConfirmEdit()
+
+  assert.equal(savedValue.widgets[0].chartName, 'demo.new-chart')
+})
+
+test('dashboard refuses to confirm an unconfigured chart widget', () => {
+  const { instance } = createDashboardInstance({ persistAsFields: true })
+  instance.state.widgets = [
+    {
+      id: 'widget-1',
+      widgetName: 'chart',
+      position: { x: 0, y: 0 },
+      size: { cols: 12, rows: 10 },
+      config: {},
+    },
+  ]
+  instance.state.isEditing = true
+
+  instance.handleConfirmEdit()
+
+  assert.equal(instance.state.isEditing, true)
+})
+
+test('dashboard cancel restores the edit snapshot and layout changes persist all widgets', () => {
+  let savedValue
+  const { instance } = createDashboardInstance({
+    persistAsFields: true,
+    value: {
+      layout: { cols: 12, rowHeight: 20, draggable: false, resizable: true },
+      widgets: [
+        {
+          id: 'widget-1',
+          widgetName: 'chart',
+          chartName: 'demo.sales',
+          position: { x: 0, y: 0 },
+          size: { cols: 6, rows: 8 },
+          config: { title: 'Original' },
+        },
+        {
+          id: 'widget-2',
+          widgetName: 'chart',
+          chartName: 'demo.margin',
+          position: { x: 6, y: 0 },
+          size: { cols: 6, rows: 8 },
+          config: { title: 'Margin' },
+        },
+      ],
+    },
+    onChange: (value) => {
+      savedValue = value
+    },
+  })
+
+  instance.handleEditClick()
+  instance.handleUpdateWidget({
+    ...instance.state.widgets[0],
+    config: { title: 'Changed' },
+  })
+  instance.handleCancelEdit()
+
+  assert.equal(instance.state.widgets[0].config.title, 'Original')
+  assert.equal(instance.state.isEditing, false)
+  assert.equal(instance.state.layout.rowHeight, 20)
+
+  instance.handleEditClick()
+  instance.onLayoutChange([
+    { i: 'widget-1', x: 0, y: 2, w: 6, h: 8 },
+    { i: 'widget-2', x: 6, y: 2, w: 6, h: 10 },
+  ])
+  instance.handleConfirmEdit()
+
+  assert.equal(savedValue.layout.cols, 12)
+  assert.equal(savedValue.widgets[0].position.y, 2)
+  assert.equal(savedValue.widgets[1].position.y, 2)
+  assert.equal(savedValue.widgets[1].size.rows, 10)
+})
+
+test('business-model layout ignores readonly and responsive breakpoint reflow', () => {
+  const { instance } = createDashboardInstance({
+    persistAsFields: true,
+    value: {
+      widgets: [
+        {
+          id: 'widget-1',
+          widgetName: 'chart',
+          chartName: 'demo.sales',
+          position: { x: 6, y: 0 },
+          size: { cols: 12, rows: 10 },
+          config: {},
+        },
+      ],
+    },
+  })
+  instance.state.widgetDefinitions = [
+    {
+      name: 'chart',
+      defaultSize: { cols: 12, rows: 10 },
+      sizeConstraints: {
+        min: { cols: 6, rows: 6 },
+        max: { cols: 24, rows: 24 },
+      },
+      schemaTpl: { type: 'chart-runtime', chartName: '#{chartName}' },
+    },
+  ]
+  const responsiveLayout = [{ i: 'widget-1', x: 0, y: 0, w: 1, h: 10 }]
+
+  instance.onLayoutChange(responsiveLayout)
+  assert.deepEqual(instance.state.widgets[0].position, { x: 6, y: 0 })
+  assert.deepEqual(instance.state.widgets[0].size, { cols: 12, rows: 10 })
+
+  instance.handleEditClick()
+  instance.onBreakpointChange('xs')
+  instance.onLayoutChange(responsiveLayout)
+  assert.deepEqual(instance.state.widgets[0].position, { x: 6, y: 0 })
+  assert.equal(instance.renderDashboardContent().props.isDraggable, false)
+
+  instance.onBreakpointChange('md')
+  instance.onLayoutChange([{ i: 'widget-1', x: 4, y: 2, w: 10, h: 8 }])
+  assert.equal(instance.state.widgets[0].position.x, 4)
+  assert.equal(instance.state.widgets[0].position.y, 2)
+  assert.equal(instance.state.widgets[0].size.cols, 10)
+  assert.equal(instance.state.widgets[0].size.rows, 8)
+})
+
+test('business-model layout prop updates do not discard in-progress canvas edits', () => {
+  const initialValue = {
+    layout: { cols: 24, rowHeight: 30, draggable: true, resizable: true },
+    widgets: [
+      {
+        id: 'widget-1',
+        widgetName: 'chart',
+        chartName: 'demo.sales',
+        position: { x: 0, y: 0 },
+        size: { cols: 12, rows: 10 },
+        config: { title: 'Original' },
+      },
+    ],
+  }
+  const { instance } = createDashboardInstance({
+    persistAsFields: true,
+    value: initialValue,
+  })
+  const previousProps = instance.props
+  const previousState = { ...instance.state }
+
+  instance.handleEditClick()
+  instance.handleUpdateWidget({
+    ...instance.state.widgets[0],
+    config: { ...instance.state.widgets[0].config, title: 'In progress' },
+  })
+  instance.props = {
+    ...instance.props,
+    value: {
+      ...initialValue,
+      layout: { ...initialValue.layout, rowHeight: 36 },
+    },
+  }
+  instance.componentDidUpdate(previousProps, previousState)
+
+  assert.equal(instance.state.widgets[0].config.title, 'In progress')
+  assert.equal(instance.state.layout.rowHeight, 36)
 })
 
 test('dashboard editor requests form submit only when edit confirmation is explicit', () => {
@@ -553,7 +820,10 @@ test('dashboard editing preview keeps runtime data and does not inject sampleDat
     config: {},
   }
 
-  const rendered = instance.renderWidgetContent(widget, instance.state.widgetDefinitions[0])
+  const rendered = instance.renderWidgetContent(
+    widget,
+    instance.state.widgetDefinitions[0]
+  )
 
   assert.equal(rendered.props.data.currentUser, 'tester')
   assert.equal(rendered.props.data.previewOnly, undefined)
@@ -642,7 +912,10 @@ test('user-dashboard schema opts into the new empty-state recipe without changin
   })
   assert.equal(dashboardSchema.editablePlaceholder.body[2].type, 'button')
   assert.equal(dashboardSchema.editablePlaceholder.body[2].label, '开始编辑')
-  assert.equal(dashboardSchema.editablePlaceholder.body[2].actionType, 'dashboard-edit-mode')
+  assert.equal(
+    dashboardSchema.editablePlaceholder.body[2].actionType,
+    'dashboard-edit-mode'
+  )
   assert.equal(dashboardSchema.editablePlaceholder.body[0].type, 'tpl')
   assert.doesNotMatch(dashboardSchema.editablePlaceholder.body[0].tpl, /<img/i)
   assert.ok(dashboardSchema.editablePlaceholderIndicator)

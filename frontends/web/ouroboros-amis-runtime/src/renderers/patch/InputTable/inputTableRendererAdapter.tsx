@@ -203,6 +203,8 @@ export function createInputTableRendererAdapter(
 
     private inputTableCooperativeMaterializationDisabled = false
 
+    private inputTableExternalValueRenderKey = 0
+
     get inputTableProps() {
       return this.props as InputTableRuntimeProps
     }
@@ -225,6 +227,11 @@ export function createInputTableRendererAdapter(
       ) => void
 
       setState(state, callback)
+    }
+
+    setData(value: any, replace?: boolean, index?: string | number, condition?: any) {
+      this.inputTableExternalValueRenderKey += 1
+      return super.setData(value, replace, index, condition)
     }
 
     get rowAggregateConfig(): RowAggregateConfig | undefined {
@@ -2369,7 +2376,13 @@ export function createInputTableRendererAdapter(
           return table
         }
 
-        return renderInputTableWithPositionedAddButton(table, addButtonPosition)
+        const keyedTable = React.isValidElement(table)
+          ? React.cloneElement(table, {
+              key: this.inputTableExternalValueRenderKey,
+            })
+          : table
+
+        return renderInputTableWithPositionedAddButton(keyedTable, addButtonPosition)
       } finally {
         Object.assign(this, {
           props: originalProps,

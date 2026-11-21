@@ -83,7 +83,7 @@ test('read-only and malformed values remain inspectable without overwriting the 
     [
       {
         name: 'notify',
-        listenerConfig: { expressionLooking: '${ invalid expression }' },
+        target: { kind: 'listener', listenerName: 'notice', config: { expressionLooking: '${ invalid expression }' } },
       },
     ],
     'subscription'
@@ -93,7 +93,7 @@ test('read-only and malformed values remain inspectable without overwriting the 
 })
 
 test('subscription state is edited in the original definition without materializing the enabled default', () => {
-  const original = [{ name: 'notify', listenerName: 'noticeListener', future: 1 }]
+  const original = [{ name: 'notify', target: { kind: 'listener', listenerName: 'noticeListener' }, future: 1 }]
   const instance = control(original, 'subscription')
   expect(html(instance)).toContain('订阅状态')
   expect(html(instance)).not.toContain('已有待处理交付将阻塞')
@@ -203,11 +203,7 @@ test('late candidate loads cannot replace the newer result or update an unmounte
 })
 
 test('external reference lookup uses model behavior maps and preserves manually entered names on failure', async () => {
-  const definition = {
-    name: 'confirm',
-    sourceEventModelFullName: 'external.Payment',
-    sourceEventName: 'paid',
-  }
+  const definition = { name: 'confirm', sourceEvent: { modelFullName: 'external.Payment', eventName: 'paid' }, executionMode: 'AFTER_COMMIT_TRANSACTIONAL' }
   const instance = editing([definition], 'subscription')
   instance.props.env.fetcher.mockResolvedValue({
     ok: true,
@@ -301,4 +297,21 @@ test('unfinished nested editors block switching to advanced mode', () => {
   instance.switchMode()
   expect(instance.state.advanced).toBe(false)
   expect(instance.state.error).toContain('修正当前 JSON')
+})
+
+
+test('subscription edits preserve its nested target and explicit transaction mode', () => {
+  const definition = { name: 'reserve', sourceEvent: { modelFullName: 'sales.Order', eventName: 'submitted' },
+    executionMode: 'JOIN_SOURCE_TRANSACTION', target: { kind: 'action', modelFullName: 'inventory.Stock', actionName: 'reserve' } }
+  const instance = control([definition], 'subscription')
+  expect(html(instance)).toContain('执行模式')
+  expect(html(instance)).not.toContain('事件处理身份')
+  instance.change(0, 'executionMode', 'AFTER_COMMIT_TRANSACTIONAL')
+  expect(instance.props.onChange.mock.lastCall[0][0]).toEqual({ ...definition, executionMode: 'AFTER_COMMIT_TRANSACTIONAL' })
+  instance.change(0, 'target.actionName', 'reserveV2')
+  expect(instance.props.onChange.mock.lastCall[0][0].target).toEqual({ ...definition.target, actionName: 'reserveV2' })
+  expect(definition.target.actionName).toBe('reserve')
+  const fresh = control([{ name: 'fresh' }], 'subscription')
+  fresh.change(0, 'target.actionName', 'reserve')
+  expect(fresh.props.onChange.mock.lastCall[0][0].target).toEqual({ kind: 'action', actionName: 'reserve' })
 })

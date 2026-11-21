@@ -42,7 +42,7 @@ const initialState = {
     '/login/oidc',
     '/login/bind',
     '/debug/script-editor-intelligence',
-    '/debug/statistics-sql-editor',
+    '/debug/dataset-sql-editor',
   ],
   microWhiteRoutesMap: {},
   theme: getItemFromLocal('theme') ? getItemFromLocal('theme') : '',

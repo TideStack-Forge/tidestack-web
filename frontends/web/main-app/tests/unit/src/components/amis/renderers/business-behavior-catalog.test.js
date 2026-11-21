@@ -127,11 +127,7 @@ test('event details show reliable workflow producers and conditional local notif
   const contract = catalog()
   contract.events = [{ name: 'workflowTaskCreated', allowedProducerKinds: ['workflow'] }]
   contract.subscriptions = [
-    {
-      name: 'notice',
-      sourceEventModelFullName: 'sales.Order',
-      sourceEventName: 'workflowTaskCreated',
-    },
+    { name: 'notice', sourceEvent: { modelFullName: 'sales.Order', eventName: 'workflowTaskCreated' }, executionMode: 'AFTER_COMMIT_TRANSACTIONAL' },
   ]
   contract.sources = [
     {
@@ -379,7 +375,7 @@ test('subscription and event consumer views expose effective enablement without 
       consumers: [
         {
           modelFullName: 'sales.Other',
-          subscription: { name: 'notify', sourceEventName: 'changed', isEnabled: false },
+          subscription: { name: 'notify', isEnabled: false, sourceEvent: { eventName: 'changed' }, executionMode: 'AFTER_COMMIT_TRANSACTIONAL' },
           sources: [],
         },
       ],

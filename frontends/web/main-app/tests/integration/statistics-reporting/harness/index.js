@@ -1,6 +1,7 @@
 import { installHostRouter } from '@/router/installRouter'
 import React from 'react'
 import ReactDOM from 'react-dom'
+import '@/style/index.scss'
 import { store } from '@/store/storeFacade'
 import { getRouter } from '@/router/routerFacade'
 import { mountReactApp } from '@/bootstrap/bootstrapHostApp'
@@ -11,8 +12,9 @@ window.ReactDOM = ReactDOM
 
 const statusElement = document.getElementById('statistics-reporting-playwright-status')
 const appRoot = document.getElementById('statistics-reporting-app-root')
-const initialStudioPath = '/dev/demo/analytics/datasets/demo.sales/studio'
-const initialReportViewPath = '/dev/demo/analytics/report-views/demo.sales-by-region'
+const initialDatasetEditorPath = '/dev/demo/dataset/demo.sales'
+const datasetListPath = '/dev/demo/dataset'
+const initialChartPath = '/dev/demo/chart/demo.sales-by-region'
 const initialDashboardBusinessModelPath = '/dev/demo/business-model/demo.sales-dashboard'
 const leaveTargetPath = '/playwright/statistics-reporting/leave-target'
 
@@ -24,19 +26,27 @@ function buildHarnessAppInfo() {
     currentTheme: 'default',
     routes: [
       {
-        path: '/dev/:appName/analytics/datasets/:datasetName/studio',
-        title: 'Dataset Studio',
+        path: '/dev/:appName/dataset',
+        title: 'Datasets',
         type: 'amis',
         config: {
-          schemaId: '/dev/{appName}/analytics/datasets/{datasetName}/studio',
+          schemaId: '/dev/{appName}/dataset',
         },
       },
       {
-        path: '/dev/:appName/analytics/report-views/:fullName',
+        path: '/dev/:appName/dataset/:datasetName',
+        title: 'Dataset Editor',
+        type: 'amis',
+        config: {
+          schemaId: '/dev/{appName}/dataset/{datasetName}',
+        },
+      },
+      {
+        path: '/dev/:appName/chart/:fullName',
         title: 'Chart Editor',
         type: 'amis',
         config: {
-          schemaId: '/dev/{appName}/analytics/report-views/{fullName}',
+          schemaId: '/dev/{appName}/chart/{fullName}',
         },
       },
       {
@@ -62,12 +72,12 @@ function buildHarnessAppInfo() {
 function createHarnessDebugApi(router, debugState) {
   return {
     ready: false,
-    setGenericSqlValue(value) {
-      debugState.genericSqlEditor?.setValue?.(value)
-      debugState.genericSqlEditor?.focus?.()
+    setSqlValue(value) {
+      debugState.sqlEditor?.setValue?.(value)
+      debugState.sqlEditor?.focus?.()
     },
     publishSavedEvent() {
-      EventBus.publish('statisticsReporting.datasetStudio.saved', {
+      EventBus.publish('statisticsReporting.datasetEditor.saved', {
         datasetName: 'demo.sales',
       })
     },
@@ -77,10 +87,17 @@ function createHarnessDebugApi(router, debugState) {
     getCurrentPath() {
       return router.currentRoute.fullPath
     },
-    openReportViewEditor() {
-      return router.push(initialReportViewPath)
+    openChartEditor() {
+      return router.push(initialChartPath)
+    },
+    openDatasetList() {
+      return router.push(datasetListPath)
     },
     openDashboardBusinessModelEditor() {
+      return router.push(initialDashboardBusinessModelPath)
+    },
+    async reopenDashboardBusinessModelEditor() {
+      await router.push(leaveTargetPath)
       return router.push(initialDashboardBusinessModelPath)
     },
   }
@@ -88,13 +105,13 @@ function createHarnessDebugApi(router, debugState) {
 
 async function mountHarness() {
   const debugState = {
-    genericSqlEditor: null,
+    sqlEditor: null,
   }
   const initialTab = {
     id: 'statistics-reporting-playwright-tab',
-    path: initialStudioPath,
-    fullPath: initialStudioPath,
-    title: 'Dataset Studio',
+    path: initialDatasetEditorPath,
+    fullPath: initialDatasetEditorPath,
+    title: 'Dataset Editor',
   }
 
   statusElement.textContent = 'Preparing statistics reporting harness...'
@@ -103,6 +120,8 @@ async function mountHarness() {
   store.commit('app/SET_AMIS_COMPONENES_REGISTERED', true)
   store.commit('user/SET_TOKEN', {
     accessToken: 'playwright-access-token',
+    expiresIn: 3600,
+    issuedAt: Date.now(),
   })
   store.commit('user/SET_USERINFO', {
     userIdentity: 'playwright-user',
@@ -113,7 +132,7 @@ async function mountHarness() {
   store.commit('user/GLOBAL_MENU', [])
   store.commit('user/GLOBAL_SUB_MENU', [])
 
-  window.history.replaceState({}, '', initialStudioPath)
+  window.history.replaceState({}, '', initialDatasetEditorPath)
   await store.dispatch('tabs/clearAll')
   await store.dispatch('tabs/pushTab', initialTab)
   await store.dispatch('tabs/changeActiveTab', initialTab.id)
@@ -125,10 +144,10 @@ async function mountHarness() {
   window.__STATISTICS_REPORTING_PLAYWRIGHT_HARNESS__ = harnessApi
   window.__OUROBOROS_SCRIPT_EDITOR_DEBUG__ = {
     onMounted: ({ editor, props }) => {
-      if (props?.name !== 'statisticsSqlEditorGenericSql') {
+      if (props?.name !== 'datasetSqlEditorSql') {
         return
       }
-      debugState.genericSqlEditor = editor
+      debugState.sqlEditor = editor
       harnessApi.ready = true
       statusElement.textContent = 'Statistics reporting harness ready'
     },

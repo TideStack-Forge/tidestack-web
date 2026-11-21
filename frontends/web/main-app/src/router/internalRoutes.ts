@@ -10,10 +10,8 @@ import { ErrorAfterLoginPage } from '@/features/system/pages/ErrorAfterLoginPage
 import { NotFoundPage } from '@/features/system/pages/NotFoundPage'
 import { WelcomePage } from '@/features/system/pages/WelcomePage'
 import { ScriptEditorIntelligencePage } from '@/pages/debug/ScriptEditorIntelligencePage'
-import { StatisticsSqlEditorPage } from '@/pages/debug/StatisticsSqlEditorPage'
-import { StatisticsRuntimeQueryViewPage } from '@/pages/runtime/statistics-reporting/StatisticsRuntimeQueryViewPage'
-import { StatisticsRuntimeReportViewPage } from '@/pages/runtime/statistics-reporting/StatisticsRuntimeReportViewPage'
-import { StatisticsRuntimeDashboardPage } from '@/pages/runtime/statistics-reporting/StatisticsRuntimeDashboardPage'
+import { DatasetSqlEditorPage } from '@/pages/debug/DatasetSqlEditorPage'
+import { StatisticsRuntimeChartPage } from '@/pages/runtime/statistics-reporting/StatisticsRuntimeChartPage'
 
 function RootRedirectPlaceholderPage() {
   return createElement('div', null, '正在跳转...')
@@ -68,44 +66,24 @@ export const standaloneInternalRoutes = [
     pageComponent: ScriptEditorIntelligencePage,
   },
   {
-    path: '/debug/statistics-sql-editor',
-    name: 'statisticsSqlEditorDebug',
+    path: '/debug/dataset-sql-editor',
+    name: 'datasetSqlEditorDebug',
     meta: {
-      title: 'Statistics SQL Editor Playground',
+      title: '数据集 SQL 编辑器调试页',
       authIds: [],
       type: 'internal',
     },
-    pageComponent: StatisticsSqlEditorPage,
+    pageComponent: DatasetSqlEditorPage,
   },
   {
-    path: '/runtime/statistics-reporting/query-views/:viewName',
-    name: 'statistics-reporting-query-view',
+    path: '/runtime/statistics-reporting/charts/:chartName',
+    name: 'statistics-reporting-chart',
     meta: {
-      title: '查询视图',
+      title: '图表',
       authIds: [],
       type: 'internal',
     },
-    pageComponent: StatisticsRuntimeQueryViewPage,
-  },
-  {
-    path: '/runtime/statistics-reporting/report-views/:viewName',
-    name: 'statistics-reporting-report-view',
-    meta: {
-      title: '报表视图',
-      authIds: [],
-      type: 'internal',
-    },
-    pageComponent: StatisticsRuntimeReportViewPage,
-  },
-  {
-    path: '/runtime/statistics-reporting/dashboards/:dashboardName',
-    name: 'statistics-reporting-dashboard',
-    meta: {
-      title: '仪表盘',
-      authIds: [],
-      type: 'internal',
-    },
-    pageComponent: StatisticsRuntimeDashboardPage,
+    pageComponent: StatisticsRuntimeChartPage,
   },
 ]
 

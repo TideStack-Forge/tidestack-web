@@ -1,7 +1,3 @@
-// .react-grid-item:not(.react-grid-placeholder) {
-/**
- * 控制台外层
- */
 .dashboard-wrapper {
   --dashboard-edit-anchor-top: 0px;
   --dashboard-edit-anchor-right: 0px;
@@ -9,62 +5,97 @@
   --dashboard-edit-anchor-height: 50px;
   display: flex;
   flex-direction: column;
-  height: 100%;
   width: 100%;
-  .toolbar-box {
-    position: relative;
-    .edit-button {
-      position: absolute;
-      top: var(--dashboard-edit-anchor-top);
-      right: var(--dashboard-edit-anchor-right);
-      display: none;
-      z-index: 1;
-      box-shadow: rgba(0, 0, 0, 0.08) 0px 7px 20px;
-      background: #fff;
-      &:hover {
-        display: block;
-        box-shadow: rgba(0, 0, 0, 0.08) 0px 7px 20px;
-      }
-    }
-    .hover-area {
-      position: absolute;
-      top: var(--dashboard-edit-anchor-top);
-      right: var(--dashboard-edit-anchor-right);
-      width: var(--dashboard-edit-anchor-width);
-      height: var(--dashboard-edit-anchor-height);
-      z-index: 1;
-    }
-    .hover-area:hover + .edit-button {
-      display: block;
-    }
-  }
-  .edit-operation {
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+}
+
+.dashboard-edit-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 12px 0 16px;
+  flex: 0 0 auto;
+  .dashboard-edit-summary {
     display: flex;
     align-items: center;
-    flex-grow: 0;
-    flex-shrink: 0;
-    justify-content: flex-end;
-    margin-bottom: 10px;
-    .toolbar-box {
-      position: relative;
-      cursor: pointer;
-      .toolbar-content {
-        position: absolute;
-        top: 20px;
-        right: 0;
-        box-shadow: rgba(0, 0, 0, 0.08) 0px 7px 20px;
-        background-color: #fff;
-        border-radius: 8px;
-        z-index: 9999;
-        padding: 0.25rem;
-        text-align: center;
-        min-width: 65px;
-        li {
-          color: #2468f2;
-          padding: 0.25rem 0;
-        }
-      }
+    gap: 12px;
+    min-width: 0;
+  }
+  .dashboard-edit-summary strong {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-text, #1f2937);
+  }
+  .dashboard-edit-summary span {
+    font-size: 12px;
+    color: var(--color-text-secondary, #6b7280);
+  }
+  .dashboard-edit-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+}
+
+.dashboard-canvas {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+}
+.dashboard-wrapper--editing .dashboard-canvas {
+  border: 1px solid var(--color-border, #dfe5ed);
+  border-radius: 10px;
+  background-color: var(--color-bg-secondary, #f7f9fc);
+  background-image: radial-gradient(var(--color-border, #d6deea) 1px, transparent 1px);
+  background-size: 20px 20px;
+  padding: 12px;
+  min-height: 480px;
+  .dashboard-grid {
+    min-height: 450px;
+  }
+  .react-grid-placeholder {
+    background: var(--color-primary, #2468f2);
+    opacity: 0.12;
+    border-radius: 8px;
+  }
+}
+.dashboard-canvas-empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-secondary, #6b7280);
+  pointer-events: none;
+}
+.dashboard-canvas-empty span:first-child {
+  font-size: 16px;
+  color: var(--color-text, #1f2937);
+  font-weight: 500;
+}
+.dashboard-canvas-empty span:last-child {
+  font-size: 12px;
+}
+@media (max-width: 600px) {
+  .dashboard-edit-toolbar {
+    gap: 10px;
+    .dashboard-edit-summary {
+      flex-wrap: wrap;
+      gap: 6px;
     }
+    .dashboard-edit-summary span {
+      display: none;
+    }
+  }
+  .dashboard-wrapper--editing .dashboard-canvas {
+    padding: 4px;
   }
 }
 
@@ -169,27 +200,57 @@
   min-width: 0;
 }
 
-.react-draggable-transparent-selection .widget-wrapper {
-  background-color: #fff;
-  border-radius: 3px;
+.dashboard-wrapper--editing .widget-wrapper--editing {
+  box-sizing: border-box;
+  border: 1px solid var(--color-border, #d7dfeb);
+  border-radius: 8px;
   overflow: hidden;
-}
-
-.widget-wrapper {
+  background: var(--color-bg, #fff);
+  padding-top: 36px;
+  box-shadow: 0 2px 6px rgba(20, 40, 70, 0.04);
+  &:hover,
+  &:focus-within {
+    border-color: var(--color-primary, #2468f2);
+  }
   .edit-toolbar {
     position: absolute;
     top: 0;
-    right: 5px;
-    display: none;
-    z-index: 2;
-  }
-  &:hover .edit-toolbar {
+    left: 0;
+    right: 0;
+    height: 36px;
     display: flex;
-    flex-direction: row;
+    justify-content: space-between;
     align-items: center;
+    background: var(--color-bg, #fff);
+    border-bottom: 1px solid var(--color-border, #e5e7eb);
+    z-index: 2;
+    padding: 0 6px 0 10px;
   }
   .draggable {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1 1 auto;
+    min-width: 0;
+    height: 100%;
     cursor: move;
+    color: var(--color-text-secondary, #6b7280);
+    font-size: 12px;
+  }
+  .draggable span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .widget-edit-actions {
+    display: flex;
+    flex: 0 0 auto;
+  }
+  > .widget {
+    height: 100%;
+  }
+  > .react-resizable-handle {
+    z-index: 3;
   }
 }
 
@@ -201,17 +262,23 @@
   width: 100%;
   height: 100%;
   overflow: hidden;
+  min-width: 0;
+  min-height: 0;
+  flex-wrap: nowrap;
 
   .widget-header {
     height: var(--widget-header-height);
     flex-shrink: 0;
     flex-grow: 0;
-    background: linear-gradient(180deg, #fafafa 0%, #f5f5f5 100%);
+    background: var(--color-bg, #fff);
     border-bottom: 1px solid #e8e8e8;
     padding: 0 12px;
     display: flex;
     align-items: center;
     overflow: hidden;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
   }
 
   .widget-title {
@@ -225,18 +292,29 @@
   }
 
   .widget-body {
-    min-height: calc(100% - var(--widget-header-height) - var(--widget-footer-height));
+    min-height: 0;
     flex-grow: 1;
     flex-shrink: 1;
     overflow: hidden;
     padding: 12px;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
 
     &.content-autofill {
       padding: 0;
 
       > * {
-        height: 100%;
         width: 100%;
+        min-width: 0;
+        min-height: 0;
+      }
+
+      > .cxd-Chart,
+      > .a-Chart,
+      > .statistics-chart-runtime > .cxd-Chart,
+      > .statistics-chart-runtime > .a-Chart {
+        height: 100% !important;
       }
     }
   }
@@ -253,14 +331,46 @@
   }
 }
 
+.statistics-chart-widget-thumb {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 112px;
+  width: 100%;
+  color: #4b5563;
+
+  .statistics-chart-widget-thumb__icon {
+    color: #2468f2;
+    font-size: 24px;
+    line-height: 1;
+  }
+
+  .statistics-chart-widget-thumb__title {
+    color: #111827;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .statistics-chart-widget-thumb__description {
+    color: #6b7280;
+    font-size: 12px;
+  }
+}
+
 /**
  * 组件库抽屉
  */
 .widget-definitions-panel {
   margin-bottom: 15px;
   .widget-category-title {
-    padding-left: 10px;
-    border-left: solid 4px #2468f2;
+    padding: 8px 0;
+    width: 100%;
+    border: 0;
+    background: transparent;
+    color: var(--color-text, #1f2937);
+    justify-content: space-between;
     display: flex;
     margin-bottom: 10px;
     font-size: 14px;
@@ -290,27 +400,48 @@
     }
 
     .widget-definition-item {
-      min-width: 200px;
+      min-width: 0;
       width: 100%;
-      margin: 10px;
+      margin: 0 0 12px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
 
       > .widget-definition {
-        border: 1px solid #ddd;
-        border-radius: 3px;
-        padding: 6px;
+        border: 1px solid var(--color-border, #dfe5ed);
+        border-radius: 8px 8px 0 0;
+        padding: 12px;
+        background: var(--color-bg-secondary, #f8fafc);
+        cursor: grab;
         flex-grow: 1;
         flex-shrink: 0;
         overflow: hidden;
       }
       > .widget-definition-item__title {
-        padding: 5px;
+        display: grid;
+        gap: 4px;
+        padding: 12px;
         font-size: 12px;
-        text-align: center;
-        font-weight: bold;
+        border: 1px solid var(--color-border, #dfe5ed);
+        border-top: 0;
+        border-radius: 0 0 8px 8px;
+        span {
+          color: var(--color-text-secondary, #6b7280);
+        }
       }
     }
+  }
+}
+.dashboard-component-library {
+  .dashboard-library-hint {
+    color: var(--color-text-secondary, #6b7280);
+    font-size: 12px;
+    margin-bottom: 20px;
+  }
+  .widget-definition .widget-header {
+    display: none;
+  }
+  .statistics-chart-widget-thumb {
+    min-height: 100px;
   }
 }
